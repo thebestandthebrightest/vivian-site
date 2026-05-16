@@ -17,10 +17,10 @@ const navItems = [
 export function PageShell({ children }: PageShellProps) {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="mx-auto flex w-full max-w-7xl flex-col items-start gap-5 px-6 py-7 sm:flex-row sm:items-center sm:justify-between sm:px-10 lg:px-14">
+      <header className="mx-auto flex w-full max-w-7xl flex-col items-start gap-5 px-6 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-7 lg:px-14 lg:py-8">
         <Link
           href="/"
-          className="focus-ring text-base font-medium tracking-[0.01em] text-foreground"
+          className="focus-ring text-base font-medium text-foreground"
           aria-label="Vivian Glenn homepage"
         >
           Vivian Glenn

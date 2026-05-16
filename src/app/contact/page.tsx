@@ -18,7 +18,9 @@ export default function ContactPage() {
         <Section className="pb-24 lg:pb-32">
           <div className="flex max-w-xl flex-col items-start gap-6 border-t border-line pt-8 sm:flex-row sm:gap-9">
             <ButtonLink href="mailto:gvivian321@gmail.com">Email</ButtonLink>
-            <ButtonLink href="https://www.linkedin.com/">LinkedIn</ButtonLink>
+            <ButtonLink href="https://www.linkedin.com/in/vivianglenn">
+              LinkedIn
+            </ButtonLink>
             <ButtonLink href="/resume">Resume</ButtonLink>
           </div>
         </Section>

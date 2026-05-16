@@ -24,7 +24,7 @@ export default function ResumePage() {
       <main>
         <Section className="flex min-h-[62vh] items-center justify-center py-20 sm:py-24 lg:py-28">
           <MotionReveal className="mx-auto max-w-xl text-center">
-            <h1 className="font-display text-6xl font-medium leading-[0.92] tracking-[0.01em] text-foreground sm:text-7xl lg:text-8xl">
+            <h1 className="font-display text-6xl font-medium leading-[0.92] text-foreground sm:text-7xl lg:text-8xl">
               Resume
             </h1>
             <p className="mx-auto mt-8 max-w-lg text-base leading-8 text-muted sm:text-lg">

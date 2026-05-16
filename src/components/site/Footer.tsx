@@ -5,7 +5,7 @@ export function Footer() {
     <footer className="pb-8 pt-10">
       <Section>
         <div className="flex flex-col gap-4 border-t border-line pt-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-medium tracking-[0.01em] text-foreground">
+          <p className="font-medium text-foreground">
             Vivian Glenn
           </p>
           <div className="flex gap-6">
@@ -17,7 +17,7 @@ export function Footer() {
             </a>
             <a
               className="transition-opacity duration-300 hover:opacity-70"
-              href="https://www.linkedin.com/"
+              href="https://www.linkedin.com/in/vivianglenn"
             >
               LinkedIn
             </a>

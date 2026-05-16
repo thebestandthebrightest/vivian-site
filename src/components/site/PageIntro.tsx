@@ -10,10 +10,10 @@ type PageIntroProps = {
 
 export function PageIntro({ title, copy, children }: PageIntroProps) {
   return (
-    <Section className="pb-16 pt-20 sm:pb-20 sm:pt-24 lg:pb-24 lg:pt-28">
+    <Section className="pb-14 pt-16 sm:pb-16 sm:pt-20 lg:pb-20 lg:pt-24">
       <MotionReveal>
         <div className="max-w-3xl">
-          <h1 className="font-display text-6xl font-medium leading-[0.92] tracking-[0.01em] text-foreground sm:text-7xl lg:text-8xl">
+          <h1 className="font-display text-6xl font-medium leading-[0.92] text-foreground sm:text-7xl lg:text-8xl">
             {title}
           </h1>
           {copy ? (

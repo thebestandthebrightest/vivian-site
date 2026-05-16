@@ -54,14 +54,6 @@ const researchRows = [
   },
 ];
 
-const currentFocus = [
-  "Organizational strategy",
-  "Operational analytics",
-  "Program evaluation",
-  "Forecasting and decision support",
-  "Public health systems",
-];
-
 const capabilities = [
   {
     title: "Strategy & Operations",
@@ -82,10 +74,9 @@ const capabilities = [
     ],
   },
   {
-    title: "AI Workflows",
+    title: "AI + Execution",
     items: [
       "AI-assisted synthesis",
-      "Prompt systems",
       "Research acceleration",
       "Prototyping workflows",
       "Operational automation",
@@ -109,7 +100,7 @@ const supportedTravelExtensions = new Set([
 const travelLabels: Record<string, string> = {
   "6.png": "Dublin, Ireland",
   "amsterdam.png": "Amsterdam, Netherlands",
-  "antigua.png": "Antigua, Guatemala",
+  "antigua.png": "St. John's, Antigua",
   "barcelona-1.JPG": "Barcelona, Spain",
   "barcelona-2.JPG": "Barcelona, Spain",
   "bath.JPG": "Bath, United Kingdom",
@@ -123,10 +114,10 @@ const travelLabels: Record<string, string> = {
   "london-1.JPG": "London, United Kingdom",
   "london-2.JPG": "London, United Kingdom",
   "london-3.JPG": "London, United Kingdom",
-  "malmo.png": "Malmo, Sweden",
+  "malmo.png": "Malmö, Sweden",
   "mexico.png": "Mexico City, Mexico",
   "morocco-2.png": "Sahara Desert, Morocco",
-  "morroco-1.JPG": "Marrakesh, Morocco",
+  "morroco-1.JPG": "Marrakech, Morocco",
   "munich.JPG": "Munich, Germany",
   "nyc.png": "New York, New York",
   "paris.JPG": "Paris, France",
@@ -247,21 +238,6 @@ export default function AboutPage() {
                   </article>
                 ))}
               </div>
-            </div>
-          </MotionReveal>
-        </Section>
-
-        <Section className="pb-16 lg:pb-20">
-          <MotionReveal>
-            <div className="grid gap-10 border-t border-line pt-9 md:grid-cols-[0.75fr_1.45fr] md:gap-16">
-              <h2 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
-                Approach
-              </h2>
-              <ul className="grid gap-x-8 gap-y-4 text-sm leading-7 text-muted sm:grid-cols-2">
-                {currentFocus.map((focus) => (
-                  <li key={focus}>{focus}</li>
-                ))}
-              </ul>
             </div>
           </MotionReveal>
         </Section>

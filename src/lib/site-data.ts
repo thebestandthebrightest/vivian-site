@@ -1,7 +1,5 @@
 import type { Project } from "@/components/site/ProjectFeature";
 
-export const resumeHref = "/Vivian-Glenn-Resume.pdf";
-
 export const projects: Project[] = [
   {
     number: "01",

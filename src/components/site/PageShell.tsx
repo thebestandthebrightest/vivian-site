@@ -16,7 +16,7 @@ const navItems = [
 
 export function PageShell({ children, hideBrand = false }: PageShellProps) {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <header className="mx-auto flex w-full max-w-7xl flex-col items-start gap-5 px-6 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-7 lg:px-14 lg:py-8">
         {hideBrand ? null : (
           <Link
@@ -38,7 +38,7 @@ export function PageShell({ children, hideBrand = false }: PageShellProps) {
           ))}
         </nav>
       </header>
-      {children}
+      <div className="flex flex-1 flex-col">{children}</div>
       <Footer />
     </div>
   );

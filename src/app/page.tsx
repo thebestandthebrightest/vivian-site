@@ -27,11 +27,10 @@ export default function Home() {
                 <h1 className="font-display text-[clamp(4.3rem,11vw,8.1rem)] font-medium leading-[0.88] text-foreground sm:whitespace-nowrap">
                   Vivian Glenn
                 </h1>
-                <p className="mt-7 max-w-4xl font-display text-3xl font-medium leading-tight text-foreground sm:text-4xl lg:text-[3.2rem]">
+                <p className="mt-7 max-w-3xl font-display text-[2rem] font-medium leading-[1.04] text-foreground sm:text-[2.55rem] lg:text-[3rem]">
                   Designing analytical tools, operational systems, and
-                  insight-driven platforms across public health and
-                  organizational strategy, leveraging AI to accelerate
-                  synthesis, prototyping, and execution.
+                  AI-assisted platforms for public health and organizational
+                  strategy.
                 </p>
                 <p className="mt-7 text-[0.68rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
                   Public Health @ Rutgers
@@ -72,11 +71,11 @@ export default function Home() {
           </div>
         </Section>
 
-        <Section className="pb-6 pt-10 sm:pb-8 sm:pt-12 lg:pb-10 lg:pt-14">
+        <Section className="pb-8 pt-10 sm:pb-10 sm:pt-12 lg:pb-12 lg:pt-14">
           <MotionReveal>
             <div className="grid gap-7 border-t border-line pt-8 md:grid-cols-[0.62fr_1.38fr] md:gap-14">
               <h2 className="font-display text-5xl font-medium leading-[0.96] text-foreground sm:text-6xl lg:text-7xl">
-                Impact / Recognition
+                Impact
               </h2>
               <div className="grid border-t border-line sm:grid-cols-2 sm:border-t-0">
                 {recognitionItems.map((item) => (
@@ -92,14 +91,16 @@ export default function Home() {
           </MotionReveal>
         </Section>
 
-        <Section className="pb-20 pt-4 sm:pb-24 sm:pt-5 lg:pb-28 lg:pt-6">
+        <Section className="pb-20 pt-0 sm:pb-24 lg:pb-28">
           <MotionReveal>
-            <p className="max-w-3xl text-base leading-8 text-muted sm:text-lg sm:leading-9">
-              “I design systems that make public health programs easier to
-              understand, operate, and improve. My work focuses on operational
-              clarity, participation analytics, and organizational
-              infrastructure.”
-            </p>
+            <div className="border-t border-line pt-8 sm:pt-10 lg:pt-12">
+              <p className="max-w-3xl text-base leading-8 text-muted sm:text-lg sm:leading-9">
+                “I design systems that make public health programs easier to
+                understand, operate, and improve. My work focuses on operational
+                clarity, participation analytics, and organizational
+                infrastructure.”
+              </p>
+            </div>
           </MotionReveal>
         </Section>
       </main>

@@ -70,11 +70,11 @@ export default function Home() {
           </div>
         </Section>
 
-        <Section className="py-10 sm:py-12 lg:py-14">
+        <Section className="pb-6 pt-10 sm:pb-8 sm:pt-12 lg:pb-10 lg:pt-14">
           <MotionReveal>
             <div className="grid gap-7 border-t border-line pt-8 md:grid-cols-[0.62fr_1.38fr] md:gap-14">
-              <h2 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
-                Impact / Recognition
+              <h2 className="font-display text-5xl font-medium leading-[0.96] text-foreground sm:text-6xl lg:text-7xl">
+                Impact
               </h2>
               <div className="grid border-t border-line sm:grid-cols-2 sm:border-t-0">
                 {recognitionItems.map((item) => (
@@ -90,9 +90,9 @@ export default function Home() {
           </MotionReveal>
         </Section>
 
-        <Section className="pb-20 pt-10 sm:pb-24 sm:pt-12 lg:pb-28 lg:pt-14">
+        <Section className="pb-20 pt-4 sm:pb-24 sm:pt-5 lg:pb-28 lg:pt-6">
           <MotionReveal>
-            <p className="max-w-3xl border-t border-line pt-8 text-base leading-8 text-muted sm:text-lg sm:leading-9">
+            <p className="max-w-3xl text-base leading-8 text-muted sm:text-lg sm:leading-9">
               “I design systems that make public health programs easier to
               understand, operate, and improve. My work focuses on operational
               clarity, participation analytics, and organizational

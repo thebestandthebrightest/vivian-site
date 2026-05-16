@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { readdirSync } from "node:fs";
 import { extname, join, parse } from "node:path";
 import { MotionReveal } from "@/components/site/MotionReveal";
 import { PageIntro } from "@/components/site/PageIntro";
 import { PageShell } from "@/components/site/PageShell";
 import { Section } from "@/components/site/Section";
+import {
+  TravelScrollStrip,
+  type TravelItem,
+} from "@/components/site/TravelScrollStrip";
 
 export const metadata: Metadata = {
   title: "About | Vivian Glenn",
@@ -59,6 +62,41 @@ const currentFocus = [
   "Public health systems",
 ];
 
+const capabilities = [
+  {
+    title: "Strategy & Operations",
+    items: [
+      "Operational strategy",
+      "Program evaluation",
+      "Workflow design",
+      "Scenario modeling",
+    ],
+  },
+  {
+    title: "Analytics & Systems",
+    items: [
+      "Dashboard systems",
+      "Data synthesis",
+      "Reporting infrastructure",
+      "Decision-support tools",
+    ],
+  },
+  {
+    title: "AI Workflows",
+    items: [
+      "AI-assisted synthesis",
+      "Prompt systems",
+      "Research acceleration",
+      "Prototyping workflows",
+      "Operational automation",
+    ],
+  },
+  {
+    title: "Technical",
+    items: ["Next.js", "TypeScript", "Recharts", "Supabase", "Vercel", "Figma"],
+  },
+];
+
 const supportedTravelExtensions = new Set([
   ".jpg",
   ".jpeg",
@@ -68,11 +106,36 @@ const supportedTravelExtensions = new Set([
   ".mov",
 ]);
 
-type TravelItem = {
-  filename: string;
-  kind: "image" | "video";
-  label: string;
-  src: string;
+const travelLabels: Record<string, string> = {
+  "6.png": "Dublin, Ireland",
+  "amsterdam.png": "Amsterdam, Netherlands",
+  "antigua.png": "Antigua, Guatemala",
+  "barcelona-1.JPG": "Barcelona, Spain",
+  "barcelona-2.JPG": "Barcelona, Spain",
+  "bath.JPG": "Bath, United Kingdom",
+  "boston.png": "Boston, Massachusetts",
+  "brussels.png": "Brussels, Belgium",
+  "budapest.png": "Budapest, Hungary",
+  "chicago.png": "Chicago, Illinois",
+  "copenhagen.JPG": "Copenhagen, Denmark",
+  "hawaii-1.mp4": "Honolulu, Hawaii",
+  "hawaii-2.mp4": "Big Island, Hawaii",
+  "london-1.JPG": "London, United Kingdom",
+  "london-2.JPG": "London, United Kingdom",
+  "london-3.JPG": "London, United Kingdom",
+  "malmo.png": "Malmo, Sweden",
+  "mexico.png": "Mexico City, Mexico",
+  "morocco-2.png": "Sahara Desert, Morocco",
+  "morroco-1.JPG": "Marrakesh, Morocco",
+  "munich.JPG": "Munich, Germany",
+  "nyc.png": "New York, New York",
+  "paris.JPG": "Paris, France",
+  "prague.png": "Prague, Czech Republic",
+  "providence.png": "Providence, Rhode Island",
+  "seattle.png": "Seattle, Washington",
+  "seven sisters.JPG": "Seven Sisters, United Kingdom",
+  "slovakia.JPG": "Bratislava, Slovakia",
+  "vienna.png": "Vienna, Austria",
 };
 
 function formatTravelLabel(filename: string) {
@@ -102,7 +165,7 @@ function getTravelItems(): TravelItem[] {
       return {
         filename,
         kind,
-        label: formatTravelLabel(filename),
+        label: travelLabels[filename] ?? formatTravelLabel(filename),
         src: `/travel/${encodeURIComponent(filename)}`,
       };
     });
@@ -110,49 +173,8 @@ function getTravelItems(): TravelItem[] {
 
 function TravelStrip() {
   const travelItems = getTravelItems();
-  const carouselItems = [...travelItems, ...travelItems];
 
-  return (
-    <div
-      className="overflow-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      aria-label="Travel image strip"
-    >
-      <div className="travel-carousel-track flex w-max gap-5">
-        {carouselItems.map((item, index) => (
-          <figure
-            key={`${item.filename}-${index}`}
-            className="w-[14rem] flex-none sm:w-[16rem] lg:w-[17rem]"
-          >
-            <div className="group relative aspect-[4/5] overflow-hidden bg-background">
-              {item.kind === "image" ? (
-                <Image
-                  src={item.src}
-                  alt={item.label}
-                  fill
-                  sizes="(min-width: 1024px) 272px, (min-width: 640px) 256px, 224px"
-                  className="grayscale object-cover transition duration-700 ease-out group-hover:scale-[1.02] group-hover:grayscale-0"
-                />
-              ) : (
-                <video
-                  aria-label={item.label}
-                  autoPlay
-                  className="h-full w-full object-cover grayscale transition duration-700 ease-out group-hover:scale-[1.02] group-hover:grayscale-0"
-                  loop
-                  muted
-                  playsInline
-                  preload="metadata"
-                  src={item.src}
-                />
-              )}
-            </div>
-            <figcaption className="mt-3 text-xs font-medium leading-6 text-quiet">
-              {item.label}
-            </figcaption>
-          </figure>
-        ))}
-      </div>
-    </div>
-  );
+  return <TravelScrollStrip items={travelItems} />;
 }
 
 export default function AboutPage() {
@@ -233,13 +255,40 @@ export default function AboutPage() {
           <MotionReveal>
             <div className="grid gap-10 border-t border-line pt-9 md:grid-cols-[0.75fr_1.45fr] md:gap-16">
               <h2 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
-                Current Focus
+                Approach
               </h2>
               <ul className="grid gap-x-8 gap-y-4 text-sm leading-7 text-muted sm:grid-cols-2">
                 {currentFocus.map((focus) => (
                   <li key={focus}>{focus}</li>
                 ))}
               </ul>
+            </div>
+          </MotionReveal>
+        </Section>
+
+        <Section className="pb-16 lg:pb-20">
+          <MotionReveal>
+            <div className="grid gap-10 border-t border-line pt-9 md:grid-cols-[0.75fr_1.45fr] md:gap-16">
+              <h2 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
+                Capabilities
+              </h2>
+              <div className="grid gap-x-12 sm:grid-cols-2">
+                {capabilities.map((group) => (
+                  <div
+                    key={group.title}
+                    className="border-t border-line py-5 lg:py-6"
+                  >
+                    <h3 className="text-sm font-medium leading-7 text-foreground">
+                      {group.title}
+                    </h3>
+                    <ul className="mt-3 grid gap-2 text-sm leading-7 text-muted">
+                      {group.items.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
             </div>
           </MotionReveal>
         </Section>

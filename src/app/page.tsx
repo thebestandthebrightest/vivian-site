@@ -27,9 +27,11 @@ export default function Home() {
                 <h1 className="font-display text-[clamp(4.3rem,11vw,8.1rem)] font-medium leading-[0.88] text-foreground sm:whitespace-nowrap">
                   Vivian Glenn
                 </h1>
-                <p className="mt-7 max-w-3xl font-display text-3xl font-medium leading-tight text-foreground sm:text-4xl lg:text-5xl">
-                  Strategy, analytics, and systems design for public health
-                  organizations.
+                <p className="mt-7 max-w-4xl font-display text-3xl font-medium leading-tight text-foreground sm:text-4xl lg:text-[3.2rem]">
+                  Designing analytical tools, operational systems, and
+                  insight-driven platforms across public health and
+                  organizational strategy, leveraging AI to accelerate
+                  synthesis, prototyping, and execution.
                 </p>
                 <p className="mt-7 text-[0.68rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
                   Public Health @ Rutgers
@@ -74,7 +76,7 @@ export default function Home() {
           <MotionReveal>
             <div className="grid gap-7 border-t border-line pt-8 md:grid-cols-[0.62fr_1.38fr] md:gap-14">
               <h2 className="font-display text-5xl font-medium leading-[0.96] text-foreground sm:text-6xl lg:text-7xl">
-                Impact
+                Impact / Recognition
               </h2>
               <div className="grid border-t border-line sm:grid-cols-2 sm:border-t-0">
                 {recognitionItems.map((item) => (

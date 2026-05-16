@@ -8,14 +8,14 @@ export const projects: Project[] = [
     title: "ScarletWell Studio",
     descriptor: "Operational analytics and planning platform",
     summary:
-      "Designed a centralized strategy platform for understanding program performance, planning cycles, and translating participation data into clearer decisions.",
+      "Designed decision-support infrastructure for program performance, planning cycles, and AI-assisted synthesis across wellness initiatives.",
     impact:
-      "Supported evaluation across 40+ wellness initiatives and a $43K+ programming budget.",
+      "Supported clearer evaluation across 40+ wellness initiatives and a $43K+ programming budget.",
     previewDetail: "40+ initiatives / $43K+ budget",
     details: [
       "Grant-cycle planning",
       "Cohort analytics",
-      "Decision support",
+      "AI-assisted synthesis",
       "Forecasting",
     ],
   },
@@ -24,14 +24,14 @@ export const projects: Project[] = [
     title: "PSL Dashboard",
     descriptor: "Cohort outcomes and engagement insights",
     summary:
-      "Built a stakeholder-facing dashboard to clarify attendance, competency growth, qualitative themes, and program recommendations.",
+      "Built a stakeholder-facing dashboard for attendance patterns, competency growth, qualitative synthesis, and recommendation workflows.",
     impact:
-      "Translated mixed participation and survey data into clearer program insights and recommendations.",
+      "Translated mixed participation and survey data into operational insight for program improvement.",
     previewDetail: "Pre/post analysis",
     details: [
       "Active cohort tracking",
       "Pre-post analysis",
-      "Qualitative themes",
+      "Synthesis workflows",
       "Recommendations",
     ],
   },
@@ -40,9 +40,9 @@ export const projects: Project[] = [
     title: "IFNH InsightOS",
     descriptor: "Institutional analytics and forecasting",
     summary:
-      "Developed a clean analytics interface for exploring participation, capacity, and scenario planning across institutional programming.",
+      "Developed an analytics interface for participation trends, capacity planning, and forecasting across institutional programming.",
     impact:
-      "Automated data processing and supported forecasting for engagement and program design.",
+      "Created planning infrastructure to support engagement forecasts and program design decisions.",
     previewDetail: "Forecasting tools",
     details: [
       "Forecasting tools",
@@ -56,9 +56,9 @@ export const projects: Project[] = [
     title: "Wellness Through Clay",
     descriptor: "Founder-led wellness initiative",
     summary:
-      "Founded and scaled a multi-semester Rutgers wellness initiative through programming, operations, partnerships, and student engagement.",
+      "Founded and scaled a multi-semester wellness initiative through operating systems, partnerships, funding, and student engagement.",
     impact:
-      "Reached 250+ attendees across Rutgers community programming; improved reach per dollar while sustaining demand across semesters.",
+      "Reached 250+ attendees while improving reach per dollar and sustaining demand across semesters.",
     details: [
       "250+ attendees",
       "Multi-semester programming",

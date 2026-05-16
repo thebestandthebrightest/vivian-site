@@ -71,19 +71,19 @@ export function ProjectFeature({
 export function ProjectPreview({ project, delay = 0 }: ProjectFeatureProps) {
   return (
     <MotionReveal delay={delay}>
-      <article className="group grid gap-4 border-t border-line py-7 transition-transform duration-300 ease-out hover:translate-x-1 sm:grid-cols-[0.16fr_1fr_auto] sm:items-baseline sm:gap-8">
+      <article className="group grid gap-5 border-t border-line py-8 transition duration-500 ease-out hover:border-foreground/25 sm:grid-cols-[0.14fr_1fr_auto] sm:items-baseline sm:gap-10 lg:py-9">
         <p className="text-xs font-medium text-quiet">
           {project.number}
         </p>
         <div>
-          <h3 className="font-display text-3xl font-medium leading-none text-foreground sm:text-4xl">
+          <h3 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
             <ProjectTitle>{project.title}</ProjectTitle>
           </h3>
-          <p className="mt-3 text-sm leading-6 text-muted">
+          <p className="mt-3 max-w-xl text-sm leading-6 text-muted">
             {project.descriptor}
           </p>
         </div>
-        <p className="text-sm leading-6 text-quiet sm:max-w-64">
+        <p className="text-xs font-medium leading-6 text-quiet sm:max-w-56 sm:text-right">
           {project.previewDetail ?? project.details[0]}
         </p>
       </article>

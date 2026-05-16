@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { readdirSync } from "node:fs";
+import { extname, join, parse } from "node:path";
 import { MotionReveal } from "@/components/site/MotionReveal";
 import { PageIntro } from "@/components/site/PageIntro";
 import { PageShell } from "@/components/site/PageShell";
@@ -57,35 +59,98 @@ const currentFocus = [
   "Public health systems",
 ];
 
-const travelImages = [
-  { src: "/travel/paris.JPG", label: "Paris, France" },
-  { src: "/travel/copenhagen.JPG", label: "Copenhagen, Denmark" },
-  { src: "/travel/barcelona-1.JPG", label: "Barcelona, Spain" },
-  { src: "/travel/london-1.JPG", label: "London, United Kingdom" },
-];
+const supportedTravelExtensions = new Set([
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".webp",
+  ".mp4",
+  ".mov",
+]);
+
+type TravelItem = {
+  filename: string;
+  kind: "image" | "video";
+  label: string;
+  src: string;
+};
+
+function formatTravelLabel(filename: string) {
+  return parse(filename)
+    .name.replace(/[-_]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function getTravelItems(): TravelItem[] {
+  const travelDirectory = join(process.cwd(), "public", "travel");
+
+  return readdirSync(travelDirectory, { withFileTypes: true })
+    .filter((entry) => entry.isFile())
+    .map((entry) => entry.name)
+    .filter((filename) =>
+      supportedTravelExtensions.has(extname(filename).toLowerCase()),
+    )
+    .sort((first, second) =>
+      first.localeCompare(second, undefined, { sensitivity: "base" }),
+    )
+    .map((filename) => {
+      const extension = extname(filename).toLowerCase();
+      const kind = extension === ".mp4" || extension === ".mov" ? "video" : "image";
+
+      return {
+        filename,
+        kind,
+        label: formatTravelLabel(filename),
+        src: `/travel/${encodeURIComponent(filename)}`,
+      };
+    });
+}
 
 function TravelStrip() {
+  const travelItems = getTravelItems();
+  const carouselItems = [...travelItems, ...travelItems];
+
   return (
     <div
-      className="flex gap-5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className="overflow-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       aria-label="Travel image strip"
     >
-      {travelImages.map((image) => (
-        <figure key={image.src} className="min-w-[14rem] sm:min-w-0 sm:flex-1">
-          <div className="group relative aspect-[4/5] overflow-hidden bg-background">
-            <Image
-              src={image.src}
-              alt={image.label}
-              fill
-              sizes="(min-width: 1024px) 280px, (min-width: 640px) 25vw, 224px"
-              className="object-cover transition duration-700 ease-out group-hover:scale-[1.02]"
-            />
-          </div>
-          <figcaption className="mt-3 text-xs font-medium leading-6 text-quiet">
-            {image.label}
-          </figcaption>
-        </figure>
-      ))}
+      <div className="travel-carousel-track flex w-max gap-5">
+        {carouselItems.map((item, index) => (
+          <figure
+            key={`${item.filename}-${index}`}
+            className="w-[14rem] flex-none sm:w-[16rem] lg:w-[17rem]"
+          >
+            <div className="group relative aspect-[4/5] overflow-hidden bg-background">
+              {item.kind === "image" ? (
+                <Image
+                  src={item.src}
+                  alt={item.label}
+                  fill
+                  sizes="(min-width: 1024px) 272px, (min-width: 640px) 256px, 224px"
+                  className="grayscale object-cover transition duration-700 ease-out group-hover:scale-[1.02] group-hover:grayscale-0"
+                />
+              ) : (
+                <video
+                  aria-label={item.label}
+                  autoPlay
+                  className="h-full w-full object-cover grayscale transition duration-700 ease-out group-hover:scale-[1.02] group-hover:grayscale-0"
+                  loop
+                  muted
+                  playsInline
+                  preload="metadata"
+                  src={item.src}
+                />
+              )}
+            </div>
+            <figcaption className="mt-3 text-xs font-medium leading-6 text-quiet">
+              {item.label}
+            </figcaption>
+          </figure>
+        ))}
+      </div>
     </div>
   );
 }
@@ -186,10 +251,6 @@ export default function AboutPage() {
                 <h2 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
                   Travel
                 </h2>
-                <p className="max-w-2xl text-sm leading-7 text-muted">
-                  Travel shapes how I think about systems, cities, behavior,
-                  and public space.
-                </p>
               </div>
               <TravelStrip />
             </div>

@@ -7,13 +7,6 @@ import { Section } from "@/components/site/Section";
 import { SectionHeader } from "@/components/site/SectionHeader";
 import { projects } from "@/lib/site-data";
 
-const credibility = [
-  "CDC Lewis Scholar",
-  "Deloitte Case Competition - 2nd Place",
-  "Rutgers Public Health",
-  "3.96 GPA",
-];
-
 const selectedExperience = [
   {
     organization: "CDC Lewis Scholars Program",
@@ -42,22 +35,22 @@ const selectedExperience = [
 
 export default function Home() {
   return (
-    <PageShell>
+    <PageShell hideBrand>
       <main>
-        <Section className="pb-12 pt-16 sm:pb-14 sm:pt-20 lg:pb-16 lg:pt-24">
-          <div className="grid gap-12 lg:grid-cols-[1.15fr_0.68fr] lg:items-end lg:gap-16">
+        <Section className="pb-12 pt-10 sm:pb-14 sm:pt-14 lg:pb-16 lg:pt-16">
+          <div className="grid gap-12 lg:grid-cols-[1.15fr_0.68fr] lg:items-start lg:gap-16">
             <MotionReveal>
               <div className="max-w-5xl">
-                <p className="mb-7 text-sm font-medium leading-6 text-muted">
-                  Public Health @ Rutgers
-                </p>
                 <h1 className="font-display text-[clamp(4.3rem,11vw,8.1rem)] font-medium leading-[0.88] text-foreground sm:whitespace-nowrap">
                   Vivian Glenn
                 </h1>
-                <h2 className="mt-8 font-display text-4xl font-medium leading-tight text-foreground sm:text-5xl">
+                <p className="mt-7 text-sm font-medium leading-6 text-muted">
+                  Public Health @ Rutgers
+                </p>
+                <h2 className="mt-6 font-display text-4xl font-medium leading-tight text-foreground sm:text-5xl">
                   Strategy. Analytics. Systems.
                 </h2>
-                <p className="mt-8 max-w-2xl text-base leading-8 text-muted sm:text-lg">
+                <p className="mt-7 max-w-2xl text-base leading-8 text-muted sm:text-lg">
                   Building analytical tools, operational systems, and
                   insight-driven platforms across public health and
                   organizational strategy.
@@ -77,16 +70,6 @@ export default function Home() {
               </div>
             </MotionReveal>
           </div>
-        </Section>
-
-        <Section className="pb-14 sm:pb-16 lg:pb-20">
-          <MotionReveal delay={0.18}>
-            <div className="grid gap-4 border-t border-line py-4 text-xs font-medium leading-6 text-muted sm:grid-cols-4 sm:gap-6">
-              {credibility.map((item) => (
-                <p key={item}>{item}</p>
-              ))}
-            </div>
-          </MotionReveal>
         </Section>
 
         <Section className="py-14 sm:py-16 lg:py-20">
@@ -109,7 +92,10 @@ export default function Home() {
         </Section>
 
         <Section className="py-12 sm:py-14 lg:py-16">
-          <SectionHeader title="Selected Experience" />
+          <SectionHeader
+            title="Selected Experience"
+            titleClassName="lg:whitespace-nowrap"
+          />
           <div>
             {selectedExperience.map((item, index) => (
               <MotionReveal key={item.organization} delay={index * 0.05}>
@@ -127,18 +113,6 @@ export default function Home() {
               </MotionReveal>
             ))}
           </div>
-        </Section>
-
-        <Section className="py-12 sm:py-14 lg:py-16">
-          <MotionReveal>
-            <div className="flex flex-col items-start gap-5 border-t border-line pt-8 sm:flex-row sm:gap-8">
-              <ButtonLink href="mailto:gvivian321@gmail.com">Email</ButtonLink>
-              <ButtonLink href="https://www.linkedin.com/in/vivianglenn">
-                LinkedIn
-              </ButtonLink>
-              <ButtonLink href="/resume">Resume</ButtonLink>
-            </div>
-          </MotionReveal>
         </Section>
       </main>
     </PageShell>

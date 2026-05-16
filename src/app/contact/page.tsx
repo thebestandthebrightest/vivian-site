@@ -21,8 +21,8 @@ export default function ContactPage() {
             <div className="mt-8 flex max-w-xl flex-col gap-4 text-base leading-8 text-muted sm:text-lg">
               <p>Based in New Jersey.</p>
               <p>
-                Open to conversations about public health systems, strategy,
-                analytics, and AI-assisted workflows.
+                Open to thoughtful conversations, collaborations, and the
+                occasional coffee chat.
               </p>
             </div>
             <div className="mt-10 flex flex-col items-start gap-5 sm:flex-row sm:gap-9">

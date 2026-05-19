@@ -276,6 +276,9 @@ export default function AboutPage() {
                 <h2 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
                   Travel
                 </h2>
+                <p className="text-sm leading-7 text-quiet sm:text-base">
+                  Scroll to see some of my favorite places in the world.
+                </p>
               </div>
               <TravelStrip />
             </div>

@@ -22,8 +22,8 @@ export default function ContactPage() {
               <div className="mt-8 flex max-w-2xl flex-col gap-4 text-base leading-8 text-muted sm:text-lg">
                 <p>Based in New Jersey.</p>
                 <p>
-                  Open to thoughtful conversations, collaborations, and the
-                  occasional coffee chat.
+                  Open to thoughtful conversations, collaborations, and coffee
+                  chats!
                 </p>
               </div>
               <div className="mt-12 grid max-w-2xl border-t border-line sm:grid-cols-2">

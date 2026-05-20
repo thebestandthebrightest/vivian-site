@@ -4,9 +4,11 @@ import { useState } from "react";
 import type { Project } from "./ProjectFeature";
 import { IfnhProjectModal } from "./IfnhProjectModal";
 import { MotionReveal } from "./MotionReveal";
+import { PslProjectModal } from "./PslProjectModal";
 import { ScarletWellProjectModal } from "./ScarletWellProjectModal";
 import { WellnessThroughClayProjectModal } from "./WellnessThroughClayProjectModal";
 import type { IfnhPreviewData } from "@/lib/ifnh-preview-data";
+import type { PslPreviewData } from "@/lib/psl-preview-data";
 import type { ScarletWellBriefData } from "@/lib/scarletwell-preview-data";
 import type { WellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
 
@@ -15,6 +17,7 @@ type SelectedWorkProjectsProps = {
   scarletWellData: ScarletWellBriefData;
   wellnessThroughClayData: WellnessThroughClayPreviewData;
   ifnhData: IfnhPreviewData;
+  pslData: PslPreviewData;
 };
 
 function ProjectTitle({ children }: { children: string }) {
@@ -90,15 +93,18 @@ function ProjectPreviewRow({
   isScarletWell,
   isWellnessThroughClay,
   isIfnh,
+  isPsl,
   onToggle,
 }: {
   project: Project;
   isScarletWell: boolean;
   isWellnessThroughClay: boolean;
   isIfnh: boolean;
+  isPsl: boolean;
   onToggle?: () => void;
 }) {
-  const isOpenProject = isScarletWell || isWellnessThroughClay || isIfnh;
+  const isOpenProject =
+    isScarletWell || isWellnessThroughClay || isIfnh || isPsl;
   const rowContent = (
     <>
       <p className="text-xs font-medium text-quiet">{project.number}</p>
@@ -167,11 +173,13 @@ export function SelectedWorkProjects({
   scarletWellData,
   wellnessThroughClayData,
   ifnhData,
+  pslData,
 }: SelectedWorkProjectsProps) {
   const [isScarletWellOpen, setIsScarletWellOpen] = useState(false);
   const [isWellnessThroughClayOpen, setIsWellnessThroughClayOpen] =
     useState(false);
   const [isIfnhOpen, setIsIfnhOpen] = useState(false);
+  const [isPslOpen, setIsPslOpen] = useState(false);
 
   return (
     <div className="border-b border-line">
@@ -179,6 +187,7 @@ export function SelectedWorkProjects({
         const isScarletWell = project.title === "ScarletWell Studio";
         const isWellnessThroughClay = project.title === "Wellness Through Clay";
         const isIfnh = project.title === "IFNH InsightOS";
+        const isPsl = project.title === "PSL Dashboard";
 
         return (
           <MotionReveal key={project.title} delay={index * 0.05}>
@@ -188,6 +197,7 @@ export function SelectedWorkProjects({
                 isScarletWell={isScarletWell}
                 isWellnessThroughClay={isWellnessThroughClay}
                 isIfnh={isIfnh}
+                isPsl={isPsl}
                 onToggle={
                   isScarletWell
                     ? () => setIsScarletWellOpen(true)
@@ -195,7 +205,9 @@ export function SelectedWorkProjects({
                       ? () => setIsWellnessThroughClayOpen(true)
                       : isIfnh
                         ? () => setIsIfnhOpen(true)
-                        : undefined
+                        : isPsl
+                          ? () => setIsPslOpen(true)
+                          : undefined
                 }
               />
             </div>
@@ -216,6 +228,11 @@ export function SelectedWorkProjects({
         data={ifnhData}
         isOpen={isIfnhOpen}
         onClose={() => setIsIfnhOpen(false)}
+      />
+      <PslProjectModal
+        data={pslData}
+        isOpen={isPslOpen}
+        onClose={() => setIsPslOpen(false)}
       />
     </div>
   );

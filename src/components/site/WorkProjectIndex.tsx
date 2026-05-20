@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { ifnhPreviewData } from "@/lib/ifnh-preview-data";
+import { pslPreviewData } from "@/lib/psl-preview-data";
 import { wellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
 import { IfnhProjectModal } from "./IfnhProjectModal";
 import { MotionReveal } from "./MotionReveal";
 import { ProjectFeature, type Project } from "./ProjectFeature";
+import { PslProjectModal } from "./PslProjectModal";
 import { WellnessThroughClayProjectModal } from "./WellnessThroughClayProjectModal";
 
 type WorkProjectIndexProps = {
@@ -77,6 +79,7 @@ export function WorkProjectIndex({ projects }: WorkProjectIndexProps) {
   const [isWellnessThroughClayOpen, setIsWellnessThroughClayOpen] =
     useState(false);
   const [isIfnhOpen, setIsIfnhOpen] = useState(false);
+  const [isPslOpen, setIsPslOpen] = useState(false);
 
   return (
     <>
@@ -101,6 +104,16 @@ export function WorkProjectIndex({ projects }: WorkProjectIndexProps) {
             />
           );
         }
+        if (project.title === "PSL Dashboard") {
+          return (
+            <OpenProjectRow
+              key={project.title}
+              project={project}
+              delay={index * 0.05}
+              onOpen={() => setIsPslOpen(true)}
+            />
+          );
+        }
         return (
           <ProjectFeature
             key={project.title}
@@ -119,6 +132,11 @@ export function WorkProjectIndex({ projects }: WorkProjectIndexProps) {
         data={ifnhPreviewData}
         isOpen={isIfnhOpen}
         onClose={() => setIsIfnhOpen(false)}
+      />
+      <PslProjectModal
+        data={pslPreviewData}
+        isOpen={isPslOpen}
+        onClose={() => setIsPslOpen(false)}
       />
     </>
   );

@@ -20,7 +20,7 @@ const educationRows = [
   {
     label: "Rutgers University",
     value: "Bachelor of Science, Public Health",
-    note: "Class of 2027 / GPA: 3.96/4.0",
+    note: "Class of 2027 / GPA: 3.97/4.0",
   },
   {
     label: "Honors",
@@ -242,17 +242,22 @@ export default function AboutPage() {
           </MotionReveal>
         </Section>
 
-        <Section className="pb-16 lg:pb-20">
+        <Section className="pb-12 lg:pb-16">
           <MotionReveal>
             <div className="grid gap-10 border-t border-line pt-9 md:grid-cols-[0.75fr_1.45fr] md:gap-16">
               <h2 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
                 Capabilities
               </h2>
-              <div className="grid gap-x-12 sm:grid-cols-2">
-                {capabilities.map((group) => (
+              <div className="grid gap-x-12 gap-y-7 sm:grid-cols-2 sm:gap-y-9">
+                {capabilities.map((group, index) => (
                   <div
                     key={group.title}
-                    className="border-t border-line py-5 lg:py-6"
+                    className={[
+                      "pb-5 lg:pb-6",
+                      index < 2
+                        ? "pt-0"
+                        : "border-t border-line pt-5 lg:pt-6",
+                    ].join(" ")}
                   >
                     <h3 className="text-sm font-medium leading-7 text-foreground">
                       {group.title}
@@ -271,14 +276,11 @@ export default function AboutPage() {
 
         <Section className="pb-24 lg:pb-28">
           <MotionReveal>
-            <div className="grid gap-8 border-t border-line pt-9">
-              <div className="grid gap-5 md:grid-cols-[0.75fr_1.45fr] md:gap-16">
+            <div className="grid gap-6 border-t border-line pt-8 lg:gap-7 lg:pt-9">
+              <div className="grid md:grid-cols-[0.75fr_1.45fr] md:gap-16">
                 <h2 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
                   Travel
                 </h2>
-                <p className="text-sm leading-7 text-quiet sm:text-base">
-                  Scroll to see some of my favorite places in the world.
-                </p>
               </div>
               <TravelStrip />
             </div>

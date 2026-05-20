@@ -5,7 +5,8 @@ import { PageShell } from "@/components/site/PageShell";
 import { Section } from "@/components/site/Section";
 import { SectionHeader } from "@/components/site/SectionHeader";
 import { SelectedWorkProjects } from "@/components/site/SelectedWorkProjects";
-import { projects, scarletWellPreview } from "@/lib/site-data";
+import { scarletWellBriefData } from "@/lib/scarletwell-preview-data";
+import { projects } from "@/lib/site-data";
 
 const recognitionItems = [
   "Incoming CDC Lewis Scholar",
@@ -59,7 +60,7 @@ export default function Home() {
           />
           <SelectedWorkProjects
             projects={projects.slice(0, 3)}
-            scarletWellData={scarletWellPreview}
+            scarletWellData={scarletWellBriefData}
           />
           <div className="pt-8 sm:pt-9">
             <ButtonLink href="/work">View all work</ButtonLink>

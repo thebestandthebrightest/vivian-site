@@ -3,12 +3,12 @@
 import { useState } from "react";
 import type { Project } from "./ProjectFeature";
 import { MotionReveal } from "./MotionReveal";
-import { ScarletWellPreview } from "./ScarletWellPreview";
-import type { scarletWellPreview } from "@/lib/site-data";
+import { ScarletWellProjectModal } from "./ScarletWellProjectModal";
+import type { ScarletWellBriefData } from "@/lib/scarletwell-preview-data";
 
 type SelectedWorkProjectsProps = {
   projects: Project[];
-  scarletWellData: typeof scarletWellPreview;
+  scarletWellData: ScarletWellBriefData;
 };
 
 function ProjectTitle({ children }: { children: string }) {
@@ -81,12 +81,10 @@ function AnalyticalPreview({
 function ProjectPreviewRow({
   project,
   isScarletWell,
-  isOpen,
   onToggle,
 }: {
   project: Project;
   isScarletWell: boolean;
-  isOpen: boolean;
   onToggle?: () => void;
 }) {
   const rowContent = (
@@ -101,21 +99,29 @@ function ProjectPreviewRow({
           {project.descriptor}
         </p>
         {isScarletWell ? (
-          <div className="mt-5 space-y-4 sm:hidden">
+          <div className="mt-5 max-w-2xl space-y-4">
             <p className="text-sm leading-7 text-muted">{project.summary}</p>
             <p className="text-sm font-medium leading-7 text-foreground">
               {project.impact}
             </p>
+            <ul className="flex flex-wrap gap-x-2 gap-y-2 text-xs leading-6 text-quiet">
+              {project.details.map((detail, index) => (
+                <li key={detail}>
+                  {index > 0 ? (
+                    <span className="text-line">{" / "}</span>
+                  ) : null}
+                  {detail}
+                </li>
+              ))}
+            </ul>
           </div>
         ) : null}
       </div>
       <div className="text-xs font-medium leading-6 text-quiet sm:max-w-64 sm:text-right">
         {isScarletWell ? (
           <span className="inline-flex items-center gap-3 text-foreground">
-            <span>{isOpen ? "Close project" : "View project"}</span>
-            <span aria-hidden="true" className="text-quiet">
-              {isOpen ? "−" : "+"}
-            </span>
+            <span>Open project</span>
+            <span aria-hidden="true" className="text-quiet">+</span>
           </span>
         ) : (
           project.previewDetail ?? project.details[0]
@@ -128,10 +134,9 @@ function ProjectPreviewRow({
     return (
       <button
         type="button"
-        aria-expanded={isOpen}
-        aria-controls="scarletwell-preview-drawer"
+        aria-haspopup="dialog"
         onClick={onToggle}
-        className="focus-ring group grid w-full cursor-pointer gap-5 border-t border-line py-9 text-left transition duration-500 ease-out hover:border-foreground/25 sm:grid-cols-[0.12fr_0.24fr_1fr_auto] sm:items-center sm:gap-8 lg:gap-10 lg:py-10 motion-reduce:transition-none"
+        className="focus-ring group grid w-full cursor-pointer gap-5 border-t border-line py-9 text-left transition duration-500 ease-out hover:border-foreground/25 sm:grid-cols-[0.12fr_0.24fr_1fr_auto] sm:items-start sm:gap-8 lg:gap-10 lg:py-10 motion-reduce:transition-none"
       >
         {rowContent}
       </button>
@@ -149,13 +154,12 @@ export function SelectedWorkProjects({
   projects,
   scarletWellData,
 }: SelectedWorkProjectsProps) {
-  const [openProjectId, setOpenProjectId] = useState<string | null>(null);
+  const [isScarletWellOpen, setIsScarletWellOpen] = useState(false);
 
   return (
     <div className="border-b border-line">
       {projects.map((project, index) => {
         const isScarletWell = project.title === "ScarletWell Studio";
-        const isOpen = openProjectId === project.title;
 
         return (
           <MotionReveal key={project.title} delay={index * 0.05}>
@@ -163,34 +167,21 @@ export function SelectedWorkProjects({
               <ProjectPreviewRow
                 project={project}
                 isScarletWell={isScarletWell}
-                isOpen={isOpen}
                 onToggle={
                   isScarletWell
-                    ? () =>
-                        setOpenProjectId((current) =>
-                          current === project.title ? null : project.title,
-                        )
+                    ? () => setIsScarletWellOpen(true)
                     : undefined
                 }
               />
-              {isScarletWell ? (
-                <div
-                  id="scarletwell-preview-drawer"
-                  className={`grid overflow-hidden transition-[grid-template-rows,opacity] duration-500 ease-out motion-reduce:transition-none ${
-                    isOpen
-                      ? "grid-rows-[1fr] opacity-100"
-                      : "grid-rows-[0fr] opacity-0"
-                  }`}
-                >
-                  <div className="min-h-0">
-                    <ScarletWellPreview data={scarletWellData} />
-                  </div>
-                </div>
-              ) : null}
             </div>
           </MotionReveal>
         );
       })}
+      <ScarletWellProjectModal
+        data={scarletWellData}
+        isOpen={isScarletWellOpen}
+        onClose={() => setIsScarletWellOpen(false)}
+      />
     </div>
   );
 }

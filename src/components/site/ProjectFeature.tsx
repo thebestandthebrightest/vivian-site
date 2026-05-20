@@ -24,6 +24,52 @@ function ProjectTitle({ children }: { children: string }) {
   );
 }
 
+function AnalyticalPreview({ variant }: { variant: string }) {
+  const barSets: Record<string, string[]> = {
+    "01": ["72%", "44%", "88%", "58%"],
+    "02": ["38%", "76%", "54%", "92%"],
+    "03": ["62%", "50%", "82%", "66%"],
+  };
+  const bars = barSets[variant] ?? barSets["01"];
+  const columnHeights = ["1.15rem", "0.72rem", "1.42rem", "0.96rem"];
+
+  return (
+    <div
+      className="h-16 w-full min-w-24 max-w-32 overflow-hidden border border-line bg-foreground/[0.025] p-3 opacity-75 grayscale transition duration-500 group-hover:opacity-95 sm:h-[4.75rem] sm:w-28"
+      aria-hidden="true"
+    >
+      <div className="flex h-full flex-col justify-between">
+        <div className="grid grid-cols-4 gap-1.5">
+          {bars.map((bar, index) => (
+            <span
+              key={`${variant}-${bar}-${index}`}
+              className="block bg-foreground/25"
+              style={{ height: index % 2 === 0 ? "0.45rem" : "0.68rem", width: bar }}
+            />
+          ))}
+        </div>
+        <div className="grid grid-cols-5 gap-1">
+          {Array.from({ length: 10 }).map((_, index) => (
+            <span
+              key={`${variant}-cell-${index}`}
+              className="h-1.5 bg-foreground/15"
+            />
+          ))}
+        </div>
+        <div className="flex items-end gap-1.5">
+          {bars.map((bar, index) => (
+            <span
+              key={`${variant}-column-${bar}-${index}`}
+              className="w-2 bg-foreground/20"
+              style={{ height: columnHeights[index] }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ProjectFeature({
   project,
   delay = 0,
@@ -71,10 +117,11 @@ export function ProjectFeature({
 export function ProjectPreview({ project, delay = 0 }: ProjectFeatureProps) {
   return (
     <MotionReveal delay={delay}>
-      <article className="group grid gap-5 border-t border-line py-8 transition duration-500 ease-out hover:border-foreground/25 sm:grid-cols-[0.14fr_1fr_auto] sm:items-baseline sm:gap-10 lg:py-9">
+      <article className="group grid gap-5 border-t border-line py-9 transition duration-500 ease-out hover:border-foreground/25 sm:grid-cols-[0.12fr_0.24fr_1fr_auto] sm:items-center sm:gap-8 lg:gap-10 lg:py-10">
         <p className="text-xs font-medium text-quiet">
           {project.number}
         </p>
+        <AnalyticalPreview variant={project.number} />
         <div>
           <h3 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
             <ProjectTitle>{project.title}</ProjectTitle>

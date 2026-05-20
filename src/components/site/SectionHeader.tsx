@@ -11,10 +11,13 @@ export function SectionHeader({
   copy,
   titleClassName = "",
 }: SectionHeaderProps) {
+  const titleSizeClassName =
+    titleClassName || "text-5xl sm:text-6xl lg:text-7xl";
+
   return (
     <MotionReveal className="grid gap-6 pb-10 md:grid-cols-[0.82fr_1.4fr] md:items-end md:gap-14 lg:pb-14">
       <h2
-        className={`font-display text-5xl font-medium leading-[0.96] text-foreground sm:text-6xl lg:text-7xl ${titleClassName}`}
+        className={`font-display font-medium leading-[0.96] text-foreground ${titleSizeClassName}`}
       >
         {title}
       </h2>

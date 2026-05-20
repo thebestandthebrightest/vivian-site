@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import type { Project } from "./ProjectFeature";
+import { IfnhProjectModal } from "./IfnhProjectModal";
 import { MotionReveal } from "./MotionReveal";
 import { ScarletWellProjectModal } from "./ScarletWellProjectModal";
 import { WellnessThroughClayProjectModal } from "./WellnessThroughClayProjectModal";
+import type { IfnhPreviewData } from "@/lib/ifnh-preview-data";
 import type { ScarletWellBriefData } from "@/lib/scarletwell-preview-data";
 import type { WellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
 
@@ -12,6 +14,7 @@ type SelectedWorkProjectsProps = {
   projects: Project[];
   scarletWellData: ScarletWellBriefData;
   wellnessThroughClayData: WellnessThroughClayPreviewData;
+  ifnhData: IfnhPreviewData;
 };
 
 function ProjectTitle({ children }: { children: string }) {
@@ -86,14 +89,16 @@ function ProjectPreviewRow({
   project,
   isScarletWell,
   isWellnessThroughClay,
+  isIfnh,
   onToggle,
 }: {
   project: Project;
   isScarletWell: boolean;
   isWellnessThroughClay: boolean;
+  isIfnh: boolean;
   onToggle?: () => void;
 }) {
-  const isOpenProject = isScarletWell || isWellnessThroughClay;
+  const isOpenProject = isScarletWell || isWellnessThroughClay || isIfnh;
   const rowContent = (
     <>
       <p className="text-xs font-medium text-quiet">{project.number}</p>
@@ -161,16 +166,19 @@ export function SelectedWorkProjects({
   projects,
   scarletWellData,
   wellnessThroughClayData,
+  ifnhData,
 }: SelectedWorkProjectsProps) {
   const [isScarletWellOpen, setIsScarletWellOpen] = useState(false);
   const [isWellnessThroughClayOpen, setIsWellnessThroughClayOpen] =
     useState(false);
+  const [isIfnhOpen, setIsIfnhOpen] = useState(false);
 
   return (
     <div className="border-b border-line">
       {projects.map((project, index) => {
         const isScarletWell = project.title === "ScarletWell Studio";
         const isWellnessThroughClay = project.title === "Wellness Through Clay";
+        const isIfnh = project.title === "IFNH InsightOS";
 
         return (
           <MotionReveal key={project.title} delay={index * 0.05}>
@@ -179,12 +187,15 @@ export function SelectedWorkProjects({
                 project={project}
                 isScarletWell={isScarletWell}
                 isWellnessThroughClay={isWellnessThroughClay}
+                isIfnh={isIfnh}
                 onToggle={
                   isScarletWell
                     ? () => setIsScarletWellOpen(true)
                     : isWellnessThroughClay
                       ? () => setIsWellnessThroughClayOpen(true)
-                    : undefined
+                      : isIfnh
+                        ? () => setIsIfnhOpen(true)
+                        : undefined
                 }
               />
             </div>
@@ -200,6 +211,11 @@ export function SelectedWorkProjects({
         data={wellnessThroughClayData}
         isOpen={isWellnessThroughClayOpen}
         onClose={() => setIsWellnessThroughClayOpen(false)}
+      />
+      <IfnhProjectModal
+        data={ifnhData}
+        isOpen={isIfnhOpen}
+        onClose={() => setIsIfnhOpen(false)}
       />
     </div>
   );

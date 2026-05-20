@@ -4,54 +4,41 @@ export const scarletWellBriefData = {
   summary:
     "Built to compare participation, budget efficiency, and planning readiness across grant cycles.",
   portfolioKpis: [
-    { label: "Project records", value: "41" },
-    { label: "Participant touchpoints", value: "3,003" },
+    { label: "Initiatives", value: "41" },
+    { label: "Participants", value: "3,003" },
     { label: "Budget", value: "$41K+" },
-    { label: "Touchpoints / $1K", value: "73" },
     { label: "Activities", value: "210" },
   ],
-  portfolioTotals: {
-    grants: 42,
-    records: 41,
-    activities: 210,
-    touchpoints: 3003,
-    budget: 41138,
-    costPerTouchpoint: 13.7,
-    touchpointsPerThousand: 73,
-  },
-  cycleBars: [
+  cycles: [
     {
       label: "2024-2025",
-      grants: 25,
-      activities: 124,
-      touchpoints: 1400,
+      participants: 1400,
       budget: 26354,
-      costPerTouchpoint: 18.82,
-      touchpointsPerThousand: 53,
+      costPerParticipant: 18.82,
     },
     {
       label: "2025-2026",
-      grants: 17,
-      activities: 86,
-      touchpoints: 1603,
+      participants: 1603,
       budget: 14784,
-      costPerTouchpoint: 9.22,
-      touchpointsPerThousand: 108,
+      costPerParticipant: 9.22,
     },
   ],
   insight:
-    "Participant reach increased while total documented budget decreased, producing a stronger portfolio efficiency signal in the newer cycle.",
-  planningDefaults: {
-    budget: 15000,
-    efficiency: 108,
-    activities: 90,
+    "Participation increased while documented budget decreased, improving cost per participant year over year.",
+  projection: {
+    label: "Estimated participants at current efficiency",
+    costPerParticipant: 9.22,
+    points: [
+      { budget: 15000, participants: 1626 },
+      { budget: 20000, participants: 2169 },
+      { budget: 26400, participants: 2858 },
+    ],
   },
   supports: [
     "Portfolio evaluation",
     "Cross-cycle comparison",
-    "Operational planning",
-    "Scenario modeling",
-    "Executive-ready reporting",
+    "Budget efficiency",
+    "Strategic planning",
   ],
 };
 

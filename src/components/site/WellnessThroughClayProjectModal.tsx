@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  type KeyboardEvent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type KeyboardEvent, useEffect, useRef } from "react";
 import type { WellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
 
 type WellnessThroughClayProjectModalProps = {
@@ -15,285 +9,265 @@ type WellnessThroughClayProjectModalProps = {
   onClose: () => void;
 };
 
-function SectionTitle({
-  eyebrow,
-  children,
-}: {
-  eyebrow?: string;
-  children: string;
-}) {
+function SectionTitle({ children }: { children: string }) {
   return (
-    <div>
-      {eyebrow ? (
-        <p className="mb-4 text-[0.68rem] font-medium uppercase leading-4 tracking-[0.2em] text-quiet">
-          {eyebrow}
-        </p>
-      ) : null}
-      <h3 className="font-display text-[2.55rem] font-medium leading-[0.95] text-foreground sm:text-5xl lg:text-6xl">
-        {children}
-      </h3>
-    </div>
+    <h3 className="font-display text-[2.4rem] font-medium leading-[1] text-foreground sm:text-5xl">
+      {children}
+    </h3>
   );
 }
 
 function KpiBand({ data }: { data: WellnessThroughClayPreviewData }) {
   return (
-    <div>
-      <div className="grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-5">
-        {data.kpis.map((kpi) => (
-          <div key={kpi.label}>
-            <p className="font-display text-5xl font-medium leading-none text-foreground lg:text-6xl">
-              {kpi.value}
-            </p>
-            <p className="mt-3 max-w-40 text-sm leading-6 text-muted">
-              {kpi.label}
-            </p>
-          </div>
-        ))}
-      </div>
-      <div className="mt-10 grid gap-4 border-t border-line pt-5 sm:grid-cols-3">
-        {data.evaluationSignals.map((signal) => (
-          <p key={signal} className="text-sm leading-6 text-muted">
-            {signal}
+    <div className="grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
+      {data.kpis.map((kpi) => (
+        <div key={kpi.label}>
+          <p className="font-display text-5xl font-medium leading-none text-foreground lg:text-6xl">
+            {kpi.value}
           </p>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function GrowthTimeline({ data }: { data: WellnessThroughClayPreviewData }) {
-  return (
-    <div className="grid gap-6 lg:grid-cols-3">
-      {data.timeline.map((item) => (
-        <div key={item.cycle} className="border-t border-line pt-5">
-          <p className="text-xs font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-            {item.cycle}
+          <p className="mt-3 max-w-40 text-sm leading-6 text-muted">
+            {kpi.label}
           </p>
-          <h4 className="mt-4 font-display text-4xl font-medium leading-none text-foreground">
-            {item.label}
-          </h4>
-          <p className="mt-5 font-display text-3xl font-medium leading-none text-foreground">
-            {item.metric}
-          </p>
-          <p className="mt-4 text-sm leading-7 text-muted">{item.description}</p>
         </div>
       ))}
     </div>
   );
 }
 
-function AttendanceChart({ data }: { data: WellnessThroughClayPreviewData }) {
-  const total = data.attendanceSessions.reduce(
-    (sum, session) => sum + session.attendees,
-    0,
+function GrowthTimeline({ data }: { data: WellnessThroughClayPreviewData }) {
+  return (
+    <div className="grid gap-8 lg:grid-cols-3">
+      {data.timeline.map((item, index) => (
+        <div key={item.cycle} className="border-t border-line pt-5">
+          <p className="text-xs font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+            Step {index + 1}
+          </p>
+          <h4 className="mt-4 font-display text-3xl font-medium leading-tight text-foreground">
+            {item.cycle}
+          </h4>
+          <p className="mt-4 font-display text-2xl font-medium leading-tight text-muted">
+            {item.metric}
+          </p>
+        </div>
+      ))}
+    </div>
   );
-  const average = total / data.attendanceSessions.length;
-  const max = Math.max(...data.attendanceSessions.map((session) => session.attendees));
+}
+
+function AttendanceSummary({ data }: { data: WellnessThroughClayPreviewData }) {
+  const { total, sessions, averagePerSession, comparisons } =
+    data.attendanceSummary;
+  const max = Math.max(...comparisons.map((c) => c.value));
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
-      <div className="space-y-7">
+    <div className="grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+      <div className="grid gap-10 sm:grid-cols-3 lg:grid-cols-1">
         <div>
           <p className="font-display text-6xl font-medium leading-none text-foreground">
             {total}
           </p>
           <p className="mt-3 text-sm leading-6 text-muted">
-            documented duplicated attendance
+            total 2025-2026 attendance
           </p>
         </div>
         <div>
           <p className="font-display text-5xl font-medium leading-none text-foreground">
-            {average.toFixed(1)}
+            {averagePerSession}
           </p>
           <p className="mt-3 text-sm leading-6 text-muted">average/session</p>
         </div>
-        <p className="max-w-md text-sm leading-7 text-muted">
-          {data.attendanceInsight}
-        </p>
+        <div>
+          <p className="font-display text-5xl font-medium leading-none text-foreground">
+            {sessions}
+          </p>
+          <p className="mt-3 text-sm leading-6 text-muted">sessions</p>
+        </div>
       </div>
 
-      <div className="overflow-hidden">
-        <div className="flex h-64 items-end gap-3 border-b border-line sm:gap-4">
-          {data.attendanceSessions.map((session) => (
-            <div
-              key={`${session.date}-${session.attendees}`}
-              className="flex min-w-0 flex-1 flex-col items-center justify-end gap-3"
-            >
-              <span className="text-xs font-medium leading-5 text-foreground">
-                {session.attendees}
-              </span>
-              <div
-                className="w-full bg-foreground/28 transition duration-300 hover:bg-foreground/45 motion-reduce:transition-none"
-                style={{
-                  height: `${Math.max((session.attendees / max) * 82, 18)}%`,
-                }}
-                aria-hidden="true"
-              />
-            </div>
-          ))}
-        </div>
-        <div className="mt-3 grid grid-cols-8 gap-3 sm:gap-4">
-          {data.attendanceSessions.map((session) => (
-            <div key={session.date} className="min-w-0 text-center">
-              <p className="text-xs leading-5 text-muted">{session.date}</p>
-              <p className="mt-1 text-[0.68rem] leading-4 text-quiet">
-                {session.label}
+      <div className="space-y-6">
+        {comparisons.map((c) => (
+          <div key={c.label} className="grid gap-3">
+            <div className="flex items-baseline justify-between gap-4">
+              <p className="text-sm leading-6 text-muted">{c.label}</p>
+              <p className="font-display text-2xl font-medium leading-none text-foreground">
+                {c.value}
+                {c.suffix}
               </p>
             </div>
+            <div className="h-3 bg-foreground/[0.06]">
+              <div
+                className="h-full bg-foreground/45"
+                style={{ width: `${(c.value / max) * 100}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function GrowthOutlookChart({
+  data,
+}: {
+  data: WellnessThroughClayPreviewData;
+}) {
+  const { sessions, scenarios } = data.projection;
+  const allPoints = scenarios.flatMap((s) => s.points);
+  const maxAttendance = Math.max(...allPoints) * 1.08;
+  const maxSessions = sessions[sessions.length - 1];
+  const minSessions = sessions[0];
+
+  const width = 720;
+  const height = 340;
+  const padL = 64;
+  const padR = 24;
+  const padT = 28;
+  const padB = 60;
+  const innerW = width - padL - padR;
+  const innerH = height - padT - padB;
+
+  const x = (s: number) =>
+    padL + ((s - minSessions) / (maxSessions - minSessions)) * innerW;
+  const y = (a: number) => padT + innerH - (a / maxAttendance) * innerH;
+
+  const yTicks = [0, 50, 100, 150, 200].filter((t) => t <= maxAttendance);
+
+  return (
+    <div className="space-y-6">
+      <p className="text-sm font-medium leading-6 text-muted">
+        {data.projection.label}
+      </p>
+      <div className="w-full overflow-x-auto">
+        <svg
+          viewBox={`0 0 ${width} ${height}`}
+          className="h-auto w-full min-w-[34rem]"
+          role="img"
+          aria-label="Projected attendance by session count"
+        >
+          {yTicks.map((tick) => {
+            const yy = y(tick);
+            return (
+              <g key={tick}>
+                <line
+                  x1={padL}
+                  x2={width - padR}
+                  y1={yy}
+                  y2={yy}
+                  stroke="currentColor"
+                  strokeOpacity="0.12"
+                  strokeWidth="1"
+                />
+                <text
+                  x={padL - 12}
+                  y={yy + 4}
+                  textAnchor="end"
+                  fontSize="13"
+                  fill="currentColor"
+                  fillOpacity="0.55"
+                >
+                  {tick}
+                </text>
+              </g>
+            );
+          })}
+
+          {scenarios.map((scenario, idx) => {
+            const opacity = idx === 0 ? 0.9 : 0.4;
+            const dash = idx === 0 ? undefined : "6 6";
+            const path = scenario.points
+              .map(
+                (a, i) => `${i === 0 ? "M" : "L"} ${x(sessions[i])} ${y(a)}`,
+              )
+              .join(" ");
+            return (
+              <g key={scenario.label}>
+                <path
+                  d={path}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeOpacity={opacity}
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeDasharray={dash}
+                />
+                {scenario.points.map((a, i) => (
+                  <g key={`${scenario.label}-${sessions[i]}`}>
+                    <circle
+                      cx={x(sessions[i])}
+                      cy={y(a)}
+                      r="4.5"
+                      fill="currentColor"
+                      fillOpacity={opacity}
+                    />
+                    <text
+                      x={x(sessions[i])}
+                      y={y(a) - 12}
+                      textAnchor="middle"
+                      fontSize="13"
+                      fontWeight="500"
+                      fill="currentColor"
+                      fillOpacity={idx === 0 ? 1 : 0.7}
+                    >
+                      {a}
+                    </text>
+                  </g>
+                ))}
+              </g>
+            );
+          })}
+
+          {sessions.map((s) => (
+            <text
+              key={s}
+              x={x(s)}
+              y={height - padB + 24}
+              textAnchor="middle"
+              fontSize="13"
+              fill="currentColor"
+              fillOpacity="0.65"
+            >
+              {s} sessions
+            </text>
           ))}
-        </div>
-      </div>
-    </div>
-  );
-}
 
-function ProjectionModel({ data }: { data: WellnessThroughClayPreviewData }) {
-  const [sessions, setSessions] = useState(data.projectionDefaults.sessions);
-  const [averageAttendance, setAverageAttendance] = useState(
-    data.projectionDefaults.averageAttendance,
-  );
-  const [capacity, setCapacity] = useState(data.projectionDefaults.capacity);
-
-  const projectedAttendance = Math.round(sessions * averageAttendance);
-  const projectedCapacity = sessions * capacity;
-  const capacityDelta = projectedCapacity - projectedAttendance;
-
-  const planningSignal = useMemo(() => {
-    if (averageAttendance >= capacity - 1) {
-      return "Demand may require added sessions or a larger room.";
-    }
-
-    if (sessions > data.projectionDefaults.sessions) {
-      return "Expansion depends on team capacity and materials planning.";
-    }
-
-    return "Room to grow with current format.";
-  }, [averageAttendance, capacity, data.projectionDefaults.sessions, sessions]);
-
-  return (
-    <div className="grid gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
-      <div className="space-y-8">
-        <div>
-          <p className="text-sm font-medium leading-6 text-foreground">
-            Sessions planned
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {[8, 10, 12].map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setSessions(option)}
-                className={`focus-ring border px-4 py-2 text-sm leading-6 transition duration-300 motion-reduce:transition-none ${
-                  sessions === option
-                    ? "border-foreground bg-foreground text-background"
-                    : "border-line text-muted hover:border-foreground/35 hover:text-foreground"
-                }`}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <label className="block">
-          <span className="flex items-baseline justify-between gap-5">
-            <span className="text-sm font-medium leading-6 text-foreground">
-              Average attendance/session
-            </span>
-            <span className="font-display text-3xl font-medium leading-none text-foreground">
-              {averageAttendance.toFixed(1)}
-            </span>
-          </span>
-          <input
-            type="range"
-            min="14"
-            max="20"
-            step="0.1"
-            value={averageAttendance}
-            onChange={(event) => setAverageAttendance(Number(event.target.value))}
-            className="mt-4 h-1.5 w-full cursor-pointer accent-foreground"
-          />
-        </label>
-
-        <label className="block">
-          <span className="flex items-baseline justify-between gap-5">
-            <span className="text-sm font-medium leading-6 text-foreground">
-              Capacity/session
-            </span>
-            <span className="font-display text-3xl font-medium leading-none text-foreground">
-              {capacity}
-            </span>
-          </span>
-          <input
-            type="range"
-            min="16"
-            max="28"
-            step="1"
-            value={capacity}
-            onChange={(event) => setCapacity(Number(event.target.value))}
-            className="mt-4 h-1.5 w-full cursor-pointer accent-foreground"
-          />
-        </label>
-      </div>
-
-      <div className="space-y-8">
-        <p className="text-xs font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-          Directional planning model based on documented session attendance.
-        </p>
-        <div className="grid gap-8 sm:grid-cols-2">
-          <div>
-            <p className="font-display text-6xl font-medium leading-none text-foreground">
-              {projectedAttendance}
-            </p>
-            <p className="mt-3 text-sm leading-6 text-muted">
-              projected duplicated attendance
-            </p>
-          </div>
-          <div>
-            <p className="font-display text-6xl font-medium leading-none text-foreground">
-              {Math.abs(capacityDelta)}
-            </p>
-            <p className="mt-3 text-sm leading-6 text-muted">
-              {capacityDelta >= 0 ? "unused capacity" : "capacity pressure"}
-            </p>
-          </div>
-        </div>
-        <p className="max-w-2xl font-display text-3xl font-medium leading-[1.08] text-foreground">
-          {sessions} sessions x {averageAttendance.toFixed(1)} average = ~
-          {projectedAttendance} projected touchpoints.
-        </p>
-        <p className="max-w-xl text-sm leading-7 text-muted">{planningSignal}</p>
-      </div>
-    </div>
-  );
-}
-
-function ProjectLinkRows({ data }: { data: WellnessThroughClayPreviewData }) {
-  return (
-    <div className="border-t border-line">
-      {data.projectLinks.map((link) =>
-        link.href ? (
-          <a
-            key={link.label}
-            href={link.href}
-            target="_blank"
-            rel="noreferrer"
-            className="focus-ring group flex items-center justify-between gap-6 border-b border-line py-5 text-sm leading-6 transition duration-300 hover:text-foreground motion-reduce:transition-none"
+          <text
+            x={padL}
+            y={height - 8}
+            fontSize="12"
+            fill="currentColor"
+            fillOpacity="0.5"
           >
-            <span className="font-medium text-foreground">{link.label}</span>
-            <span className="text-quiet group-hover:text-foreground">Open</span>
-          </a>
-        ) : (
-          <div
-            key={link.label}
-            className="flex items-center justify-between gap-6 border-b border-line py-5 text-sm leading-6"
+            Sessions
+          </text>
+          <text
+            x={padL - 48}
+            y={padT + 6}
+            fontSize="12"
+            fill="currentColor"
+            fillOpacity="0.5"
           >
-            <span className="font-medium text-foreground">{link.label}</span>
-            <span className="text-quiet">URL pending</span>
+            Attendance
+          </text>
+        </svg>
+      </div>
+      <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm leading-6 text-muted">
+        {scenarios.map((scenario, idx) => (
+          <div key={scenario.label} className="flex items-center gap-2">
+            <span
+              className="inline-block h-[2px] w-7"
+              style={{
+                background: "currentColor",
+                opacity: idx === 0 ? 0.9 : 0.4,
+                borderTop: idx === 1 ? "2px dashed currentColor" : undefined,
+              }}
+              aria-hidden="true"
+            />
+            <span>{scenario.label}</span>
           </div>
-        ),
-      )}
+        ))}
+      </div>
     </div>
   );
 }
@@ -304,7 +278,7 @@ function Supports({ data }: { data: WellnessThroughClayPreviewData }) {
       {data.supports.map((item) => (
         <p
           key={item}
-          className="border-t border-line pt-4 font-display text-2xl font-medium leading-none text-foreground"
+          className="border-t border-line pt-4 font-display text-2xl font-medium leading-tight text-foreground"
         >
           {item}
         </p>
@@ -365,6 +339,8 @@ export function WellnessThroughClayProjectModal({
     }
   };
 
+  const hasLinks = data.projectLinks.some((link) => link.href);
+
   if (!isOpen) return null;
 
   return (
@@ -377,7 +353,7 @@ export function WellnessThroughClayProjectModal({
         onKeyDown={handleKeyDown}
         className="modal-panel-in mx-auto h-screen w-full overflow-y-auto bg-background sm:h-[calc(100vh-2.5rem)] sm:max-w-[88rem] sm:border sm:border-line"
       >
-        <div className="mx-auto w-full max-w-7xl px-6 pb-16 pt-5 sm:px-10 lg:px-14">
+        <div className="mx-auto w-full max-w-7xl px-6 pb-20 pt-5 sm:px-10 lg:px-14">
           <div className="sticky top-0 z-10 -mx-6 flex justify-end bg-background/95 px-6 py-4 sm:-mx-10 sm:px-10 lg:-mx-14 lg:px-14">
             <button
               ref={closeButtonRef}
@@ -389,67 +365,87 @@ export function WellnessThroughClayProjectModal({
             </button>
           </div>
 
-          <header className="grid gap-10 pb-16 pt-10 lg:grid-cols-[1fr_0.72fr] lg:items-end lg:pb-20 lg:pt-16">
+          <header className="grid gap-12 pb-20 pt-12 lg:grid-cols-[1fr_0.85fr] lg:items-end lg:pb-24 lg:pt-16">
             <div>
               <h2
                 id="wtc-modal-title"
-                className="font-display text-[clamp(4.2rem,11vw,8.4rem)] font-medium leading-[0.86] text-foreground"
+                className="font-display text-[clamp(3.6rem,9.5vw,7rem)] font-medium leading-[0.92] text-foreground"
               >
                 {data.title}
               </h2>
-              <p className="mt-8 text-sm font-medium leading-6 text-muted">
+              <p className="mt-6 text-sm font-medium leading-6 text-muted">
                 {data.subtitle}
               </p>
             </div>
-            <div>
-              <p className="max-w-xl font-display text-[2.05rem] font-medium leading-[1.05] text-foreground sm:text-[2.45rem]">
+            <div className="space-y-5">
+              <p className="max-w-xl font-display text-[1.7rem] font-medium leading-[1.2] text-foreground sm:text-[2rem]">
                 {data.summary}
               </p>
-              <p className="mt-6 text-sm leading-7 text-muted">{data.context}</p>
+              <p className="max-w-xl text-sm leading-7 text-muted">
+                {data.context}
+              </p>
             </div>
           </header>
 
           <main>
-            <section className="py-12 sm:py-16">
+            <section className="py-14 sm:py-20">
               <KpiBand data={data} />
             </section>
 
-            <section className="border-t border-line py-16 sm:py-20">
-              <div className="mb-12 max-w-3xl">
-                <SectionTitle eyebrow="Growth timeline">
-                  From pilot workshop to repeatable wellness model.
-                </SectionTitle>
+            <section className="border-t border-line py-16 sm:py-24">
+              <div className="mb-14 max-w-3xl">
+                <SectionTitle>Growth timeline</SectionTitle>
               </div>
               <GrowthTimeline data={data} />
             </section>
 
-            <section className="border-t border-line py-16 sm:py-20">
-              <div className="mb-12 max-w-3xl">
-                <SectionTitle eyebrow="Attendance analytics">
-                  Documented 2025-2026 participation.
-                </SectionTitle>
+            <section className="border-t border-line py-16 sm:py-24">
+              <div className="mb-14 max-w-3xl">
+                <SectionTitle>Attendance</SectionTitle>
               </div>
-              <AttendanceChart data={data} />
+              <AttendanceSummary data={data} />
             </section>
+
+            <section className="border-t border-line py-16 sm:py-24">
+              <div className="mb-14 max-w-3xl">
+                <SectionTitle>Growth outlook</SectionTitle>
+              </div>
+              <GrowthOutlookChart data={data} />
+            </section>
+
+            {hasLinks ? (
+              <section className="border-t border-line py-16 sm:py-20">
+                <div className="mb-10 max-w-3xl">
+                  <SectionTitle>Press + links</SectionTitle>
+                </div>
+                <div className="border-t border-line">
+                  {data.projectLinks
+                    .filter(
+                      (link): link is { label: string; href: string } =>
+                        link.href !== null,
+                    )
+                    .map((link) => (
+                      <a
+                        key={link.label}
+                        href={link.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="focus-ring group flex items-center justify-between gap-6 border-b border-line py-5 text-sm leading-6 transition duration-300 hover:text-foreground motion-reduce:transition-none"
+                      >
+                        <span className="font-medium text-foreground">
+                          {link.label}
+                        </span>
+                        <span className="text-quiet group-hover:text-foreground">
+                          Open
+                        </span>
+                      </a>
+                    ))}
+                </div>
+              </section>
+            ) : null}
 
             <section className="border-t border-line py-16 sm:py-20">
               <div className="mb-12 max-w-3xl">
-                <SectionTitle eyebrow="Growth projection">
-                  Directional planning model.
-                </SectionTitle>
-              </div>
-              <ProjectionModel data={data} />
-            </section>
-
-            <section className="border-t border-line py-16 sm:py-20">
-              <div className="mb-10 max-w-3xl">
-                <SectionTitle>Press + Project Links</SectionTitle>
-              </div>
-              <ProjectLinkRows data={data} />
-            </section>
-
-            <section className="border-t border-line py-16 sm:py-20">
-              <div className="mb-10 max-w-3xl">
                 <SectionTitle>What this shows</SectionTitle>
               </div>
               <Supports data={data} />

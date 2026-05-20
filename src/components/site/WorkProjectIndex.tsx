@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { ifnhPreviewData } from "@/lib/ifnh-preview-data";
 import { wellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
+import { IfnhProjectModal } from "./IfnhProjectModal";
 import { MotionReveal } from "./MotionReveal";
 import { ProjectFeature, type Project } from "./ProjectFeature";
 import { WellnessThroughClayProjectModal } from "./WellnessThroughClayProjectModal";
@@ -18,7 +20,7 @@ function ProjectTitle({ children }: { children: string }) {
   );
 }
 
-function WellnessThroughClayRow({
+function OpenProjectRow({
   project,
   delay,
   onOpen,
@@ -74,30 +76,49 @@ function WellnessThroughClayRow({
 export function WorkProjectIndex({ projects }: WorkProjectIndexProps) {
   const [isWellnessThroughClayOpen, setIsWellnessThroughClayOpen] =
     useState(false);
+  const [isIfnhOpen, setIsIfnhOpen] = useState(false);
 
   return (
     <>
-      {projects.map((project, index) =>
-        project.title === "Wellness Through Clay" ? (
-          <WellnessThroughClayRow
-            key={project.title}
-            project={project}
-            delay={index * 0.05}
-            onOpen={() => setIsWellnessThroughClayOpen(true)}
-          />
-        ) : (
+      {projects.map((project, index) => {
+        if (project.title === "Wellness Through Clay") {
+          return (
+            <OpenProjectRow
+              key={project.title}
+              project={project}
+              delay={index * 0.05}
+              onOpen={() => setIsWellnessThroughClayOpen(true)}
+            />
+          );
+        }
+        if (project.title === "IFNH InsightOS") {
+          return (
+            <OpenProjectRow
+              key={project.title}
+              project={project}
+              delay={index * 0.05}
+              onOpen={() => setIsIfnhOpen(true)}
+            />
+          );
+        }
+        return (
           <ProjectFeature
             key={project.title}
             project={project}
             delay={index * 0.05}
           />
-        ),
-      )}
+        );
+      })}
       <div className="border-t border-line" />
       <WellnessThroughClayProjectModal
         data={wellnessThroughClayPreviewData}
         isOpen={isWellnessThroughClayOpen}
         onClose={() => setIsWellnessThroughClayOpen(false)}
+      />
+      <IfnhProjectModal
+        data={ifnhPreviewData}
+        isOpen={isIfnhOpen}
+        onClose={() => setIsIfnhOpen(false)}
       />
     </>
   );

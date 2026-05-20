@@ -5,6 +5,7 @@ import { PageShell } from "@/components/site/PageShell";
 import { Section } from "@/components/site/Section";
 import { SectionHeader } from "@/components/site/SectionHeader";
 import { SelectedWorkProjects } from "@/components/site/SelectedWorkProjects";
+import { ifnhPreviewData } from "@/lib/ifnh-preview-data";
 import { scarletWellBriefData } from "@/lib/scarletwell-preview-data";
 import { projects } from "@/lib/site-data";
 import { wellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
@@ -63,6 +64,7 @@ export default function Home() {
             projects={projects}
             scarletWellData={scarletWellBriefData}
             wellnessThroughClayData={wellnessThroughClayPreviewData}
+            ifnhData={ifnhPreviewData}
           />
           <div className="pt-8 sm:pt-9">
             <ButtonLink href="/work">View all work</ButtonLink>

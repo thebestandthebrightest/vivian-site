@@ -7,83 +7,75 @@ export const wellnessThroughClayPreviewData = {
   title: "Wellness Through Clay",
   subtitle: "Founder-led wellness initiative",
   summary:
-    "Built a recurring clay-making workshop series that uses creative expression, mindfulness, and shared-table interaction to support student connection and well-being.",
-  context: "Founded, funded, operated, and evaluated across multiple semesters.",
+    "Built a recurring creative wellness program centered on mindfulness, connection, and accessible student engagement.",
+  context: "Founded, funded, operated, and evaluated across multiple programming cycles.",
   kpis: [
     { label: "Attendees", value: "250+" },
-    { label: "Programming cycles", value: "3" },
-    { label: "Documented 2025-2026 attendance", value: "114" },
-    { label: "Faculty/staff summer participants", value: "22" },
-    { label: "2025-2026 sessions", value: "8" },
-  ],
-  evaluationSignals: [
-    "Spring 2025: ~16 average/session",
-    "2025-2026: 14.3 average/session",
-    "Participation tracking across repeat sessions",
+    { label: "Cycles", value: "3" },
+    { label: "2025-2026 attendance", value: "114" },
+    { label: "Summer faculty/staff", value: "22" },
+    { label: "Sessions", value: "8" },
   ],
   timeline: [
     {
-      cycle: "Spring 2025",
-      label: "Pilot",
+      cycle: "Pilot",
       metric: "~16 average/session",
-      description:
-        "Tested demand for a repeatable clay-making wellness format centered on creative expression and shared-table connection.",
     },
     {
-      cycle: "Summer 2025",
-      label: "Faculty/staff cycle",
-      metric: "22 participants",
-      description:
-        "Extended the model into a summer faculty/staff cycle, pairing operations, materials planning, and campus partnership work.",
+      cycle: "Summer cycle",
+      metric: "22 faculty/staff",
     },
     {
-      cycle: "Fall 2025-Spring 2026",
-      label: "Scaled repeat cycle",
-      metric: "114 documented attendance",
-      description:
-        "Ran 8 documented sessions with sustained participation signals across fall and spring programming.",
+      cycle: "Scaled repeat cycle",
+      metric: "114 attendance",
     },
   ],
-  attendanceSessions: [
-    { date: "10/17", label: "Create", attendees: 17 },
-    { date: "11/7", label: "Paint", attendees: 13 },
-    { date: "11/14", label: "Session", attendees: 10 },
-    { date: "11/21", label: "Session", attendees: 7 },
-    { date: "2/27", label: "Session", attendees: 19 },
-    { date: "3/6", label: "Session", attendees: 10 },
-    { date: "4/17", label: "Session", attendees: 22 },
-    { date: "4/24", label: "Session", attendees: 16 },
-  ],
-  attendanceInsight:
-    "Attendance remained consistent across semesters, with spring sessions reaching the highest documented turnout.",
-  projectionDefaults: {
+  attendanceSummary: {
+    total: 114,
     sessions: 8,
-    averageAttendance: 14.3,
-    capacity: 20,
+    averagePerSession: 14.3,
+    comparisons: [
+      { label: "Spring 2025 average/session", value: 16, suffix: "" },
+      { label: "2025-2026 average/session", value: 14.3, suffix: "" },
+      { label: "Summer faculty/staff total", value: 22, suffix: "" },
+    ],
+  },
+  projection: {
+    label: "Projected attendance by session count",
+    sessions: [8, 10, 12],
+    scenarios: [
+      {
+        label: "Current pace · 14.3/session",
+        averagePerSession: 14.3,
+        points: [114, 143, 172],
+      },
+      {
+        label: "Growth pace · 16/session",
+        averagePerSession: 16,
+        points: [128, 160, 192],
+      },
+    ],
   },
   projectLinks: [
     {
       label: "Website",
       href: null,
-      // TODO: add final Wellness Through Clay website URL when confirmed.
     },
     {
       label: "Daily Targum",
       href: null,
-      // TODO: add final Daily Targum article URL when confirmed.
     },
     {
       label: "Rutgers feature",
       href: null,
-      // TODO: add final Rutgers Alcohol Studies / Wellness Through Clay article URL when confirmed.
     },
-  ] satisfies ProjectLink[],
+  ] as ProjectLink[],
   supports: [
     "Founder-led program design",
     "Engagement analytics",
     "Grant-funded operations",
-    "Community-centered evaluation",
-    "Scalable wellness programming",
+    "Program evaluation",
+    "Scalable wellness model",
   ],
 };
 

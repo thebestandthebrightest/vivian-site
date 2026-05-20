@@ -1,32 +1,14 @@
 export const scarletWellBriefData = {
-  label: "Cleaned v4 portfolio view",
-  sourceNote:
-    "Curated aggregate module based on the ScarletWell clean source v4 package.",
   title: "ScarletWell Studio",
   subtitle: "Operational analytics and planning platform",
-  executiveSummary:
-    "ScarletWell Studio organizes grant-cycle data into a clearer operating view, helping teams understand participation, budget, efficiency, readiness, and planning signals across wellness initiatives.",
-  capabilities: [
-    {
-      title: "Understand",
-      text: "Past cycles, portfolio patterns, participation, and budget trends.",
-    },
-    {
-      title: "Compare",
-      text: "Grant families, years, activities, reach, and cost efficiency.",
-    },
-    {
-      title: "Plan",
-      text: "Scenario modeling, forecasting assumptions, and operational recommendations.",
-    },
-  ],
+  summary:
+    "Built to compare participation, budget efficiency, and planning readiness across grant cycles.",
   portfolioKpis: [
     { label: "Project records", value: "41" },
-    { label: "Activities", value: "210" },
     { label: "Participant touchpoints", value: "3,003" },
-    { label: "Documented budget", value: "$41.1K" },
-    { label: "Avg. cost / touchpoint", value: "$13.70" },
+    { label: "Budget", value: "$41K+" },
     { label: "Touchpoints / $1K", value: "73" },
+    { label: "Activities", value: "210" },
   ],
   portfolioTotals: {
     grants: 42,
@@ -37,44 +19,6 @@ export const scarletWellBriefData = {
     costPerTouchpoint: 13.7,
     touchpointsPerThousand: 73,
   },
-  cycleComparison: [
-    {
-      label: "Grants",
-      previous: "25",
-      current: "17",
-      signal: "Fewer awards in the newer cycle",
-    },
-    {
-      label: "Activities",
-      previous: "124",
-      current: "86",
-      signal: "Fewer documented activities",
-    },
-    {
-      label: "Participant touchpoints",
-      previous: "1,400",
-      current: "1,603",
-      signal: "Touchpoints increased",
-    },
-    {
-      label: "Budget",
-      previous: "$26.4K",
-      current: "$14.8K",
-      signal: "Documented budget decreased",
-    },
-    {
-      label: "Cost per touchpoint",
-      previous: "$18.82",
-      current: "$9.22",
-      signal: "Lower cost per touchpoint",
-    },
-    {
-      label: "Touchpoints per $1K",
-      previous: "53",
-      current: "108",
-      signal: "Stronger reach efficiency",
-    },
-  ],
   cycleBars: [
     {
       label: "2024-2025",
@@ -95,122 +39,19 @@ export const scarletWellBriefData = {
       touchpointsPerThousand: 108,
     },
   ],
-  familyRows: [
-    {
-      label: "2024-2025 Wellness at Work",
-      grants: 8,
-      activities: 49,
-      touchpoints: 173,
-      budget: "$7.8K",
-      costPerTouchpoint: "$45.16",
-      touchpointsPerThousand: 22,
-      units: 9,
-    },
-    {
-      label: "2024-2025 Connection Grant",
-      grants: 17,
-      activities: 75,
-      touchpoints: 1227,
-      budget: "$18.5K",
-      costPerTouchpoint: "$15.11",
-      touchpointsPerThousand: 66,
-      units: 11,
-    },
-    {
-      label: "2025-2026 Connection Grant",
-      grants: 8,
-      activities: 41,
-      touchpoints: 817,
-      budget: "$6.2K",
-      costPerTouchpoint: "$7.61",
-      touchpointsPerThousand: 131,
-      units: 11,
-    },
-    {
-      label: "2025-2026 Wellness at Work",
-      grants: 9,
-      activities: 45,
-      touchpoints: 786,
-      budget: "$8.6K",
-      costPerTouchpoint: "$10.90",
-      touchpointsPerThousand: 92,
-      units: 13,
-    },
-  ],
-  efficiencyInsights: [
-    "Efficiency improves when reach and budget are evaluated together.",
-    "Grant family comparison helps separate high-reach models from high-touch models.",
-    "Cycle-level views make planning tradeoffs easier to see.",
-  ],
+  insight:
+    "Participant reach increased while total documented budget decreased, producing a stronger portfolio efficiency signal in the newer cycle.",
   planningDefaults: {
     budget: 15000,
     efficiency: 108,
     activities: 90,
   },
-  planningPresets: [
-    {
-      label: "Current efficiency",
-      budget: 15000,
-      efficiency: 108,
-      activities: 90,
-      touchpoints: 1626,
-    },
-    {
-      label: "Growth investment",
-      budget: 20000,
-      efficiency: 108,
-      activities: 100,
-      touchpoints: 2169,
-    },
-    {
-      label: "Restored budget scenario",
-      budget: 26400,
-      efficiency: 108,
-      activities: 124,
-      touchpoints: 2858,
-    },
-  ],
-  buildLayers: [
-    {
-      title: "Data infrastructure",
-      items: [
-        "Cleaned and standardized multi-source project records",
-        "Merged final report outcomes without duplicating project rows",
-        "Separated duplicated attendance from unique reach",
-        "Preserved missing values instead of fabricating data",
-      ],
-    },
-    {
-      title: "Analytics layer",
-      items: [
-        "Cycle comparison",
-        "Grant family comparison",
-        "Budget and reach efficiency",
-        "Cost per participant touchpoint",
-        "Representation summaries",
-        "Planning readiness signals",
-      ],
-    },
-    {
-      title: "Decision-support layer",
-      items: [
-        "Portfolio KPI views",
-        "Efficiency diagnostics",
-        "Forecasting scenarios",
-        "Recommendation workflows",
-        "Executive-ready summaries",
-      ],
-    },
-    {
-      title: "Product / workflow layer",
-      items: [
-        "Private analytics interface",
-        "Program profiles",
-        "Cohort views",
-        "Planning workspace",
-        "AI synthesis workflows for summarizing narrative inputs",
-      ],
-    },
+  supports: [
+    "Portfolio evaluation",
+    "Cross-cycle comparison",
+    "Operational planning",
+    "Scenario modeling",
+    "Executive-ready reporting",
   ],
 };
 

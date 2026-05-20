@@ -59,3 +59,25 @@ a {
 .focus-ring:focus-visible {
   outline-color: var(--foreground);
 }
+
+@keyframes modal-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.992);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-panel-in {
+  animation: modal-panel-in 220ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-panel-in {
+    animation: none;
+  }
+}

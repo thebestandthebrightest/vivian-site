@@ -4,11 +4,14 @@ import { useState } from "react";
 import type { Project } from "./ProjectFeature";
 import { MotionReveal } from "./MotionReveal";
 import { ScarletWellProjectModal } from "./ScarletWellProjectModal";
+import { WellnessThroughClayProjectModal } from "./WellnessThroughClayProjectModal";
 import type { ScarletWellBriefData } from "@/lib/scarletwell-preview-data";
+import type { WellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
 
 type SelectedWorkProjectsProps = {
   projects: Project[];
   scarletWellData: ScarletWellBriefData;
+  wellnessThroughClayData: WellnessThroughClayPreviewData;
 };
 
 function ProjectTitle({ children }: { children: string }) {
@@ -30,6 +33,7 @@ function AnalyticalPreview({
     "01": ["72%", "44%", "88%", "58%"],
     "02": ["38%", "76%", "54%", "92%"],
     "03": ["62%", "50%", "82%", "66%"],
+    "04": ["68%", "52%", "76%", "60%"],
   };
   const bars = barSets[variant] ?? barSets["01"];
   const columnHeights = isFeatured
@@ -81,16 +85,19 @@ function AnalyticalPreview({
 function ProjectPreviewRow({
   project,
   isScarletWell,
+  isWellnessThroughClay,
   onToggle,
 }: {
   project: Project;
   isScarletWell: boolean;
+  isWellnessThroughClay: boolean;
   onToggle?: () => void;
 }) {
+  const isOpenProject = isScarletWell || isWellnessThroughClay;
   const rowContent = (
     <>
       <p className="text-xs font-medium text-quiet">{project.number}</p>
-      <AnalyticalPreview variant={project.number} isFeatured={isScarletWell} />
+      <AnalyticalPreview variant={project.number} isFeatured={isOpenProject} />
       <div className="min-w-0">
         <h3 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
           <ProjectTitle>{project.title}</ProjectTitle>
@@ -98,7 +105,7 @@ function ProjectPreviewRow({
         <p className="mt-3 max-w-xl text-sm leading-6 text-muted">
           {project.descriptor}
         </p>
-        {isScarletWell ? (
+        {isOpenProject ? (
           <div className="mt-5 max-w-2xl space-y-4">
             <p className="text-sm leading-7 text-muted">{project.summary}</p>
             <p className="text-sm font-medium leading-7 text-foreground">
@@ -118,7 +125,7 @@ function ProjectPreviewRow({
         ) : null}
       </div>
       <div className="text-xs font-medium leading-6 text-quiet sm:max-w-64 sm:text-right">
-        {isScarletWell ? (
+        {isOpenProject ? (
           <span className="inline-flex items-center gap-3 text-foreground">
             <span>Open project</span>
             <span aria-hidden="true" className="text-quiet">+</span>
@@ -130,7 +137,7 @@ function ProjectPreviewRow({
     </>
   );
 
-  if (isScarletWell) {
+  if (isOpenProject) {
     return (
       <button
         type="button"
@@ -153,13 +160,17 @@ function ProjectPreviewRow({
 export function SelectedWorkProjects({
   projects,
   scarletWellData,
+  wellnessThroughClayData,
 }: SelectedWorkProjectsProps) {
   const [isScarletWellOpen, setIsScarletWellOpen] = useState(false);
+  const [isWellnessThroughClayOpen, setIsWellnessThroughClayOpen] =
+    useState(false);
 
   return (
     <div className="border-b border-line">
       {projects.map((project, index) => {
         const isScarletWell = project.title === "ScarletWell Studio";
+        const isWellnessThroughClay = project.title === "Wellness Through Clay";
 
         return (
           <MotionReveal key={project.title} delay={index * 0.05}>
@@ -167,9 +178,12 @@ export function SelectedWorkProjects({
               <ProjectPreviewRow
                 project={project}
                 isScarletWell={isScarletWell}
+                isWellnessThroughClay={isWellnessThroughClay}
                 onToggle={
                   isScarletWell
                     ? () => setIsScarletWellOpen(true)
+                    : isWellnessThroughClay
+                      ? () => setIsWellnessThroughClayOpen(true)
                     : undefined
                 }
               />
@@ -181,6 +195,11 @@ export function SelectedWorkProjects({
         data={scarletWellData}
         isOpen={isScarletWellOpen}
         onClose={() => setIsScarletWellOpen(false)}
+      />
+      <WellnessThroughClayProjectModal
+        data={wellnessThroughClayData}
+        isOpen={isWellnessThroughClayOpen}
+        onClose={() => setIsWellnessThroughClayOpen(false)}
       />
     </div>
   );

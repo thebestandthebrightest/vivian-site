@@ -7,6 +7,7 @@ import { SectionHeader } from "@/components/site/SectionHeader";
 import { SelectedWorkProjects } from "@/components/site/SelectedWorkProjects";
 import { scarletWellBriefData } from "@/lib/scarletwell-preview-data";
 import { projects } from "@/lib/site-data";
+import { wellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
 
 const recognitionItems = [
   "Incoming CDC Lewis Scholar",
@@ -59,8 +60,9 @@ export default function Home() {
             titleClassName="text-4xl sm:text-5xl lg:text-6xl"
           />
           <SelectedWorkProjects
-            projects={projects.slice(0, 3)}
+            projects={projects}
             scarletWellData={scarletWellBriefData}
+            wellnessThroughClayData={wellnessThroughClayPreviewData}
           />
           <div className="pt-8 sm:pt-9">
             <ButtonLink href="/work">View all work</ButtonLink>

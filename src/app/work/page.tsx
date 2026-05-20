@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { PageIntro } from "@/components/site/PageIntro";
 import { PageShell } from "@/components/site/PageShell";
-import { ProjectFeature } from "@/components/site/ProjectFeature";
 import { Section } from "@/components/site/Section";
+import { WorkProjectIndex } from "@/components/site/WorkProjectIndex";
 import { projects } from "@/lib/site-data";
 
 export const metadata: Metadata = {
@@ -20,14 +20,7 @@ export default function WorkPage() {
           copy="A concise index of analytical tools, planning systems, dashboards, and founder-led operations work."
         />
         <Section className="pb-24 lg:pb-32">
-          {projects.map((project, index) => (
-            <ProjectFeature
-              key={project.title}
-              project={project}
-              delay={index * 0.05}
-            />
-          ))}
-          <div className="border-t border-line" />
+          <WorkProjectIndex projects={projects} />
         </Section>
       </main>
     </PageShell>

@@ -9,9 +9,17 @@ type PslProjectModalProps = {
   onClose: () => void;
 };
 
+function SectionLabel({ children }: { children: string }) {
+  return (
+    <p className="text-[0.7rem] font-medium uppercase leading-5 tracking-[0.22em] text-quiet">
+      {children}
+    </p>
+  );
+}
+
 function SectionTitle({ children }: { children: string }) {
   return (
-    <h3 className="font-display text-[2.4rem] font-medium leading-[1] text-foreground sm:text-5xl">
+    <h3 className="mt-3 font-display text-[2.2rem] font-medium leading-[1] text-foreground sm:text-[2.6rem]">
       {children}
     </h3>
   );
@@ -19,13 +27,15 @@ function SectionTitle({ children }: { children: string }) {
 
 function KpiBand({ data }: { data: PslPreviewData }) {
   return (
-    <div className="grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-x-10 gap-y-8 border-y border-line py-10 sm:grid-cols-2 lg:grid-cols-4">
       {data.kpis.map((kpi) => (
         <div key={kpi.label}>
           <p className="font-display text-5xl font-medium leading-none text-foreground lg:text-6xl">
             {kpi.value}
           </p>
-          <p className="mt-3 text-sm leading-6 text-muted">{kpi.label}</p>
+          <p className="mt-3 text-[0.7rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+            {kpi.label}
+          </p>
         </div>
       ))}
     </div>
@@ -48,10 +58,13 @@ function CohortEngagement({ data }: { data: PslPreviewData }) {
             <p className="text-base font-medium leading-6 text-foreground">
               {bar.label}
             </p>
-            <div className="h-3 bg-foreground/[0.06]">
+            <div className="h-3 bg-foreground/[0.05]">
               <div
-                className="h-full bg-foreground/55"
-                style={{ width: `${(bar.value / max) * 100}%` }}
+                className="h-full"
+                style={{
+                  width: `${(bar.value / max) * 100}%`,
+                  background: "var(--accent)",
+                }}
               />
             </div>
             <p className="text-sm leading-5 text-foreground sm:text-right">
@@ -108,8 +121,11 @@ function CompetencyChart({ data }: { data: PslPreviewData }) {
                   </p>
                   <div className="h-2 bg-foreground/[0.06]">
                     <div
-                      className="h-full bg-foreground/65"
-                      style={{ width: `${postPct}%` }}
+                      className="h-full"
+                      style={{
+                        width: `${postPct}%`,
+                        background: "var(--accent)",
+                      }}
                     />
                   </div>
                   <p className="text-sm leading-5 text-foreground sm:text-right">
@@ -245,20 +261,18 @@ export function PslProjectModal({
             </button>
           </div>
 
-          <header className="grid gap-12 pb-20 pt-12 lg:grid-cols-[1fr_0.85fr] lg:items-end lg:pb-24 lg:pt-16">
+          <header className="grid gap-10 pb-14 pt-10 lg:grid-cols-[1fr_0.85fr] lg:items-end lg:pb-16 lg:pt-14">
             <div>
+              <SectionLabel>{data.subtitle}</SectionLabel>
               <h2
                 id="psl-modal-title"
-                className="font-display text-[clamp(3.8rem,10vw,7.6rem)] font-medium leading-[0.9] text-foreground"
+                className="mt-4 font-display text-[clamp(3.4rem,9vw,6.5rem)] font-medium leading-[0.92] text-foreground"
               >
                 {data.title}
               </h2>
-              <p className="mt-6 text-sm font-medium leading-6 text-muted">
-                {data.subtitle}
-              </p>
             </div>
-            <div className="max-w-xl space-y-6">
-              <p className="font-display text-[1.7rem] font-medium leading-[1.2] text-foreground sm:text-[2rem]">
+            <div className="max-w-xl space-y-5">
+              <p className="font-display text-[1.55rem] font-medium leading-[1.2] text-foreground sm:text-[1.85rem]">
                 {data.summary}
               </p>
               <p className="text-sm leading-6 text-muted">{data.context}</p>
@@ -266,34 +280,41 @@ export function PslProjectModal({
           </header>
 
           <main>
-            <section className="py-14 sm:py-20">
-              <KpiBand data={data} />
+            <section className="pb-10">
+              <SectionLabel>Cohort snapshot</SectionLabel>
+              <div className="mt-6">
+                <KpiBand data={data} />
+              </div>
             </section>
 
-            <section className="border-t border-line py-16 sm:py-24">
-              <div className="mb-14 max-w-3xl">
-                <SectionTitle>Cohort engagement signal</SectionTitle>
+            <section className="border-t border-line py-14 sm:py-20">
+              <div className="mb-10 max-w-3xl">
+                <SectionLabel>Cohort engagement</SectionLabel>
+                <SectionTitle>Participation through the cycle</SectionTitle>
               </div>
               <CohortEngagement data={data} />
             </section>
 
-            <section className="border-t border-line py-16 sm:py-24">
-              <div className="mb-14 max-w-3xl">
-                <SectionTitle>Pre/post competency</SectionTitle>
+            <section className="border-t border-line py-14 sm:py-20">
+              <div className="mb-10 max-w-3xl">
+                <SectionLabel>Competency growth</SectionLabel>
+                <SectionTitle>Pre / post competency lift</SectionTitle>
               </div>
               <CompetencyChart data={data} />
             </section>
 
-            <section className="border-t border-line py-16 sm:py-24">
-              <div className="mb-12 max-w-3xl">
-                <SectionTitle>Qualitative signals</SectionTitle>
+            <section className="border-t border-line py-14 sm:py-20">
+              <div className="mb-10 max-w-3xl">
+                <SectionLabel>Qualitative themes</SectionLabel>
+                <SectionTitle>What participants reported</SectionTitle>
               </div>
               <Qualitative data={data} />
             </section>
 
-            <section className="border-t border-line py-16 sm:py-20">
-              <div className="mb-12 max-w-3xl">
-                <SectionTitle>What this enabled</SectionTitle>
+            <section className="border-t border-line py-14 sm:py-18">
+              <div className="mb-10 max-w-3xl">
+                <SectionLabel>Program evaluation</SectionLabel>
+                <SectionTitle>Where this gets applied</SectionTitle>
               </div>
               <Outcomes data={data} />
             </section>

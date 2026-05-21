@@ -7,68 +7,35 @@ export const wellnessThroughClayPreviewData = {
   title: "Wellness Through Clay",
   subtitle: "Founder-led wellness initiative",
   summary:
-    "Built a recurring creative wellness program centered on mindfulness, connection, and accessible student engagement.",
-  context: "Founded, funded, operated, and evaluated across multiple programming cycles.",
+    "Founded and scaled a recurring creative wellness initiative focused on mindfulness, accessibility, and community engagement.",
+  context: "Three cycles · 18 sessions · 250+ cumulative attendees.",
   kpis: [
-    { label: "Attendees", value: "250+" },
+    { label: "Cumulative attendees", value: "250+" },
+    { label: "Sessions", value: "18" },
     { label: "Cycles", value: "3" },
-    { label: "2025-2026 attendance", value: "114" },
-    { label: "Summer faculty/staff", value: "22" },
-    { label: "Sessions", value: "8" },
+    { label: "Faculty/staff", value: "22" },
+    { label: "Avg / session", value: "14–16" },
   ],
-  timeline: [
-    {
-      cycle: "Pilot",
-      metric: "~16 average/session",
-    },
-    {
-      cycle: "Summer cycle",
-      metric: "22 faculty/staff",
-    },
-    {
-      cycle: "Scaled repeat cycle",
-      metric: "114 attendance",
-    },
-  ],
-  attendanceSummary: {
-    total: 114,
-    sessions: 8,
-    averagePerSession: 14.3,
-    comparisons: [
-      { label: "Spring 2025 average/session", value: 16, suffix: "" },
-      { label: "2025-2026 average/session", value: 14.3, suffix: "" },
-      { label: "Summer faculty/staff total", value: 22, suffix: "" },
+  cumulativeGrowth: {
+    label: "Cumulative attendees by cycle",
+    points: [
+      { cycle: "Spring 2025", value: 128 },
+      { cycle: "Summer 2025", value: 150 },
+      { cycle: "2025-2026", value: 264 },
     ],
   },
-  projection: {
-    label: "Projected attendance by session count",
-    sessions: [8, 10, 12],
-    scenarios: [
-      {
-        label: "Current pace · 14.3/session",
-        averagePerSession: 14.3,
-        points: [114, 143, 172],
-      },
-      {
-        label: "Growth pace · 16/session",
-        averagePerSession: 16,
-        points: [128, 160, 192],
-      },
+  stability: {
+    insight: "Participation remained stable across repeat programming cycles.",
+    comparisons: [
+      { label: "Spring 2025 · avg / session", value: 16 },
+      { label: "2025-2026 · avg / session", value: 14.3 },
     ],
   },
   projectLinks: [
-    {
-      label: "Website",
-      href: null,
-    },
-    {
-      label: "Daily Targum",
-      href: null,
-    },
-    {
-      label: "Rutgers feature",
-      href: null,
-    },
+    { label: "Instagram", href: null },
+    { label: "Website", href: null },
+    { label: "Daily Targum", href: null },
+    { label: "Rutgers feature", href: null },
   ] as ProjectLink[],
   supports: [
     "Founder-led program design",

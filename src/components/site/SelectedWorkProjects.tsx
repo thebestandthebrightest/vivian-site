@@ -20,152 +20,147 @@ type SelectedWorkProjectsProps = {
   pslData: PslPreviewData;
 };
 
-function ProjectTitle({ children }: { children: string }) {
+function MicroVisual({ variant }: { variant: Project["visual"] }) {
+  if (variant === "compare") {
+    return (
+      <svg
+        viewBox="0 0 80 44"
+        className="h-11 w-20"
+        role="img"
+        aria-label="Comparison visual"
+      >
+        <rect x="6" y="14" width="28" height="22" fill="currentColor" fillOpacity="0.18" />
+        <rect x="42" y="6" width="28" height="30" fill="var(--accent)" />
+        <line x1="2" x2="78" y1="40" y2="40" stroke="currentColor" strokeOpacity="0.25" strokeWidth="1" />
+      </svg>
+    );
+  }
+  if (variant === "funnel") {
+    return (
+      <svg
+        viewBox="0 0 80 44"
+        className="h-11 w-20"
+        role="img"
+        aria-label="Funnel visual"
+      >
+        <rect x="6" y="6" width="68" height="8" fill="currentColor" fillOpacity="0.22" />
+        <rect x="14" y="18" width="52" height="8" fill="var(--accent)" />
+        <rect x="26" y="30" width="28" height="8" fill="currentColor" fillOpacity="0.45" />
+      </svg>
+    );
+  }
+  if (variant === "growth") {
+    return (
+      <svg
+        viewBox="0 0 80 44"
+        className="h-11 w-20"
+        role="img"
+        aria-label="Growth visual"
+      >
+        <line x1="2" x2="78" y1="40" y2="40" stroke="currentColor" strokeOpacity="0.25" strokeWidth="1" />
+        <polyline
+          points="6,34 26,28 48,18 72,8"
+          fill="none"
+          stroke="var(--accent)"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="72" cy="8" r="3" fill="var(--accent)" />
+      </svg>
+    );
+  }
   return (
-    <span className="relative inline-block pb-1 after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-foreground after:transition-transform after:duration-300 after:ease-out group-hover:after:scale-x-100">
-      {children}
-    </span>
-  );
-}
-
-function AnalyticalPreview({
-  variant,
-  isFeatured = false,
-}: {
-  variant: string;
-  isFeatured?: boolean;
-}) {
-  const barSets: Record<string, string[]> = {
-    "01": ["72%", "44%", "88%", "58%"],
-    "02": ["38%", "76%", "54%", "92%"],
-    "03": ["62%", "50%", "82%", "66%"],
-    "04": ["68%", "52%", "76%", "60%"],
-  };
-  const bars = barSets[variant] ?? barSets["01"];
-  const columnHeights = isFeatured
-    ? ["1.05rem", "1.55rem", "0.82rem", "1.95rem"]
-    : ["1.15rem", "0.72rem", "1.42rem", "0.96rem"];
-
-  return (
-    <div
-      className={`h-16 w-full min-w-24 max-w-32 overflow-hidden border border-line bg-foreground/[0.025] p-3 opacity-75 grayscale transition duration-500 group-hover:opacity-95 sm:h-[4.75rem] sm:w-28 motion-reduce:transition-none ${
-        isFeatured ? "bg-foreground/[0.035] opacity-90" : ""
-      }`}
-      aria-hidden="true"
+    <svg
+      viewBox="0 0 80 44"
+      className="h-11 w-20"
+      role="img"
+      aria-label="Delta visual"
     >
-      <div className="flex h-full flex-col justify-between">
-        <div className="grid grid-cols-4 gap-1.5">
-          {bars.map((bar, index) => (
-            <span
-              key={`${variant}-${bar}-${index}`}
-              className="block bg-foreground/25"
-              style={{
-                height: index % 2 === 0 ? "0.45rem" : "0.68rem",
-                width: bar,
-              }}
-            />
-          ))}
-        </div>
-        <div className="grid grid-cols-5 gap-1">
-          {Array.from({ length: 10 }).map((_, index) => (
-            <span
-              key={`${variant}-cell-${index}`}
-              className="h-1.5 bg-foreground/15"
-            />
-          ))}
-        </div>
-        <div className="flex items-end gap-1.5">
-          {bars.map((bar, index) => (
-            <span
-              key={`${variant}-column-${bar}-${index}`}
-              className="w-2 bg-foreground/20"
-              style={{ height: columnHeights[index] }}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
+      <rect x="6" y="22" width="14" height="14" fill="currentColor" fillOpacity="0.18" />
+      <rect x="24" y="16" width="14" height="20" fill="currentColor" fillOpacity="0.28" />
+      <rect x="42" y="10" width="14" height="26" fill="var(--accent)" />
+      <rect x="60" y="4" width="14" height="32" fill="var(--accent)" />
+    </svg>
   );
 }
 
-function ProjectPreviewRow({
+function ProjectRow({
   project,
-  isScarletWell,
-  isWellnessThroughClay,
-  isIfnh,
-  isPsl,
+  isOpenable,
   onToggle,
 }: {
   project: Project;
-  isScarletWell: boolean;
-  isWellnessThroughClay: boolean;
-  isIfnh: boolean;
-  isPsl: boolean;
+  isOpenable: boolean;
   onToggle?: () => void;
 }) {
-  const isOpenProject =
-    isScarletWell || isWellnessThroughClay || isIfnh || isPsl;
   const rowContent = (
     <>
-      <p className="text-xs font-medium text-quiet">{project.number}</p>
-      <AnalyticalPreview variant={project.number} isFeatured={isOpenProject} />
-      <div className="min-w-0">
-        <h3 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
-          <ProjectTitle>{project.title}</ProjectTitle>
-        </h3>
-        <p className="mt-3 max-w-xl text-sm leading-6 text-muted">
-          {project.descriptor}
+      <div className="flex items-baseline gap-4 sm:block">
+        <p className="text-xs font-medium text-quiet">{project.number}</p>
+        <p className="text-[0.7rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet sm:mt-2">
+          {project.category}
         </p>
-        {isOpenProject ? (
-          <div className="mt-5 max-w-2xl space-y-4">
-            <p className="text-sm leading-7 text-muted">{project.summary}</p>
-            <p className="text-sm font-medium leading-7 text-foreground">
-              {project.impact}
-            </p>
-            <ul className="flex flex-wrap gap-x-2 gap-y-2 text-xs leading-6 text-quiet">
-              {project.details.map((detail, index) => (
-                <li key={detail}>
-                  {index > 0 ? (
-                    <span className="text-line">{" / "}</span>
-                  ) : null}
-                  {detail}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
       </div>
-      <div className="text-xs font-medium leading-6 text-quiet sm:max-w-64 sm:text-right">
-        {isOpenProject ? (
-          <span className="inline-flex items-center gap-3 text-foreground">
-            <span>Open project</span>
-            <span aria-hidden="true" className="text-quiet">+</span>
+
+      <div className="min-w-0">
+        <h3 className="font-display text-[2.4rem] font-medium leading-[0.95] text-foreground sm:text-[2.9rem] lg:text-5xl">
+          <span className="relative inline-block pb-1 after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-foreground after:transition-transform after:duration-300 after:ease-out group-hover:after:scale-x-100">
+            {project.title}
           </span>
-        ) : (
-          project.previewDetail ?? project.details[0]
-        )}
+        </h3>
+        <p className="mt-4 max-w-xl text-[0.95rem] leading-7 text-muted">
+          {project.outcome}
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-5 sm:items-end">
+        <div className="grid w-full grid-cols-3 gap-x-4 sm:w-auto sm:gap-x-7">
+          {project.metrics.map((metric) => (
+            <div key={metric.label} className="sm:text-right">
+              <p className="font-display text-[1.75rem] font-medium leading-none text-foreground sm:text-3xl">
+                {metric.value}
+              </p>
+              <p className="mt-1.5 text-[0.65rem] font-medium uppercase leading-4 tracking-[0.14em] text-quiet">
+                {metric.label}
+              </p>
+            </div>
+          ))}
+        </div>
+        <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:justify-end sm:gap-6">
+          <MicroVisual variant={project.visual} />
+          {isOpenable ? (
+            <span className="inline-flex items-center gap-2 text-[0.7rem] font-medium uppercase leading-5 tracking-[0.18em] text-foreground">
+              <span>Open</span>
+              <span aria-hidden="true" className="text-quiet">+</span>
+            </span>
+          ) : (
+            <span className="text-[0.7rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+              {project.previewDetail ?? project.details[0]}
+            </span>
+          )}
+        </div>
       </div>
     </>
   );
 
-  if (isOpenProject) {
+  const layout =
+    "group grid w-full gap-7 border-t border-line py-8 transition duration-500 ease-out hover:border-foreground/30 sm:grid-cols-[6rem_1.1fr_1.2fr] sm:items-start sm:gap-10 lg:py-10 motion-reduce:transition-none";
+
+  if (isOpenable) {
     return (
       <button
         type="button"
         aria-haspopup="dialog"
         onClick={onToggle}
-        className="focus-ring group grid w-full cursor-pointer gap-5 border-t border-line py-9 text-left transition duration-500 ease-out hover:border-foreground/25 sm:grid-cols-[0.12fr_0.24fr_1fr_auto] sm:items-start sm:gap-8 lg:gap-10 lg:py-10 motion-reduce:transition-none"
+        className={`focus-ring text-left cursor-pointer ${layout}`}
       >
         {rowContent}
       </button>
     );
   }
 
-  return (
-    <article className="group grid gap-5 border-t border-line py-9 transition duration-500 ease-out hover:border-foreground/25 sm:grid-cols-[0.12fr_0.24fr_1fr_auto] sm:items-center sm:gap-8 lg:gap-10 lg:py-10 motion-reduce:transition-none">
-      {rowContent}
-    </article>
-  );
+  return <article className={layout}>{rowContent}</article>;
 }
 
 export function SelectedWorkProjects({
@@ -184,33 +179,24 @@ export function SelectedWorkProjects({
   return (
     <div className="border-b border-line">
       {projects.map((project, index) => {
-        const isScarletWell = project.title === "ScarletWell Studio";
-        const isWellnessThroughClay = project.title === "Wellness Through Clay";
-        const isIfnh = project.title === "IFNH InsightOS";
-        const isPsl = project.title === "PSL Dashboard";
+        const onToggle =
+          project.title === "ScarletWell Studio"
+            ? () => setIsScarletWellOpen(true)
+            : project.title === "Wellness Through Clay"
+              ? () => setIsWellnessThroughClayOpen(true)
+              : project.title === "IFNH InsightOS"
+                ? () => setIsIfnhOpen(true)
+                : project.title === "PSL Dashboard"
+                  ? () => setIsPslOpen(true)
+                  : undefined;
 
         return (
           <MotionReveal key={project.title} delay={index * 0.05}>
-            <div>
-              <ProjectPreviewRow
-                project={project}
-                isScarletWell={isScarletWell}
-                isWellnessThroughClay={isWellnessThroughClay}
-                isIfnh={isIfnh}
-                isPsl={isPsl}
-                onToggle={
-                  isScarletWell
-                    ? () => setIsScarletWellOpen(true)
-                    : isWellnessThroughClay
-                      ? () => setIsWellnessThroughClayOpen(true)
-                      : isIfnh
-                        ? () => setIsIfnhOpen(true)
-                        : isPsl
-                          ? () => setIsPslOpen(true)
-                          : undefined
-                }
-              />
-            </div>
+            <ProjectRow
+              project={project}
+              isOpenable={Boolean(onToggle)}
+              onToggle={onToggle}
+            />
           </MotionReveal>
         );
       })}

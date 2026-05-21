@@ -1,9 +1,18 @@
 import { MotionReveal } from "./MotionReveal";
 
+export type ProjectMetric = {
+  value: string;
+  label: string;
+};
+
 export type Project = {
   number: string;
   title: string;
   descriptor: string;
+  category: string;
+  outcome: string;
+  metrics: ProjectMetric[];
+  visual: "compare" | "funnel" | "growth" | "delta";
   summary: string;
   impact: string;
   previewDetail?: string;

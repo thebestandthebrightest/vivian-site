@@ -2,12 +2,12 @@ export const scarletWellBriefData = {
   title: "ScarletWell Studio",
   subtitle: "Operational analytics and planning platform",
   summary:
-    "Built to compare participation, budget efficiency, and planning readiness across grant cycles.",
+    "Higher participation supported with lower documented spend across grant cycles.",
   portfolioKpis: [
-    { label: "Initiatives", value: "41" },
     { label: "Participants", value: "3,003" },
-    { label: "Budget", value: "$41K+" },
     { label: "Activities", value: "210" },
+    { label: "Budget managed", value: "$41K+" },
+    { label: "Initiatives", value: "41" },
   ],
   cycles: [
     {
@@ -23,18 +23,29 @@ export const scarletWellBriefData = {
       costPerParticipant: 9.22,
     },
   ],
+  efficiencyDeltas: [
+    {
+      label: "Participants",
+      delta: "+14%",
+      direction: "up" as const,
+      detail: "1,400 → 1,603",
+    },
+    {
+      label: "Documented budget",
+      delta: "−44%",
+      direction: "down" as const,
+      detail: "$26.4K → $14.8K",
+    },
+    {
+      label: "Cost / participant",
+      delta: "−51%",
+      direction: "down" as const,
+      detail: "$18.82 → $9.22",
+    },
+  ],
   insight:
-    "Participation increased while documented budget decreased, improving cost per participant year over year.",
-  projection: {
-    label: "Estimated participants at current efficiency",
-    costPerParticipant: 9.22,
-    points: [
-      { budget: 15000, participants: 1626 },
-      { budget: 20000, participants: 2169 },
-      { budget: 26400, participants: 2858 },
-    ],
-  },
-  supports: [
+    "Higher reach with lower documented spend — cost per participant dropped roughly 51% year over year.",
+  strategicUses: [
     "Portfolio evaluation",
     "Cross-cycle comparison",
     "Budget efficiency",

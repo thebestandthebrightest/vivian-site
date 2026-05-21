@@ -1,8 +1,8 @@
 export const pslPreviewData = {
   title: "PSL Dashboard",
-  subtitle: "Cohort outcomes and engagement analysis",
+  subtitle: "Cohort outcomes and program evaluation",
   summary:
-    "Designed an evaluation and reporting system for understanding participant engagement, competency growth, and leadership outcomes across a peer support cohort.",
+    "Evaluation system translating cohort attendance, competency, and survey data into operational insight.",
   context: "Built from attendance, competency, survey, and interview data.",
   kpis: [
     { label: "Cohort participants", value: "22" },

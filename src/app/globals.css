@@ -6,6 +6,8 @@
   --muted: rgba(72, 38, 29, 0.72);
   --quiet: rgba(72, 38, 29, 0.58);
   --line: rgba(72, 38, 29, 0.14);
+  --accent: #B2CDFF;
+  --accent-soft: rgba(178, 205, 255, 0.45);
 }
 
 @theme inline {
@@ -14,6 +16,8 @@
   --color-muted: var(--muted);
   --color-quiet: var(--quiet);
   --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
   --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Cormorant Garamond", "Cormorant Garamond Fallback", Georgia,
     serif;

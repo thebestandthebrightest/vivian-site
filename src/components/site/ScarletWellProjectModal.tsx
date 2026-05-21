@@ -17,9 +17,17 @@ function formatCurrencyK(value: number) {
   return `$${(value / 1000).toFixed(1)}K`;
 }
 
+function SectionLabel({ children }: { children: string }) {
+  return (
+    <p className="text-[0.7rem] font-medium uppercase leading-5 tracking-[0.22em] text-quiet">
+      {children}
+    </p>
+  );
+}
+
 function SectionTitle({ children }: { children: string }) {
   return (
-    <h3 className="font-display text-[2.4rem] font-medium leading-[1] text-foreground sm:text-5xl">
+    <h3 className="mt-3 font-display text-[2.2rem] font-medium leading-[1] text-foreground sm:text-[2.6rem]">
       {children}
     </h3>
   );
@@ -27,20 +35,61 @@ function SectionTitle({ children }: { children: string }) {
 
 function KpiBand({ data }: { data: ScarletWellBriefData }) {
   return (
-    <div className="grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-x-10 gap-y-8 border-y border-line py-10 sm:grid-cols-2 lg:grid-cols-4">
       {data.portfolioKpis.map((kpi) => (
         <div key={kpi.label}>
           <p className="font-display text-5xl font-medium leading-none text-foreground lg:text-6xl">
             {kpi.value}
           </p>
-          <p className="mt-3 text-sm leading-6 text-muted">{kpi.label}</p>
+          <p className="mt-3 text-[0.7rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+            {kpi.label}
+          </p>
         </div>
       ))}
     </div>
   );
 }
 
-function CompareRow({
+function ComparisonBar({
+  label,
+  cycleLabel,
+  value,
+  display,
+  ratio,
+  emphasized = false,
+}: {
+  label: string;
+  cycleLabel: string;
+  value: number;
+  display: string;
+  ratio: number;
+  emphasized?: boolean;
+}) {
+  return (
+    <div className="grid grid-cols-[5.5rem_1fr_auto] items-center gap-4">
+      <p className="text-[0.7rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+        {cycleLabel}
+      </p>
+      <div className="relative h-4 bg-foreground/[0.05]">
+        <div
+          className="h-full transition-all duration-700"
+          style={{
+            width: `${ratio * 100}%`,
+            background: emphasized ? "var(--accent)" : "rgba(72,38,29,0.32)",
+          }}
+          aria-hidden="true"
+        />
+      </div>
+      <p className="text-sm leading-5 text-foreground">
+        <span className="sr-only">{label}: </span>
+        {display}
+        <span className="ml-2 text-quiet">({value.toLocaleString()})</span>
+      </p>
+    </div>
+  );
+}
+
+function ComparisonGroup({
   label,
   previous,
   current,
@@ -54,43 +103,39 @@ function CompareRow({
   currentText: string;
 }) {
   const max = Math.max(previous, current);
-
   return (
     <div className="grid gap-5 py-7 sm:grid-cols-[10rem_1fr] sm:items-center">
-      <p className="text-base font-medium leading-6 text-foreground">{label}</p>
-      <div className="grid gap-4">
-        <div className="grid grid-cols-[5rem_1fr_auto] items-center gap-4">
-          <p className="text-sm leading-5 text-quiet">2024-25</p>
-          <div className="h-3 bg-foreground/[0.06]">
-            <div
-              className="h-full bg-foreground/28"
-              style={{ width: `${(previous / max) * 100}%` }}
-            />
-          </div>
-          <p className="text-sm leading-5 text-muted">{previousText}</p>
-        </div>
-        <div className="grid grid-cols-[5rem_1fr_auto] items-center gap-4">
-          <p className="text-sm leading-5 text-quiet">2025-26</p>
-          <div className="h-3 bg-foreground/[0.06]">
-            <div
-              className="h-full bg-foreground/58"
-              style={{ width: `${(current / max) * 100}%` }}
-            />
-          </div>
-          <p className="text-sm leading-5 text-foreground">{currentText}</p>
-        </div>
+      <p className="font-display text-2xl font-medium leading-none text-foreground">
+        {label}
+      </p>
+      <div className="space-y-3">
+        <ComparisonBar
+          label={label}
+          cycleLabel="2024-25"
+          value={previous}
+          display={previousText}
+          ratio={previous / max}
+        />
+        <ComparisonBar
+          label={label}
+          cycleLabel="2025-26"
+          value={current}
+          display={currentText}
+          ratio={current / max}
+          emphasized
+        />
       </div>
     </div>
   );
 }
 
-function PortfolioEfficiency({ data }: { data: ScarletWellBriefData }) {
+function EfficiencyHero({ data }: { data: ScarletWellBriefData }) {
   const [previous, current] = data.cycles;
 
   return (
-    <div className="space-y-14">
+    <div className="space-y-10">
       <div className="border-y border-line/80">
-        <CompareRow
+        <ComparisonGroup
           label="Participants"
           previous={previous.participants}
           current={current.participants}
@@ -98,7 +143,7 @@ function PortfolioEfficiency({ data }: { data: ScarletWellBriefData }) {
           currentText={formatNumber(current.participants)}
         />
         <div className="border-t border-line/60" />
-        <CompareRow
+        <ComparisonGroup
           label="Budget"
           previous={previous.budget}
           current={current.budget}
@@ -107,168 +152,94 @@ function PortfolioEfficiency({ data }: { data: ScarletWellBriefData }) {
         />
       </div>
 
-      <div>
-        <p className="text-sm font-medium leading-6 text-muted">
-          Cost per participant
-        </p>
-        <div className="mt-5 grid gap-6 sm:grid-cols-[1fr_auto_1fr] sm:items-end">
-          <div>
-            <p className="font-display text-5xl font-medium leading-none text-foreground sm:text-6xl">
-              ${previous.costPerParticipant.toFixed(2)}
-            </p>
-            <p className="mt-3 text-sm leading-6 text-muted">2024-25</p>
-          </div>
-          <p className="hidden pb-2 text-sm leading-6 text-quiet sm:block">→</p>
-          <div className="sm:text-right">
-            <p className="font-display text-6xl font-medium leading-none text-foreground sm:text-7xl">
-              ${current.costPerParticipant.toFixed(2)}
-            </p>
-            <p className="mt-3 text-sm leading-6 text-muted">2025-26</p>
-          </div>
+      <div className="grid gap-8 border border-line bg-foreground/[0.02] p-8 sm:grid-cols-[1fr_auto_1fr] sm:items-end sm:p-10">
+        <div>
+          <SectionLabel>Cost / participant · 2024-25</SectionLabel>
+          <p className="mt-3 font-display text-5xl font-medium leading-none text-foreground sm:text-6xl">
+            ${previous.costPerParticipant.toFixed(2)}
+          </p>
         </div>
-        <p className="mt-10 max-w-4xl font-display text-2xl font-medium leading-[1.2] text-foreground sm:text-3xl">
-          {data.insight}
-        </p>
+        <div className="hidden text-quiet sm:block">
+          <svg viewBox="0 0 60 24" className="h-6 w-16" aria-hidden="true">
+            <line
+              x1="2"
+              x2="50"
+              y1="12"
+              y2="12"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+            <polyline
+              points="44,4 56,12 44,20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+        <div className="sm:text-right">
+          <SectionLabel>Cost / participant · 2025-26</SectionLabel>
+          <p
+            className="mt-3 font-display text-6xl font-medium leading-none sm:text-7xl"
+            style={{ color: "var(--foreground)" }}
+          >
+            <span
+              className="inline-block bg-accent/0 px-1"
+              style={{ background: "var(--accent-soft)" }}
+            >
+              ${current.costPerParticipant.toFixed(2)}
+            </span>
+          </p>
+          <p className="mt-4 text-[0.7rem] font-medium uppercase leading-5 tracking-[0.18em] text-foreground">
+            −51% cost / participant
+          </p>
+        </div>
       </div>
     </div>
   );
 }
 
-function GrowthProjectionChart({ data }: { data: ScarletWellBriefData }) {
-  const points = data.projection.points;
-  const maxBudget = Math.max(...points.map((p) => p.budget));
-  const maxParticipants = Math.max(...points.map((p) => p.participants));
-
-  const width = 720;
-  const height = 320;
-  const padL = 72;
-  const padR = 24;
-  const padT = 24;
-  const padB = 56;
-  const innerW = width - padL - padR;
-  const innerH = height - padT - padB;
-
-  const x = (budget: number) => padL + (budget / maxBudget) * innerW;
-  const y = (participants: number) =>
-    padT + innerH - (participants / maxParticipants) * innerH;
-
-  const path = points
-    .map((p, i) => `${i === 0 ? "M" : "L"} ${x(p.budget)} ${y(p.participants)}`)
-    .join(" ");
-
-  const yTicks = [0, 0.5, 1].map((t) => Math.round(maxParticipants * t));
-
+function EfficiencySignals({ data }: { data: ScarletWellBriefData }) {
   return (
-    <div className="space-y-6">
-      <p className="text-sm font-medium leading-6 text-muted">
-        {data.projection.label}
-      </p>
-      <div className="w-full overflow-x-auto">
-        <svg
-          viewBox={`0 0 ${width} ${height}`}
-          className="h-auto w-full min-w-[34rem]"
-          role="img"
-          aria-label="Projected participants by budget"
-        >
-          {yTicks.map((tick) => {
-            const yy = y(tick);
-            return (
-              <g key={tick}>
-                <line
-                  x1={padL}
-                  x2={width - padR}
-                  y1={yy}
-                  y2={yy}
-                  stroke="currentColor"
-                  strokeOpacity="0.12"
-                  strokeWidth="1"
-                />
-                <text
-                  x={padL - 12}
-                  y={yy + 4}
-                  textAnchor="end"
-                  fontSize="13"
-                  fill="currentColor"
-                  fillOpacity="0.55"
-                >
-                  {tick.toLocaleString()}
-                </text>
-              </g>
-            );
-          })}
-
-          <path
-            d={path}
-            fill="none"
-            stroke="currentColor"
-            strokeOpacity="0.85"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-
-          {points.map((p) => (
-            <g key={p.budget}>
-              <circle
-                cx={x(p.budget)}
-                cy={y(p.participants)}
-                r="5"
-                fill="currentColor"
-              />
-              <text
-                x={x(p.budget)}
-                y={y(p.participants) - 14}
-                textAnchor="middle"
-                fontSize="14"
-                fontWeight="500"
-                fill="currentColor"
-              >
-                {p.participants.toLocaleString()}
-              </text>
-              <text
-                x={x(p.budget)}
-                y={height - padB + 24}
-                textAnchor="middle"
-                fontSize="13"
-                fill="currentColor"
-                fillOpacity="0.65"
-              >
-                ${(p.budget / 1000).toFixed(p.budget % 1000 === 0 ? 0 : 1)}K
-              </text>
-            </g>
-          ))}
-
-          <text
-            x={padL}
-            y={height - 8}
-            fontSize="12"
-            fill="currentColor"
-            fillOpacity="0.5"
+    <div className="grid gap-6 sm:grid-cols-3">
+      {data.efficiencyDeltas.map((item) => {
+        const isUp = item.direction === "up";
+        return (
+          <div
+            key={item.label}
+            className="border border-line bg-background p-6"
           >
-            Budget
-          </text>
-          <text
-            x={padL - 56}
-            y={padT + 6}
-            fontSize="12"
-            fill="currentColor"
-            fillOpacity="0.5"
-          >
-            Participants
-          </text>
-        </svg>
-      </div>
-      <p className="max-w-2xl text-sm leading-6 text-muted">
-        Projection based on current attendance and budget assumptions.
-      </p>
+            <SectionLabel>{item.label}</SectionLabel>
+            <div className="mt-4 flex items-baseline gap-3">
+              <p
+                className="font-display text-5xl font-medium leading-none"
+                style={{
+                  color: isUp ? "var(--foreground)" : "var(--foreground)",
+                }}
+              >
+                {item.delta}
+              </p>
+              <span
+                aria-hidden="true"
+                className="text-base text-quiet"
+              >
+                {isUp ? "↑" : "↓"}
+              </span>
+            </div>
+            <p className="mt-4 text-sm leading-6 text-muted">{item.detail}</p>
+          </div>
+        );
+      })}
     </div>
   );
 }
 
-function Supports({ data }: { data: ScarletWellBriefData }) {
+function StrategicUses({ data }: { data: ScarletWellBriefData }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {data.supports.map((item) => (
+      {data.strategicUses.map((item) => (
         <p
           key={item}
           className="border-t border-line pt-4 font-display text-2xl font-medium leading-tight text-foreground"
@@ -357,47 +328,59 @@ export function ScarletWellProjectModal({
             </button>
           </div>
 
-          <header className="grid gap-12 pb-20 pt-12 lg:grid-cols-[1fr_0.85fr] lg:items-end lg:pb-24 lg:pt-16">
+          <header className="grid gap-10 pb-14 pt-10 lg:grid-cols-[1fr_0.85fr] lg:items-end lg:pb-16 lg:pt-14">
             <div>
+              <SectionLabel>{data.subtitle}</SectionLabel>
               <h2
                 id="scarletwell-modal-title"
-                className="font-display text-[clamp(3.8rem,10vw,7.6rem)] font-medium leading-[0.9] text-foreground"
+                className="mt-4 font-display text-[clamp(3.4rem,9vw,6.5rem)] font-medium leading-[0.92] text-foreground"
               >
                 {data.title}
               </h2>
-              <p className="mt-6 text-sm font-medium leading-6 text-muted">
-                {data.subtitle}
-              </p>
             </div>
-            <p className="max-w-xl font-display text-[1.7rem] font-medium leading-[1.2] text-foreground sm:text-[2rem]">
+            <p className="max-w-xl font-display text-[1.55rem] font-medium leading-[1.2] text-foreground sm:text-[1.85rem]">
               {data.summary}
             </p>
           </header>
 
           <main>
-            <section className="py-14 sm:py-20">
-              <KpiBand data={data} />
+            <section className="pb-10">
+              <SectionLabel>Portfolio snapshot</SectionLabel>
+              <div className="mt-6">
+                <KpiBand data={data} />
+              </div>
             </section>
 
-            <section className="border-t border-line py-16 sm:py-24">
-              <div className="mb-14 max-w-3xl">
-                <SectionTitle>Portfolio efficiency</SectionTitle>
+            <section className="border-t border-line py-14 sm:py-20">
+              <div className="mb-10 max-w-3xl">
+                <SectionLabel>Operational impact</SectionLabel>
+                <SectionTitle>Higher reach, lower spend</SectionTitle>
+                <p className="mt-5 max-w-2xl text-sm leading-7 text-muted">
+                  Comparing 2024-25 against 2025-26 across the same portfolio:
+                  participation up, documented budget down, cost per participant
+                  cut roughly in half.
+                </p>
               </div>
-              <PortfolioEfficiency data={data} />
+              <EfficiencyHero data={data} />
             </section>
 
-            <section className="border-t border-line py-16 sm:py-24">
-              <div className="mb-14 max-w-3xl">
-                <SectionTitle>Growth projection</SectionTitle>
+            <section className="border-t border-line py-14 sm:py-20">
+              <div className="mb-10 max-w-3xl">
+                <SectionLabel>Efficiency signals</SectionLabel>
+                <SectionTitle>Year-over-year deltas</SectionTitle>
               </div>
-              <GrowthProjectionChart data={data} />
+              <EfficiencySignals data={data} />
+              <p className="mt-10 max-w-3xl font-display text-2xl font-medium leading-[1.25] text-foreground sm:text-[1.75rem]">
+                {data.insight}
+              </p>
             </section>
 
-            <section className="border-t border-line py-16 sm:py-20">
-              <div className="mb-12 max-w-3xl">
-                <SectionTitle>What this supports</SectionTitle>
+            <section className="border-t border-line py-14 sm:py-18">
+              <div className="mb-10 max-w-3xl">
+                <SectionLabel>Strategic use</SectionLabel>
+                <SectionTitle>Where this gets applied</SectionTitle>
               </div>
-              <Supports data={data} />
+              <StrategicUses data={data} />
             </section>
           </main>
         </div>

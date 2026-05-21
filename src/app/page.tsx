@@ -31,11 +31,11 @@ export default function Home() {
                 <h1 className="font-display text-[clamp(4.3rem,11vw,8.1rem)] font-medium leading-[0.88] text-foreground sm:whitespace-nowrap">
                   Vivian Glenn
                 </h1>
-                <p className="mt-8 max-w-3xl font-display text-[2rem] font-medium leading-[1.04] text-foreground sm:text-[2.45rem] lg:text-[2.9rem]">
-                  “Turning complex information into clearer strategy and
-                  action.”
+                <p className="mt-10 max-w-xl text-[0.78rem] font-medium uppercase leading-6 tracking-[0.22em] text-foreground">
+                  Strategy, analytics, and operational insight for complex
+                  organizations.
                 </p>
-                <p className="mt-8 text-[0.78rem] font-medium uppercase leading-5 tracking-[0.24em] text-muted">
+                <p className="mt-5 text-[0.7rem] font-medium uppercase leading-5 tracking-[0.24em] text-quiet">
                   Public Health @ Rutgers
                 </p>
               </div>
@@ -58,7 +58,6 @@ export default function Home() {
         <Section className="py-14 sm:py-16 lg:py-20">
           <SectionHeader
             title="Selected Work"
-            copy="Selected projects spanning analytics, operations, and organizational strategy."
             titleClassName="text-4xl sm:text-5xl lg:text-6xl"
           />
           <SelectedWorkProjects

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #fbfaf7;
   --foreground: #48261d;
   --muted: rgba(72, 38, 29, 0.72);
   --quiet: rgba(72, 38, 29, 0.58);
@@ -32,6 +32,8 @@ body {
   max-width: 100%;
   overflow-x: hidden;
   color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -53,6 +55,8 @@ a {
 
 .font-display {
   font-family: var(--font-cormorant), Georgia, serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
 }
 
 .focus-ring {

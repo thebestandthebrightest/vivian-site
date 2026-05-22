@@ -6,6 +6,7 @@ import { TextLink } from "./TextLink";
 type PageShellProps = {
   children: ReactNode;
   hideBrand?: boolean;
+  hideFooter?: boolean;
 };
 
 const navItems = [
@@ -14,7 +15,11 @@ const navItems = [
   { label: "Contact", href: "/contact" },
 ];
 
-export function PageShell({ children, hideBrand = false }: PageShellProps) {
+export function PageShell({
+  children,
+  hideBrand = false,
+  hideFooter = false,
+}: PageShellProps) {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <header className="mx-auto flex w-full max-w-7xl flex-col items-start gap-5 px-6 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-7 lg:px-14 lg:py-8">
@@ -39,7 +44,7 @@ export function PageShell({ children, hideBrand = false }: PageShellProps) {
         </nav>
       </header>
       <div className="flex flex-1 flex-col">{children}</div>
-      <Footer />
+      {hideFooter ? null : <Footer />}
     </div>
   );
 }

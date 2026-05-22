@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { useRef } from "react";
+import { SmoothImage, SmoothVideo } from "./SmoothImage";
 
 export type TravelItem = {
   filename: string;
@@ -110,18 +110,20 @@ export function TravelScrollStrip({ items }: TravelScrollStripProps) {
             >
               <div className="relative aspect-[4/5] overflow-hidden bg-background">
                 {item.kind === "image" ? (
-                  <Image
+                  <SmoothImage
                     src={item.src}
                     alt={item.label}
                     fill
                     draggable={false}
                     sizes="(min-width: 1024px) 272px, (min-width: 640px) 256px, 224px"
-                    className="object-cover transition duration-700 ease-out hover:scale-[1.02]"
+                    wrapperClassName="h-full w-full"
+                    className="object-cover hover:scale-[1.02]"
                   />
                 ) : (
-                  <video
+                  <SmoothVideo
                     aria-label={item.label}
-                    className="h-full w-full object-cover transition duration-700 ease-out hover:scale-[1.02]"
+                    className="h-full w-full object-cover hover:scale-[1.02]"
+                    wrapperClassName="h-full w-full"
                     draggable={false}
                     muted
                     playsInline

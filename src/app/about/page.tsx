@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { readdirSync } from "node:fs";
 import { extname, join, parse } from "node:path";
 import { MotionReveal } from "@/components/site/MotionReveal";
 import { PageShell } from "@/components/site/PageShell";
 import { Section } from "@/components/site/Section";
+import { SmoothImage } from "@/components/site/SmoothImage";
 import {
   TravelScrollStrip,
   type TravelItem,
@@ -174,17 +174,18 @@ export default function AboutPage() {
       <main>
         <Section className="pb-14 pt-16 sm:pb-16 sm:pt-20 lg:pb-20 lg:pt-24">
           <MotionReveal>
-            <div className="grid gap-10 md:grid-cols-[minmax(20rem,26rem)_minmax(0,1fr)] md:items-start md:gap-14 lg:gap-18">
-              <Image
+            <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)] md:items-center md:gap-14 lg:gap-18">
+              <SmoothImage
                 src="/vivian-headshot.png"
                 alt="Vivian Glenn"
                 width={420}
                 height={420}
                 priority
                 sizes="(min-width: 1024px) 420px, (min-width: 768px) 38vw, 100vw"
-                className="h-auto w-full max-w-[26rem] object-contain"
+                wrapperClassName="w-full max-w-[26rem] md:order-2 md:ml-auto"
+                className="h-auto w-full object-contain"
               />
-              <div className="max-w-3xl">
+              <div className="max-w-3xl md:order-1">
                 <h1 className="font-display text-6xl font-medium leading-[0.92] text-foreground sm:text-7xl lg:text-8xl">
                   About
                 </h1>

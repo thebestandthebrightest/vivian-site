@@ -2,12 +2,17 @@
 
 import { useState } from "react";
 import { ifnhPreviewData } from "@/lib/ifnh-preview-data";
+import { pressPreviewData } from "@/lib/press-preview-data";
 import { pslPreviewData } from "@/lib/psl-preview-data";
+import { scarletWellBriefData } from "@/lib/scarletwell-preview-data";
+import { sjmsPreviewData } from "@/lib/sjms-preview-data";
 import { wellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
 import { IfnhProjectModal } from "./IfnhProjectModal";
 import { MotionReveal } from "./MotionReveal";
-import { ProjectFeature, type Project } from "./ProjectFeature";
+import type { Project } from "./ProjectFeature";
 import { PslProjectModal } from "./PslProjectModal";
+import { ScarletWellProjectModal } from "./ScarletWellProjectModal";
+import { SimpleProjectModal } from "./SimpleProjectModal";
 import { WellnessThroughClayProjectModal } from "./WellnessThroughClayProjectModal";
 
 type WorkProjectIndexProps = {
@@ -22,7 +27,7 @@ function ProjectTitle({ children }: { children: string }) {
   );
 }
 
-function OpenProjectRow({
+function ProjectRow({
   project,
   delay,
   onOpen,
@@ -52,91 +57,80 @@ function OpenProjectRow({
           <p className="text-sm leading-7 text-muted md:max-w-xl">
             {project.summary}
           </p>
-          <p className="mt-5 text-sm font-medium leading-7 text-foreground md:max-w-xl">
-            {project.impact}
-          </p>
-          <ul className="mt-6 flex flex-wrap gap-x-2 gap-y-2 text-xs leading-6 text-quiet">
-            {project.details.map((detail, index) => (
-              <li key={detail}>
-                {index > 0 ? <span className="text-line">{" / "}</span> : null}
-                {detail}
-              </li>
-            ))}
-          </ul>
-          <p className="mt-6 inline-flex items-center gap-3 text-xs font-medium leading-6 text-foreground">
-            <span>Open project</span>
-            <span aria-hidden="true" className="text-quiet">
-              +
-            </span>
-          </p>
         </div>
       </button>
     </MotionReveal>
   );
 }
 
+type ModalKey =
+  | "scarletwell"
+  | "psl"
+  | "ifnh"
+  | "wtc"
+  | "sjms"
+  | "press"
+  | null;
+
+const titleToModalKey: Record<string, Exclude<ModalKey, null>> = {
+  "ScarletWell Studio": "scarletwell",
+  "PSL Dashboard": "psl",
+  "IFNH InsightOS": "ifnh",
+  "Wellness Through Clay": "wtc",
+  "South Jersey Medical Society": "sjms",
+  Press: "press",
+};
+
 export function WorkProjectIndex({ projects }: WorkProjectIndexProps) {
-  const [isWellnessThroughClayOpen, setIsWellnessThroughClayOpen] =
-    useState(false);
-  const [isIfnhOpen, setIsIfnhOpen] = useState(false);
-  const [isPslOpen, setIsPslOpen] = useState(false);
+  const [openModal, setOpenModal] = useState<ModalKey>(null);
+  const closeModal = () => setOpenModal(null);
 
   return (
     <>
       {projects.map((project, index) => {
-        if (project.title === "Wellness Through Clay") {
-          return (
-            <OpenProjectRow
-              key={project.title}
-              project={project}
-              delay={index * 0.05}
-              onOpen={() => setIsWellnessThroughClayOpen(true)}
-            />
-          );
-        }
-        if (project.title === "IFNH InsightOS") {
-          return (
-            <OpenProjectRow
-              key={project.title}
-              project={project}
-              delay={index * 0.05}
-              onOpen={() => setIsIfnhOpen(true)}
-            />
-          );
-        }
-        if (project.title === "PSL Dashboard") {
-          return (
-            <OpenProjectRow
-              key={project.title}
-              project={project}
-              delay={index * 0.05}
-              onOpen={() => setIsPslOpen(true)}
-            />
-          );
-        }
+        const key = titleToModalKey[project.title];
         return (
-          <ProjectFeature
+          <ProjectRow
             key={project.title}
             project={project}
             delay={index * 0.05}
+            onOpen={() => setOpenModal(key ?? null)}
           />
         );
       })}
       <div className="border-t border-line" />
-      <WellnessThroughClayProjectModal
-        data={wellnessThroughClayPreviewData}
-        isOpen={isWellnessThroughClayOpen}
-        onClose={() => setIsWellnessThroughClayOpen(false)}
-      />
-      <IfnhProjectModal
-        data={ifnhPreviewData}
-        isOpen={isIfnhOpen}
-        onClose={() => setIsIfnhOpen(false)}
+
+      <ScarletWellProjectModal
+        data={scarletWellBriefData}
+        isOpen={openModal === "scarletwell"}
+        onClose={closeModal}
       />
       <PslProjectModal
         data={pslPreviewData}
-        isOpen={isPslOpen}
-        onClose={() => setIsPslOpen(false)}
+        isOpen={openModal === "psl"}
+        onClose={closeModal}
+      />
+      <IfnhProjectModal
+        data={ifnhPreviewData}
+        isOpen={openModal === "ifnh"}
+        onClose={closeModal}
+      />
+      <WellnessThroughClayProjectModal
+        data={wellnessThroughClayPreviewData}
+        isOpen={openModal === "wtc"}
+        onClose={closeModal}
+      />
+      <SimpleProjectModal
+        data={sjmsPreviewData}
+        isOpen={openModal === "sjms"}
+        onClose={closeModal}
+        labelledById="sjms-modal-title"
+      />
+      <SimpleProjectModal
+        data={pressPreviewData}
+        isOpen={openModal === "press"}
+        onClose={closeModal}
+        labelledById="press-modal-title"
       />
     </>
   );

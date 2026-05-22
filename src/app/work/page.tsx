@@ -15,10 +15,7 @@ export default function WorkPage() {
   return (
     <PageShell>
       <main>
-        <PageIntro
-          title="Work"
-          copy="A concise index of analytical tools, planning systems, dashboards, and founder-led operations work."
-        />
+        <PageIntro title="Work" />
         <Section className="pb-24 lg:pb-32">
           <WorkProjectIndex projects={projects} />
         </Section>

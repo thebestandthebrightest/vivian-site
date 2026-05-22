@@ -15,7 +15,7 @@ export const projects: Project[] = [
     ],
     visual: "compare",
     summary:
-      "Designed decision-support infrastructure for program performance, planning cycles, and AI synthesis workflows across wellness initiatives.",
+      "Analytics and planning system helping Rutgers mental health and wellness programs track impact, allocate funding, and improve program performance.",
     impact:
       "Supported clearer evaluation across 40+ wellness initiatives and a $41K+ programming budget.",
     previewDetail: "41 initiatives / $41K+ budget",
@@ -40,7 +40,7 @@ export const projects: Project[] = [
     ],
     visual: "delta",
     summary:
-      "Built a stakeholder-facing dashboard for attendance patterns, competency growth, qualitative synthesis, and recommendation workflows.",
+      "Faculty and staff dashboard translating peer leader engagement and training data into clearer outcomes, trends, and program recommendations.",
     impact:
       "Translated mixed participation and survey data into operational insight for program improvement.",
     previewDetail: "Pre/post analysis",
@@ -65,7 +65,7 @@ export const projects: Project[] = [
     ],
     visual: "funnel",
     summary:
-      "Developed an analytics interface for participation trends, capacity planning, and forecasting across institutional programming.",
+      "Campus engagement dashboard using real student participation and survey data to identify patterns, forecast needs, and guide program decisions.",
     impact:
       "Created planning infrastructure to support engagement forecasts and program design decisions.",
     previewDetail: "Survey n = 105",
@@ -90,7 +90,7 @@ export const projects: Project[] = [
     ],
     visual: "growth",
     summary:
-      "Founded and scaled a recurring creative wellness initiative focused on mindfulness, accessibility, and community engagement.",
+      "Ceramics workshops showing how data, feedback, and operations shape student wellness experiences.",
     impact:
       "Reached 250+ attendees while sustaining stable participation across repeat programming cycles.",
     details: [
@@ -98,6 +98,51 @@ export const projects: Project[] = [
       "Multi-cycle operations",
       "Grant funding",
       "Program evaluation",
+    ],
+  },
+  {
+    number: "05",
+    title: "South Jersey Medical Society",
+    descriptor: "Scholarship review system",
+    category: "Operations · Review systems",
+    outcome:
+      "Centralized scholarship review and award decisions into a single workflow.",
+    metrics: [
+      { value: "$3K", label: "in awards" },
+      { value: "1", label: "review system" },
+      { value: "—", label: "—" },
+    ],
+    visual: "delta",
+    summary:
+      "Scholarship review system for scoring applications and organizing award decisions.",
+    impact:
+      "Built a JavaScript-enabled review dashboard to centralize reviewer evaluations, automate scoring, and organize award decisions.",
+    details: [
+      "Supported $3,000 in scholarship awards",
+      "Centralized reviewer scoring",
+      "Improved review workflow clarity",
+    ],
+  },
+  {
+    number: "06",
+    title: "Press",
+    descriptor: "Selected articles and external features",
+    category: "External features",
+    outcome:
+      "External features and mentions documenting program reach and recognition.",
+    metrics: [
+      { value: "—", label: "—" },
+      { value: "—", label: "—" },
+      { value: "—", label: "—" },
+    ],
+    visual: "growth",
+    summary: "Selected articles and external features.",
+    impact:
+      "External features and mentions documenting program reach, recognition, and public-facing impact.",
+    details: [
+      "Program features",
+      "External recognition",
+      "Public-facing impact",
     ],
   },
 ];

@@ -1,97 +1,34 @@
-import Image from "next/image";
-import { ButtonLink } from "@/components/site/ButtonLink";
-import { MotionReveal } from "@/components/site/MotionReveal";
-import { PageShell } from "@/components/site/PageShell";
-import { Section } from "@/components/site/Section";
-import { SectionHeader } from "@/components/site/SectionHeader";
-import { SelectedWorkProjects } from "@/components/site/SelectedWorkProjects";
-import { ifnhPreviewData } from "@/lib/ifnh-preview-data";
-import { pslPreviewData } from "@/lib/psl-preview-data";
-import { scarletWellBriefData } from "@/lib/scarletwell-preview-data";
-import { projects } from "@/lib/site-data";
-import { wellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
+import Link from "next/link";
 
-const recognitionItems = [
-  "Incoming CDC Lewis Scholar",
-  "Deloitte Rutgers Case Competition — 2nd Place",
-  "Brown University School of Public Health",
-  "ScarletWell Strategy & Analytics",
-  "Rutgers Learning Assistant Mentor",
-  "Wellness Through Clay — 250+ participants",
+const navItems = [
+  { label: "about", href: "/about" },
+  { label: "work", href: "/work" },
+  { label: "contact", href: "/contact" },
 ];
 
 export default function Home() {
   return (
-    <PageShell hideBrand>
-      <main>
-        <Section className="pb-16 pt-10 sm:pb-20 sm:pt-14 lg:pb-24 lg:pt-14">
-          <div className="grid gap-10 lg:grid-cols-[1.12fr_0.68fr] lg:items-start lg:gap-16">
-            <MotionReveal>
-              <div className="max-w-4xl">
-                <h1 className="font-display text-[clamp(4.3rem,11vw,8.1rem)] font-medium leading-[0.88] text-foreground sm:whitespace-nowrap">
-                  Vivian Glenn
-                </h1>
-                <p className="mt-10 max-w-xl text-[0.78rem] font-medium uppercase leading-6 tracking-[0.22em] text-foreground">
-                  Strategy, analytics, and operational insight for complex
-                  organizations.
-                </p>
-                <p className="mt-5 text-[0.7rem] font-medium uppercase leading-5 tracking-[0.24em] text-quiet">
-                  Public Health @ Rutgers
-                </p>
-              </div>
-            </MotionReveal>
-            <MotionReveal delay={0.12}>
-              <div className="relative aspect-[4/5] w-full max-w-sm overflow-hidden lg:ml-auto">
-                <Image
-                  src="/vivian-headshot.png"
-                  alt="Vivian Glenn"
-                  fill
-                  priority
-                  sizes="(min-width: 1024px) 360px, 85vw"
-                  className="object-cover object-center transition duration-700 ease-out hover:scale-[1.015]"
-                />
-              </div>
-            </MotionReveal>
-          </div>
-        </Section>
-
-        <Section className="py-14 sm:py-16 lg:py-20">
-          <SectionHeader
-            title="Selected Work"
-            titleClassName="text-4xl sm:text-5xl lg:text-6xl"
-          />
-          <SelectedWorkProjects
-            projects={projects}
-            scarletWellData={scarletWellBriefData}
-            wellnessThroughClayData={wellnessThroughClayPreviewData}
-            ifnhData={ifnhPreviewData}
-            pslData={pslPreviewData}
-          />
-          <div className="pt-8 sm:pt-9">
-            <ButtonLink href="/work">View all work</ButtonLink>
-          </div>
-        </Section>
-
-        <Section className="pb-24 pt-14 sm:pb-28 sm:pt-18 lg:pb-32 lg:pt-20">
-          <MotionReveal>
-            <div className="grid gap-8 border-t border-line pt-10 md:grid-cols-[0.62fr_1.38fr] md:gap-14">
-              <h2 className="font-display text-4xl font-medium leading-[0.96] text-foreground sm:text-5xl lg:text-6xl">
-                Impact
-              </h2>
-              <div className="grid border-t border-line sm:grid-cols-2 sm:border-t-0">
-                {recognitionItems.map((item) => (
-                  <p
-                    key={item}
-                    className="border-b border-line py-4 text-sm font-medium leading-6 text-muted sm:odd:pr-8 sm:even:pl-8"
-                  >
-                    {item}
-                  </p>
-                ))}
-              </div>
-            </div>
-          </MotionReveal>
-        </Section>
-      </main>
-    </PageShell>
+    <main className="flex min-h-svh items-center justify-center bg-[#fbfaf7] px-6 py-10 text-foreground sm:px-10 lg:px-14">
+      <div className="flex w-full max-w-6xl flex-col items-center text-center">
+        <h1 className="font-display text-[clamp(3.6rem,13vw,10.5rem)] font-medium uppercase leading-[0.84] text-foreground">
+          VIVIAN GLENN
+        </h1>
+        <nav
+          className="mt-12 flex flex-col items-center gap-4 sm:mt-14 sm:gap-5"
+          aria-label="Primary navigation"
+        >
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="focus-ring group relative inline-flex px-1 py-1 text-[clamp(1.5rem,3vw,2.45rem)] font-medium lowercase leading-none text-foreground transition duration-300 ease-out hover:translate-x-1 hover:opacity-80"
+            >
+              <span>{item.label}</span>
+              <span className="absolute -bottom-1 left-1 h-px w-0 bg-foreground transition-[width] duration-300 ease-out group-hover:w-[calc(100%-0.5rem)]" />
+            </Link>
+          ))}
+        </nav>
+      </div>
+    </main>
   );
 }

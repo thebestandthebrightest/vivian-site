@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { readdirSync } from "node:fs";
 import { extname, join, parse } from "node:path";
 import { MotionReveal } from "@/components/site/MotionReveal";
-import { PageIntro } from "@/components/site/PageIntro";
 import { PageShell } from "@/components/site/PageShell";
 import { Section } from "@/components/site/Section";
 import {
@@ -172,17 +172,37 @@ export default function AboutPage() {
   return (
     <PageShell>
       <main>
-        <PageIntro title="About">
-          <p className="max-w-2xl text-base leading-8 text-muted sm:text-lg">
-            I&apos;m a Public Health student at Rutgers interested in strategy,
-            analytics, operations, and systems that help organizations make
-            clearer decisions.
-          </p>
-          <p className="mt-5 max-w-2xl text-base leading-8 text-muted sm:text-lg">
-            My work centers on translating messy information into clear tools,
-            decisions, and operating rhythms.
-          </p>
-        </PageIntro>
+        <Section className="pb-14 pt-16 sm:pb-16 sm:pt-20 lg:pb-20 lg:pt-24">
+          <MotionReveal>
+            <div className="grid gap-10 md:grid-cols-[minmax(20rem,26rem)_minmax(0,1fr)] md:items-start md:gap-14 lg:gap-18">
+              <Image
+                src="/vivian-headshot.png"
+                alt="Vivian Glenn"
+                width={420}
+                height={420}
+                priority
+                sizes="(min-width: 1024px) 420px, (min-width: 768px) 38vw, 100vw"
+                className="h-auto w-full max-w-[26rem] object-contain"
+              />
+              <div className="max-w-3xl">
+                <h1 className="font-display text-6xl font-medium leading-[0.92] text-foreground sm:text-7xl lg:text-8xl">
+                  About
+                </h1>
+                <div className="mt-10">
+                  <p className="max-w-2xl text-base leading-8 text-muted sm:text-lg">
+                    I&apos;m a Public Health student at Rutgers interested in strategy,
+                    analytics, operations, and systems that help organizations make
+                    clearer decisions.
+                  </p>
+                  <p className="mt-5 max-w-2xl text-base leading-8 text-muted sm:text-lg">
+                    My work centers on translating messy information into clear tools,
+                    decisions, and operating rhythms.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </MotionReveal>
+        </Section>
 
         <Section className="pb-16 lg:pb-20">
           <MotionReveal>

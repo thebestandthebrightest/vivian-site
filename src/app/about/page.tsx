@@ -20,7 +20,7 @@ const education = {
   school: {
     name: "Rutgers University",
     degree: "Bachelor of Science, Public Health",
-    detail: "Class of 2027 / GPA: 3.96/4.0",
+    detail: "Class of 2027 / GPA: 3.97/4.0",
   },
   honors: [
     "School of Arts & Sciences Excellence Award (2025)",

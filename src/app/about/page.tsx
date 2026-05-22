@@ -16,23 +16,21 @@ export const metadata: Metadata = {
     "About Vivian Glenn, a Public Health student at Rutgers interested in strategy, analytics, operations, and systems.",
 };
 
-const educationRows = [
-  {
-    label: "Rutgers University",
-    value: "Bachelor of Science, Public Health",
-    note: "Class of 2027 / GPA: 3.97/4.0",
+const education = {
+  school: {
+    name: "Rutgers University",
+    degree: "Bachelor of Science, Public Health",
+    detail: "Class of 2027 / GPA: 3.96/4.0",
   },
-  {
-    label: "Honors",
-    value: "School of Arts & Sciences Excellence Award",
-    note: "Dean's List, all semesters",
-  },
-  {
-    label: "Relevant coursework",
-    value: "Statistics / Calculus I / Microeconomics / Biochemistry",
-    note: "Physics / Health Disparities / Public Health Literacy",
-  },
-];
+  honors: [
+    "School of Arts & Sciences Excellence Award (2025)",
+    "Dean’s List, all semesters",
+    "ScarletWell Grant Recipient ($3,600+)",
+    "LSAMP Research Stipend ($3,000)",
+  ],
+  coursework:
+    "Statistics / Calculus I / Microeconomics / Biochemistry / Organic Chemistry / Physics / Health Disparities / Public Health Literature",
+};
 
 const researchRows = [
   {
@@ -168,34 +166,43 @@ function TravelStrip() {
   return <TravelScrollStrip items={travelItems} />;
 }
 
+const sectionGridClass =
+  "grid gap-x-16 gap-y-8 md:grid-cols-[14rem_minmax(0,1fr)] lg:grid-cols-[16rem_minmax(0,1fr)]";
+
+const sectionHeadingClass =
+  "font-display text-3xl font-medium leading-[1.05] text-foreground sm:text-[2.5rem]";
+
+const eyebrowClass =
+  "text-[0.7rem] font-medium uppercase tracking-[0.18em] text-quiet";
+
 export default function AboutPage() {
   return (
     <PageShell>
       <main>
-        <Section className="pb-14 pt-16 sm:pb-16 sm:pt-20 lg:pb-20 lg:pt-24">
+        <Section className="pb-20 pt-16 sm:pb-24 sm:pt-20 lg:pb-28 lg:pt-24">
           <MotionReveal>
-            <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)] md:items-center md:gap-14 lg:gap-18">
+            <div className="grid gap-12 md:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)] md:items-center md:gap-16 lg:gap-20">
               <SmoothImage
                 src="/vivian-headshot.png"
                 alt="Vivian Glenn"
                 width={420}
                 height={420}
                 priority
-                sizes="(min-width: 1024px) 420px, (min-width: 768px) 38vw, 100vw"
-                wrapperClassName="w-full max-w-[26rem] md:order-2 md:ml-auto"
+                sizes="(min-width: 1024px) 384px, (min-width: 768px) 36vw, 100vw"
+                wrapperClassName="w-full max-w-[24rem] md:order-2 md:ml-auto"
                 className="h-auto w-full object-contain"
               />
               <div className="max-w-3xl md:order-1">
                 <h1 className="font-display text-6xl font-medium leading-[0.92] text-foreground sm:text-7xl lg:text-8xl">
                   About
                 </h1>
-                <div className="mt-10">
+                <div className="mt-10 space-y-5">
                   <p className="max-w-2xl text-base leading-8 text-muted sm:text-lg">
                     I&apos;m a Public Health student at Rutgers interested in strategy,
                     analytics, operations, and systems that help organizations make
                     clearer decisions.
                   </p>
-                  <p className="mt-5 max-w-2xl text-base leading-8 text-muted sm:text-lg">
+                  <p className="max-w-2xl text-base leading-8 text-muted sm:text-lg">
                     My work centers on translating messy information into clear tools,
                     decisions, and operating rhythms.
                   </p>
@@ -205,55 +212,68 @@ export default function AboutPage() {
           </MotionReveal>
         </Section>
 
-        <Section className="pb-16 lg:pb-20">
+        <Section className="pb-20 lg:pb-24">
           <MotionReveal>
-            <div className="grid gap-10 border-t border-line pt-9 md:grid-cols-[0.75fr_1.45fr] md:gap-16">
-              <h2 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
-                Education
-              </h2>
+            <div className={sectionGridClass}>
               <div>
-                {educationRows.map((row) => (
-                  <div
-                    key={row.label}
-                    className="grid gap-2 border-t border-line py-5 first:border-t-0 first:pt-0 sm:grid-cols-[0.65fr_1.35fr]"
-                  >
-                    <p className="text-sm font-medium leading-7 text-foreground">
-                      {row.label}
-                    </p>
-                    <div>
-                      <p className="text-sm leading-7 text-muted">
-                        {row.value}
-                      </p>
-                      <p className="text-sm leading-7 text-quiet">{row.note}</p>
-                    </div>
-                  </div>
-                ))}
+                <p className={eyebrowClass}>01</p>
+                <h2 className={`${sectionHeadingClass} mt-3`}>Education</h2>
+              </div>
+              <div className="space-y-10">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium leading-7 text-foreground">
+                    {education.school.name}
+                  </p>
+                  <p className="text-sm leading-7 text-muted">
+                    {education.school.degree}
+                  </p>
+                  <p className="text-sm leading-7 text-quiet">
+                    {education.school.detail}
+                  </p>
+                </div>
+
+                <div>
+                  <p className={eyebrowClass}>Honors &amp; Awards</p>
+                  <ul className="mt-3 space-y-1 text-sm leading-7 text-muted">
+                    {education.honors.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <p className={eyebrowClass}>Relevant coursework</p>
+                  <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">
+                    {education.coursework}
+                  </p>
+                </div>
               </div>
             </div>
           </MotionReveal>
         </Section>
 
-        <Section className="pb-16 lg:pb-20">
+        <Section className="pb-20 lg:pb-24">
           <MotionReveal>
-            <div className="grid gap-10 border-t border-line pt-9 md:grid-cols-[0.75fr_1.45fr] md:gap-16">
-              <h2 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
-                Research & Writing
-              </h2>
+            <div className={sectionGridClass}>
               <div>
+                <p className={eyebrowClass}>02</p>
+                <h2 className={`${sectionHeadingClass} mt-3`}>
+                  Research &amp; Writing
+                </h2>
+              </div>
+              <div className="space-y-9">
                 {researchRows.map((row) => (
                   <article
                     key={row.organization}
-                    className="grid gap-2 border-t border-line py-5 first:border-t-0 first:pt-0 sm:grid-cols-[0.75fr_1.25fr]"
+                    className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] sm:gap-10"
                   >
                     <div>
                       <h3 className="text-sm font-medium leading-7 text-foreground">
                         {row.organization}
                       </h3>
-                      <p className="text-sm leading-7 text-quiet">
-                        {row.role}
-                      </p>
+                      <p className="text-sm leading-7 text-quiet">{row.role}</p>
                     </div>
-                    <p className="text-sm leading-7 text-muted">
+                    <p className="max-w-xl text-sm leading-7 text-muted">
                       {row.description}
                     </p>
                   </article>
@@ -263,27 +283,20 @@ export default function AboutPage() {
           </MotionReveal>
         </Section>
 
-        <Section className="pb-12 lg:pb-16">
+        <Section className="pb-20 lg:pb-24">
           <MotionReveal>
-            <div className="grid gap-10 border-t border-line pt-9 md:grid-cols-[0.75fr_1.45fr] md:gap-16">
-              <h2 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
-                Capabilities
-              </h2>
-              <div className="grid gap-x-12 gap-y-7 sm:grid-cols-2 sm:gap-y-9">
-                {capabilities.map((group, index) => (
-                  <div
-                    key={group.title}
-                    className={[
-                      "pb-5 lg:pb-6",
-                      index < 2
-                        ? "pt-0"
-                        : "border-t border-line pt-5 lg:pt-6",
-                    ].join(" ")}
-                  >
+            <div className={sectionGridClass}>
+              <div>
+                <p className={eyebrowClass}>03</p>
+                <h2 className={`${sectionHeadingClass} mt-3`}>Capabilities</h2>
+              </div>
+              <div className="grid gap-x-12 gap-y-9 sm:grid-cols-2">
+                {capabilities.map((group) => (
+                  <div key={group.title}>
                     <h3 className="text-sm font-medium leading-7 text-foreground">
                       {group.title}
                     </h3>
-                    <ul className="mt-3 grid gap-2 text-sm leading-7 text-muted">
+                    <ul className="mt-2 space-y-1 text-sm leading-7 text-muted">
                       {group.items.map((item) => (
                         <li key={item}>{item}</li>
                       ))}
@@ -297,12 +310,17 @@ export default function AboutPage() {
 
         <Section className="pb-24 lg:pb-28">
           <MotionReveal>
-            <div className="grid gap-6 border-t border-line pt-8 lg:gap-7 lg:pt-9">
-              <div className="grid md:grid-cols-[0.75fr_1.45fr] md:gap-16">
-                <h2 className="font-display text-4xl font-medium leading-none text-foreground sm:text-5xl">
-                  Travel
-                </h2>
+            <div className={sectionGridClass}>
+              <div>
+                <p className={eyebrowClass}>04</p>
+                <h2 className={`${sectionHeadingClass} mt-3`}>Travel</h2>
               </div>
+              <p className="max-w-xl text-sm leading-7 text-muted">
+                A running record of the places that have shaped how I see systems,
+                people, and pace.
+              </p>
+            </div>
+            <div className="mt-10 lg:mt-12">
               <TravelStrip />
             </div>
           </MotionReveal>

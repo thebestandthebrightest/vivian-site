@@ -65,11 +65,13 @@ export function HomeNavigation() {
   };
 
   const handleWorkClick = () => {
-    setIsWorkOpen((current) => {
-      const next = !current;
-      setIsWorkPinned(next);
-      return next;
-    });
+    if (isWorkPinned) {
+      closeWorkMenu();
+      return;
+    }
+
+    setIsWorkOpen(true);
+    setIsWorkPinned(true);
   };
 
   useEffect(() => {
@@ -122,6 +124,12 @@ export function HomeNavigation() {
             <div
               ref={workMenuRef}
               className="relative flex justify-center"
+              onMouseEnter={() => setIsWorkOpen(true)}
+              onMouseLeave={() => {
+                if (!isWorkPinned) {
+                  setIsWorkOpen(false);
+                }
+              }}
               onPointerEnter={handleWorkPointerEnter}
               onPointerLeave={handleWorkPointerLeave}
             >

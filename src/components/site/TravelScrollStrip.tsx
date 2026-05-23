@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { SmoothImage, SmoothVideo } from "./SmoothImage";
 
 export type TravelItem = {
@@ -16,11 +16,67 @@ type TravelScrollStripProps = {
 
 export function TravelScrollStrip({ items }: TravelScrollStripProps) {
   const stripRef = useRef<HTMLDivElement>(null);
+  const isHoveringRef = useRef(false);
+  const positionRef = useRef(0);
   const dragRef = useRef({
     active: false,
     scrollLeft: 0,
     startX: 0,
   });
+  const loopedItems = useMemo(
+    () => [...items, ...items].map((item, index) => ({ ...item, loopIndex: index })),
+    [items],
+  );
+
+  useEffect(() => {
+    const strip = stripRef.current;
+    if (!strip || items.length === 0) {
+      return;
+    }
+
+    let frameId = 0;
+    let previousTimestamp = 0;
+    const baseDistance = () => strip.scrollWidth / 2;
+    const normalizePosition = () => {
+      const distance = baseDistance();
+      if (distance <= 0) {
+        return;
+      }
+
+      while (positionRef.current >= distance) {
+        positionRef.current -= distance;
+      }
+
+      while (positionRef.current < 0) {
+        positionRef.current += distance;
+      }
+    };
+
+    const tick = (timestamp: number) => {
+      if (previousTimestamp === 0) {
+        previousTimestamp = timestamp;
+      }
+
+      const elapsed = timestamp - previousTimestamp;
+      previousTimestamp = timestamp;
+
+      if (!dragRef.current.active && !isHoveringRef.current) {
+        const speed = 0.045;
+
+        positionRef.current += elapsed * speed;
+        normalizePosition();
+        strip.scrollLeft = positionRef.current;
+      }
+
+      frameId = window.requestAnimationFrame(tick);
+    };
+
+    positionRef.current = 0;
+    strip.scrollLeft = 0;
+    frameId = window.requestAnimationFrame(tick);
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [items]);
 
   const startDrag = (clientX: number) => {
     const strip = stripRef.current;
@@ -41,8 +97,19 @@ export function TravelScrollStrip({ items }: TravelScrollStripProps) {
       return;
     }
 
-    strip.scrollLeft =
+    const distance = strip.scrollWidth / 2;
+    positionRef.current =
       dragRef.current.scrollLeft - (clientX - dragRef.current.startX);
+    if (distance > 0) {
+      while (positionRef.current >= distance) {
+        positionRef.current -= distance;
+      }
+
+      while (positionRef.current < 0) {
+        positionRef.current += distance;
+      }
+    }
+    strip.scrollLeft = positionRef.current;
   };
 
   const stopDrag = () => {
@@ -61,8 +128,15 @@ export function TravelScrollStrip({ items }: TravelScrollStripProps) {
 
       <div
         ref={stripRef}
-        className="relative w-full min-w-0 cursor-grab select-none overflow-x-auto scroll-smooth active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="relative w-full min-w-0 cursor-grab select-none overflow-x-auto active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         aria-label="Travel image strip"
+        onMouseEnter={() => {
+          isHoveringRef.current = true;
+        }}
+        onMouseLeave={() => {
+          isHoveringRef.current = false;
+          stopDrag();
+        }}
         onMouseDown={(event) => {
           if (event.button !== 0) {
             return;
@@ -83,7 +157,6 @@ export function TravelScrollStrip({ items }: TravelScrollStripProps) {
           window.addEventListener("mouseup", handleMouseUp, { once: true });
         }}
         onDragStart={(event) => event.preventDefault()}
-        onMouseLeave={stopDrag}
         onMouseMove={(event) => moveDrag(event.clientX)}
         onMouseUp={stopDrag}
         onPointerCancel={stopDrag}
@@ -103,10 +176,11 @@ export function TravelScrollStrip({ items }: TravelScrollStripProps) {
         }}
       >
         <div className="flex w-max gap-5">
-          {items.map((item) => (
+          {loopedItems.map((item) => (
             <figure
-              key={item.filename}
-              className="w-[14rem] flex-none sm:w-[16rem] lg:w-[17rem]"
+              key={`${item.filename}-${item.loopIndex}`}
+              aria-hidden={item.loopIndex >= items.length}
+              className="group w-[14rem] flex-none sm:w-[16rem] lg:w-[17rem]"
             >
               <div className="relative aspect-[4/5] overflow-hidden bg-background">
                 {item.kind === "image" ? (
@@ -117,12 +191,12 @@ export function TravelScrollStrip({ items }: TravelScrollStripProps) {
                     draggable={false}
                     sizes="(min-width: 1024px) 272px, (min-width: 640px) 256px, 224px"
                     wrapperClassName="h-full w-full"
-                    className="object-cover hover:scale-[1.02]"
+                    className="object-cover group-hover:scale-[1.02] hover:scale-[1.02]"
                   />
                 ) : (
                   <SmoothVideo
                     aria-label={item.label}
-                    className="h-full w-full object-cover hover:scale-[1.02]"
+                    className="h-full w-full object-cover group-hover:scale-[1.02] hover:scale-[1.02]"
                     wrapperClassName="h-full w-full"
                     draggable={false}
                     muted

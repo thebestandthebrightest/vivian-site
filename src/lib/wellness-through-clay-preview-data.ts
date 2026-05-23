@@ -7,7 +7,7 @@ export const wellnessThroughClayPreviewData = {
   title: "Wellness Through Clay",
   subtitle: "Founder-led wellness initiative",
   summary:
-    "Founded and scaled a recurring creative wellness initiative focused on mindfulness, accessibility, and community engagement.",
+    "Founded and scaled a recurring creative wellness initiative focused on mindfulness, accessibility, and low-pressure student connection.",
   context: "Three cycles · 18 sessions · 250+ cumulative attendees.",
   kpis: [
     { label: "Cumulative attendees", value: "250+" },
@@ -19,9 +19,9 @@ export const wellnessThroughClayPreviewData = {
   cumulativeGrowth: {
     label: "Cumulative attendees by cycle",
     points: [
-      { cycle: "Spring 2025", value: 128 },
-      { cycle: "Summer 2025", value: 150 },
-      { cycle: "2025-2026", value: 264 },
+      { cycle: "Spring 2025", value: 128, displayValue: "128" },
+      { cycle: "Summer 2025", value: 150, displayValue: "150" },
+      { cycle: "2025-2026", value: 264, displayValue: "250+" },
     ],
   },
   stability: {

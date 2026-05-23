@@ -2,7 +2,14 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import type { IfnhPreviewData } from "@/lib/ifnh-preview-data";
-import { ModalSectionLabel, ProjectModalShell } from "./ProjectModalShell";
+import {
+  KpiStrip,
+  ModalIcon,
+  ModalSectionLabel,
+  ModalTabs,
+  ProjectModalShell,
+  SkillsImpactColumns,
+} from "./ProjectModalShell";
 
 type IfnhProjectModalProps = {
   data: IfnhPreviewData;
@@ -20,6 +27,13 @@ const TABS: Array<{ id: TabId; label: string }> = [
   { id: "recommendation", label: "Recommendation" },
 ];
 
+const FLOW = [
+  { icon: "clipboard" as const, label: "Survey responses" },
+  { icon: "bar-chart" as const, label: "Engagement gap" },
+  { icon: "sliders" as const, label: "Scenario model" },
+  { icon: "target" as const, label: "Recommended action" },
+];
+
 export function IfnhProjectModal({
   data,
   isOpen,
@@ -28,10 +42,10 @@ export function IfnhProjectModal({
   const [tab, setTab] = useState<TabId>("overview");
 
   const kpis = [
-    { label: "Survey responses", value: "105" },
-    { label: "Regular visitors", value: "78%" },
-    { label: "Open to meeting", value: "67%" },
-    { label: "Met someone new", value: "37%" },
+    { label: "Survey responses", value: "105", icon: "clipboard" as const },
+    { label: "Regular visitors", value: "78%", icon: "calendar-check" as const },
+    { label: "Open to meeting", value: "67%", icon: "users" as const },
+    { label: "Met someone new", value: "37%", icon: "message-square" as const },
   ];
 
   return (
@@ -43,72 +57,72 @@ export function IfnhProjectModal({
       summary="A campus engagement dashboard using student participation and survey data to identify patterns, forecast needs, and guide program decisions."
     >
       <section>
-        <div className="border-y border-line py-7">
-          <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
-            {kpis.map((item) => (
-              <div key={item.label}>
-                <p className="font-display text-4xl font-medium leading-none text-foreground lg:text-[2.75rem]">
-                  {item.value}
-                </p>
-                <p className="mt-2 text-[0.7rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
-                  {item.label}
-                </p>
-              </div>
-            ))}
-          </div>
+        <ModalSectionLabel>Impact snapshot</ModalSectionLabel>
+        <div className="mt-4">
+          <KpiStrip items={kpis} />
         </div>
       </section>
 
-      <Tabs current={tab} onChange={setTab} />
+      <section>
+        <ModalSectionLabel>Data to decision</ModalSectionLabel>
+        <div className="mt-5">
+          <InsightFlow />
+        </div>
+      </section>
 
-      {tab === "overview" ? <OverviewTab data={data} /> : null}
-      {tab === "scenario" ? <ScenarioLabTab data={data} /> : null}
-      {tab === "insights" ? <StudentInsightsTab /> : null}
-      {tab === "recommendation" ? <RecommendationTab /> : null}
+      <section>
+        <ModalTabs
+          items={TABS}
+          active={tab}
+          onChange={setTab}
+          ariaLabel="IFNH InsightOS sections"
+          idPrefix="ifnh"
+        />
+
+        <div
+          className="mt-7"
+          role="tabpanel"
+          id={`ifnh-panel-${tab}`}
+          aria-labelledby={`ifnh-tab-${tab}`}
+        >
+          {tab === "overview" ? <OverviewTab data={data} /> : null}
+          {tab === "scenario" ? <ScenarioLabTab data={data} /> : null}
+          {tab === "insights" ? <StudentInsightsTab /> : null}
+          {tab === "recommendation" ? <RecommendationTab /> : null}
+        </div>
+      </section>
 
       <SkillsImpactSection />
     </ProjectModalShell>
   );
 }
 
-// ── Tabs ──────────────────────────────────────────────────────────────────────
-
-function Tabs({
-  current,
-  onChange,
-}: {
-  current: TabId;
-  onChange: (id: TabId) => void;
-}) {
+function InsightFlow() {
   return (
-    <div
-      role="tablist"
-      aria-label="IFNH InsightOS sections"
-      className="-mx-6 overflow-x-auto border-b border-line px-6 sm:-mx-10 sm:px-10 lg:-mx-12 lg:px-12"
-    >
-      <div className="flex min-w-max items-end gap-7">
-        {TABS.map((t) => {
-          const active = t.id === current;
-          return (
-            <button
-              key={t.id}
-              role="tab"
-              type="button"
-              aria-selected={active}
-              onClick={() => onChange(t.id)}
-              className="focus-ring relative -mb-px py-3 text-xs font-medium uppercase leading-5 tracking-[0.18em] transition motion-reduce:transition-none"
-              style={{
-                color: active ? "var(--foreground)" : "var(--quiet)",
-                borderBottom: active
-                  ? "1.5px solid var(--foreground)"
-                  : "1.5px solid transparent",
-              }}
-            >
-              {t.label}
-            </button>
-          );
-        })}
-      </div>
+    <div className="flex flex-col gap-3 lg:flex-row lg:items-stretch">
+      {FLOW.map((step, index) => (
+        <div key={step.label} className="flex flex-1 items-stretch gap-3">
+          <div
+            className="flex flex-1 items-center gap-3 border border-line px-4 py-4"
+            style={
+              index === FLOW.length - 1
+                ? { borderColor: "var(--sage-line)", background: "var(--sage-soft)" }
+                : { background: "var(--background)" }
+            }
+          >
+            <ModalIcon name={step.icon} className="h-4 w-4 shrink-0 text-quiet" />
+            <p className="text-[0.95rem] font-medium leading-6 text-foreground">
+              {step.label}
+            </p>
+          </div>
+          {index < FLOW.length - 1 ? (
+            <div aria-hidden="true" className="flex items-center text-quiet">
+              <span className="lg:hidden">↓</span>
+              <ModalIcon name="arrow-right" className="hidden h-4 w-4 lg:block" />
+            </div>
+          ) : null}
+        </div>
+      ))}
     </div>
   );
 }
@@ -138,7 +152,7 @@ function OverviewTab({ data }: { data: IfnhPreviewData }) {
                       : "1px solid var(--line)",
                   }}
                 >
-                  <p className="text-xs font-medium leading-5 text-foreground sm:text-sm">
+                  <p className="text-sm font-medium leading-5 text-foreground">
                     {step.label}
                   </p>
                   <p className="font-display text-2xl font-medium leading-none text-foreground sm:text-3xl">
@@ -156,9 +170,9 @@ function OverviewTab({ data }: { data: IfnhPreviewData }) {
           >
             30-point
           </p>
-          <p className="text-sm leading-5 text-muted">connection gap</p>
+          <p className="text-[0.95rem] leading-6 text-muted">connection gap</p>
         </div>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
+        <p className="mt-3 max-w-2xl text-[0.95rem] leading-7 text-muted">
           Interest was present, but the environment did not consistently
           convert openness into interaction.
         </p>
@@ -187,7 +201,7 @@ function OverviewTab({ data }: { data: IfnhPreviewData }) {
           >
             +{data.capacity.overage}
           </p>
-          <p className="text-sm leading-5 text-muted">
+          <p className="text-[0.95rem] leading-6 text-muted">
             seat shortfall at peak
           </p>
         </div>
@@ -209,7 +223,7 @@ function CapacityRow({
 }) {
   return (
     <div className="grid grid-cols-[minmax(9rem,12rem)_1fr_3rem] items-center gap-4">
-      <p className="text-xs font-medium leading-5 text-foreground">{label}</p>
+      <p className="text-sm font-medium leading-6 text-foreground">{label}</p>
       <div className="h-3 bg-foreground/[0.05]">
         <div
           className="h-full transition-all duration-500"
@@ -217,7 +231,7 @@ function CapacityRow({
           aria-hidden="true"
         />
       </div>
-      <p className="text-right text-xs font-medium leading-5 text-foreground">
+      <p className="text-right text-sm font-medium leading-5 text-foreground">
         {value}
       </p>
     </div>
@@ -316,7 +330,7 @@ function ScenarioLabTab({ data }: { data: IfnhPreviewData }) {
           style={{ background: "var(--sage-soft)" }}
         >
           <div>
-            <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+            <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
               Recommended strategy
             </p>
             <p className="mt-2 font-display text-2xl font-medium leading-tight text-foreground sm:text-[1.65rem]">
@@ -328,14 +342,14 @@ function ScenarioLabTab({ data }: { data: IfnhPreviewData }) {
             <ScenarioStat label="Seating fit" value={seatingFit} />
             <ScenarioStat label="Effort" value={effort} />
           </div>
-          <p className="text-sm leading-6 text-muted">{rationale}</p>
+          <p className="text-[0.95rem] leading-7 text-muted">{rationale}</p>
         </div>
       </div>
 
       <div className="mt-10 overflow-x-auto">
         <table className="w-full min-w-[36rem] border-collapse text-left">
           <thead>
-            <tr className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+            <tr className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
               <th className="border-b border-line pb-3 pr-4 font-medium">
                 Scenario
               </th>
@@ -373,7 +387,7 @@ function ScenarioLabTab({ data }: { data: IfnhPreviewData }) {
               return (
                 <tr
                   key={s.name}
-                  className="text-sm leading-5 text-foreground"
+                  className="text-[0.95rem] leading-6 text-foreground"
                   style={
                     isRecommended
                       ? { background: "var(--sage-soft)" }
@@ -385,7 +399,7 @@ function ScenarioLabTab({ data }: { data: IfnhPreviewData }) {
                       <span className="font-medium">{s.name}</span>
                       {isRecommended ? (
                         <span
-                          className="text-[0.6rem] font-medium uppercase leading-4 tracking-[0.16em]"
+                          className="text-[0.72rem] font-medium uppercase leading-4 tracking-[0.14em]"
                           style={{ color: "rgba(72,38,29,0.7)" }}
                         >
                           Recommended
@@ -428,8 +442,9 @@ function SliderControl({
   return (
     <div>
       <div className="flex items-baseline justify-between">
-        <label className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-          {label}
+        <label className="inline-flex items-center gap-1.5 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+          <ModalIcon name="sliders" className="h-4 w-4" />
+          <span>{label}</span>
         </label>
         <span className="font-display text-2xl font-medium leading-none text-foreground">
           {value}
@@ -445,7 +460,7 @@ function SliderControl({
         style={{ accentColor: "var(--accent)" }}
         aria-label={label}
       />
-      <div className="mt-1 flex justify-between text-[0.65rem] uppercase leading-5 tracking-[0.16em] text-quiet">
+      <div className="mt-1 flex justify-between text-[0.75rem] uppercase leading-5 tracking-[0.14em] text-quiet">
         <span>{min}</span>
         <span>{max}</span>
       </div>
@@ -465,8 +480,9 @@ function SegmentedControl({
   const options: Level[] = ["Low", "Medium", "High"];
   return (
     <div>
-      <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-        {label}
+      <p className="inline-flex items-center gap-1.5 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+        <ModalIcon name="target" className="h-4 w-4" />
+        <span>{label}</span>
       </p>
       <div
         role="radiogroup"
@@ -482,7 +498,7 @@ function SegmentedControl({
               role="radio"
               aria-checked={active}
               onClick={() => onChange(opt)}
-              className="focus-ring px-3 py-1.5 text-xs font-medium leading-5 transition motion-reduce:transition-none sm:px-4"
+              className="focus-ring px-3 py-1.5 text-sm font-medium leading-5 transition motion-reduce:transition-none sm:px-4"
               style={{
                 background: active ? "var(--foreground)" : "transparent",
                 color: active ? "var(--background)" : "var(--foreground)",
@@ -502,7 +518,7 @@ function SegmentedControl({
 function ScenarioStat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-[0.6rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+      <p className="text-[0.72rem] font-medium uppercase leading-5 tracking-[0.14em] text-quiet">
         {label}
       </p>
       <p className="mt-1 text-sm font-medium leading-5 text-foreground">
@@ -514,7 +530,7 @@ function ScenarioStat({ label, value }: { label: string; value: string }) {
 
 function Tag({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center border border-line px-2 py-1 text-[0.7rem] font-medium uppercase leading-4 tracking-[0.12em] text-foreground">
+    <span className="inline-flex items-center border border-line px-2 py-1 text-[0.75rem] font-medium uppercase leading-4 tracking-[0.12em] text-foreground">
       {children}
     </span>
   );
@@ -558,7 +574,7 @@ function StudentInsightsTab() {
   return (
     <section>
       <ModalSectionLabel>Student insights</ModalSectionLabel>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
+      <p className="mt-3 max-w-2xl text-[0.95rem] leading-7 text-muted">
         Qualitative themes synthesized from open-text responses and behavior
         patterns in the survey.
       </p>
@@ -577,7 +593,7 @@ function StudentInsightsTab() {
               </div>
               <SignalMeter level={theme.signal} />
             </div>
-            <p className="text-sm leading-6 text-muted">{theme.body}</p>
+            <p className="text-[0.95rem] leading-7 text-muted">{theme.body}</p>
           </article>
         ))}
       </div>
@@ -589,7 +605,7 @@ function SignalMeter({ level }: { level: "High signal" | "Medium signal" }) {
   const filled = level === "High signal" ? 3 : 2;
   return (
     <div className="flex items-center gap-2">
-      <span className="text-[0.6rem] font-medium uppercase leading-4 tracking-[0.16em] text-quiet">
+      <span className="text-[0.72rem] font-medium uppercase leading-4 tracking-[0.14em] text-quiet">
         {level}
       </span>
       <div className="flex items-center gap-1" aria-hidden="true">
@@ -645,7 +661,7 @@ function RecommendationTab() {
               <h3 className="font-display text-xl font-medium leading-tight text-foreground">
                 {step.title}
               </h3>
-              <p className="mt-2 text-sm leading-6 text-muted">{step.body}</p>
+              <p className="mt-2 text-[0.95rem] leading-7 text-muted">{step.body}</p>
             </div>
           </li>
         ))}
@@ -655,13 +671,13 @@ function RecommendationTab() {
         className="mt-10 border border-line p-5 sm:p-6"
         style={{ background: "var(--sage-soft)" }}
       >
-        <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+        <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
           Recommended scenario
         </p>
         <p className="mt-2 font-display text-2xl font-medium leading-tight text-foreground sm:text-[1.65rem]">
           Seating + programming test
         </p>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
+        <p className="mt-3 max-w-2xl text-[0.95rem] leading-7 text-muted">
           This option addresses both the +30 seat shortfall and the 30-point
           connection gap.
         </p>
@@ -704,45 +720,19 @@ const IMPACTS: Array<{ title: string; body: string }> = [
 
 function SkillsImpactSection() {
   return (
-    <section>
-      <ModalSectionLabel>Analysis to action</ModalSectionLabel>
-      <div className="mt-6 grid gap-10 border-t border-line pt-6 lg:grid-cols-2 lg:gap-12">
-        <div>
-          <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-            Skills used
-          </p>
-          <ul className="mt-4 space-y-4">
-            {SKILLS.map((s) => (
-              <li key={s.title} className="border-t border-line pt-3">
-                <p className="text-sm font-medium leading-5 text-foreground">
-                  {s.title}
-                </p>
-                <p className="mt-1 text-sm leading-6 text-muted">{s.body}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-            Impact created
-          </p>
-          <ul className="mt-4 space-y-4">
-            {IMPACTS.map((s) => (
-              <li
-                key={s.title}
-                className="border-t pt-3"
-                style={{ borderColor: "var(--accent)" }}
-              >
-                <p className="text-sm font-medium leading-5 text-foreground">
-                  {s.title}
-                </p>
-                <p className="mt-1 text-sm leading-6 text-muted">{s.body}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </section>
+    <SkillsImpactColumns
+      accent="accent"
+      skills={SKILLS.map((item, index) => ({
+        title: item.title,
+        detail: item.body,
+        icon: (["clipboard", "sliders", "target"] as const)[index],
+      }))}
+      impact={IMPACTS.map((item, index) => ({
+        title: item.title,
+        detail: item.body,
+        icon: (["bar-chart", "monitor", "check-circle"] as const)[index],
+      }))}
+    />
   );
 }
 

@@ -3,6 +3,7 @@
 import {
   type KeyboardEvent,
   type ReactNode,
+  type SVGProps,
   useEffect,
   useRef,
 } from "react";
@@ -103,7 +104,7 @@ export function ProjectModalShell({
           <header className="grid gap-6 pb-10 pt-6 lg:grid-cols-[1fr_0.9fr] lg:items-end lg:gap-10">
             <div>
               {eyebrow ? (
-                <p className="mb-3 text-[0.65rem] font-medium uppercase leading-5 tracking-[0.22em] text-quiet">
+                <p className="mb-3 text-[0.72rem] font-medium uppercase leading-5 tracking-[0.2em] text-quiet">
                   {eyebrow}
                 </p>
               ) : null}
@@ -128,14 +129,268 @@ export function ProjectModalShell({
 
 export function ModalSectionLabel({ children }: { children: ReactNode }) {
   return (
-    <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.22em] text-quiet">
+    <p className="text-[0.72rem] font-medium uppercase leading-5 tracking-[0.2em] text-quiet">
       {children}
     </p>
   );
 }
 
+export type ModalIconName =
+  | "arrow-right"
+  | "bar-chart"
+  | "calendar-check"
+  | "check-circle"
+  | "clipboard"
+  | "database"
+  | "layers"
+  | "message-square"
+  | "monitor"
+  | "sliders"
+  | "target"
+  | "users"
+  | "wallet";
+
+const MODAL_ICON_PATHS: Record<ModalIconName, ReactNode> = {
+  "arrow-right": (
+    <>
+      <path d="M5 12h14" />
+      <path d="m13 6 6 6-6 6" />
+    </>
+  ),
+  "bar-chart": (
+    <>
+      <path d="M3 3v18h18" />
+      <path d="M7 16v-4M12 16V8M17 16v-6" />
+    </>
+  ),
+  "calendar-check": (
+    <>
+      <rect x="3" y="4.5" width="18" height="16" rx="1.5" />
+      <path d="M8 3v3M16 3v3M3 9.5h18" />
+      <path d="m9 14 2 2 4-4" />
+    </>
+  ),
+  "check-circle": (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="m8.5 12.5 2.25 2.25 4.75-5" />
+    </>
+  ),
+  clipboard: (
+    <>
+      <rect x="6" y="4.5" width="12" height="16" rx="1.5" />
+      <path d="M9 4.5V3.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" />
+      <path d="M9 11h6M9 14.5h6M9 18h4" />
+    </>
+  ),
+  database: (
+    <>
+      <ellipse cx="12" cy="5.5" rx="8" ry="2.5" />
+      <path d="M4 5.5v6c0 1.4 3.6 2.5 8 2.5s8-1.1 8-2.5v-6" />
+      <path d="M4 11.5v6c0 1.4 3.6 2.5 8 2.5s8-1.1 8-2.5v-6" />
+    </>
+  ),
+  layers: (
+    <>
+      <path d="m12 3 8 4.5-8 4.5-8-4.5z" />
+      <path d="m4 12 8 4.5 8-4.5" />
+      <path d="m4 16.5 8 4.5 8-4.5" />
+    </>
+  ),
+  "message-square": <path d="M4 5.5h16v11H10.5L7 20v-3.5H4z" />,
+  monitor: (
+    <>
+      <rect x="3.5" y="4.5" width="17" height="12" rx="1.5" />
+      <path d="M9 20h6M12 16.5V20" />
+      <path d="M8 12.5v-3M12 12.5v-5M16 12.5v-4" />
+    </>
+  ),
+  sliders: (
+    <>
+      <path d="M4 6h6M14 6h6M4 12h10M18 12h2M4 18h3M11 18h9" />
+      <circle cx="12" cy="6" r="2" />
+      <circle cx="16" cy="12" r="2" />
+      <circle cx="9" cy="18" r="2" />
+    </>
+  ),
+  target: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="4.5" />
+      <path d="M12 3v3M21 12h-3M12 21v-3M3 12h3" />
+    </>
+  ),
+  users: (
+    <>
+      <circle cx="9" cy="8" r="3" />
+      <path d="M3.5 20a5.5 5.5 0 0 1 11 0" />
+      <circle cx="16.5" cy="9" r="2.5" />
+      <path d="M16 14.5a4.5 4.5 0 0 1 4.5 4.5" />
+    </>
+  ),
+  wallet: (
+    <>
+      <path d="M4 7.5h15a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 19 19.5H5.5A2.5 2.5 0 0 1 3 17V7a2.5 2.5 0 0 1 2.5-2.5H18" />
+      <path d="M16.5 13.5h4" />
+      <path d="M7 9.5h4" />
+    </>
+  ),
+};
+
+export function ModalIcon({
+  name,
+  className = "h-4 w-4",
+  ...rest
+}: { name: ModalIconName } & SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.45}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+      {...rest}
+    >
+      {MODAL_ICON_PATHS[name]}
+    </svg>
+  );
+}
+
+type ModalTabsProps<T extends string> = {
+  items: Array<{ id: T; label: string }>;
+  active: T;
+  onChange: (id: T) => void;
+  ariaLabel: string;
+  idPrefix: string;
+};
+
+export function ModalTabs<T extends string>({
+  items,
+  active,
+  onChange,
+  ariaLabel,
+  idPrefix,
+}: ModalTabsProps<T>) {
+  return (
+    <div role="tablist" aria-label={ariaLabel} className="overflow-x-auto border-b border-line">
+      <div className="flex min-w-max gap-7 lg:min-w-0 lg:flex-wrap">
+        {items.map((item) => {
+          const isActive = item.id === active;
+          return (
+            <button
+              key={item.id}
+              id={`${idPrefix}-tab-${item.id}`}
+              role="tab"
+              type="button"
+              aria-selected={isActive}
+              aria-controls={`${idPrefix}-panel-${item.id}`}
+              onClick={() => onChange(item.id)}
+              className="focus-ring relative -mb-px py-3 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] transition hover:opacity-100 motion-reduce:transition-none"
+              style={{
+                color: isActive ? "var(--foreground)" : "var(--quiet)",
+                borderBottom: isActive
+                  ? "1.5px solid var(--foreground)"
+                  : "1.5px solid transparent",
+              }}
+            >
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export type ModalListItem = {
+  title: string;
+  detail?: string;
+  icon?: ModalIconName;
+};
+
+export function SkillsImpactColumns({
+  skills,
+  impact,
+  accent = "sage",
+}: {
+  skills: ModalListItem[];
+  impact: ModalListItem[];
+  accent?: "sage" | "accent";
+}) {
+  const impactBorder = accent === "accent" ? "var(--accent)" : "var(--sage-line)";
+
+  return (
+    <section className="border-t border-line pt-10">
+      <div className="grid gap-10 lg:grid-cols-[1fr_auto_1fr] lg:items-start lg:gap-12">
+        <ModalListColumn heading="Skills used" items={skills} />
+        <div
+          aria-hidden="true"
+          className="hidden self-stretch text-quiet lg:flex lg:items-center"
+        >
+          <ModalIcon name="arrow-right" className="h-5 w-5" />
+        </div>
+        <ModalListColumn
+          heading="Impact created"
+          items={impact}
+          borderColor={impactBorder}
+        />
+      </div>
+    </section>
+  );
+}
+
+function ModalListColumn({
+  heading,
+  items,
+  borderColor = "var(--line)",
+}: {
+  heading: string;
+  items: ModalListItem[];
+  borderColor?: string;
+}) {
+  return (
+    <div>
+      <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+        {heading}
+      </p>
+      <ul className="mt-5 space-y-5">
+        {items.map((item) => (
+          <li key={item.title} className="border-t pt-4" style={{ borderColor }}>
+            <div className="flex items-start gap-2.5">
+              {item.icon ? (
+                <ModalIcon
+                  name={item.icon}
+                  className="mt-0.5 h-4 w-4 shrink-0 text-quiet"
+                />
+              ) : null}
+              <div>
+                <p className="text-[0.95rem] font-medium leading-6 text-foreground">
+                  {item.title}
+                </p>
+                {item.detail ? (
+                  <p className="mt-1.5 text-sm leading-6 text-muted">
+                    {item.detail}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 type KpiStripProps = {
-  items: Array<{ label: string; value: string; highlight?: boolean }>;
+  items: Array<{
+    label: string;
+    value: string;
+    highlight?: boolean;
+    icon?: ModalIconName;
+  }>;
 };
 
 export function KpiStrip({ items }: KpiStripProps) {
@@ -158,9 +413,10 @@ export function KpiStrip({ items }: KpiStripProps) {
           >
             {item.value}
           </p>
-          <p className="mt-2 text-[0.7rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
-            {item.label}
-          </p>
+          <div className="mt-2 flex items-center gap-1.5 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+            {item.icon ? <ModalIcon name={item.icon} className="h-4 w-4" /> : null}
+            <span>{item.label}</span>
+          </div>
         </div>
       ))}
     </div>
@@ -190,7 +446,7 @@ export function DeltaCards({ items }: DeltaCardsProps) {
               : undefined
           }
         >
-          <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+          <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
             {item.label}
           </p>
           <p className="mt-3 font-display text-4xl font-medium leading-none text-foreground">
@@ -200,7 +456,7 @@ export function DeltaCards({ items }: DeltaCardsProps) {
             </span>
           </p>
           {item.detail ? (
-            <p className="mt-3 text-xs leading-5 text-muted">{item.detail}</p>
+            <p className="mt-3 text-sm leading-6 text-muted">{item.detail}</p>
           ) : null}
         </div>
       ))}
@@ -228,14 +484,14 @@ export function FlowDiagram({ steps }: FlowDiagramProps) {
                 : { background: "var(--background)" }
             }
           >
-            <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+            <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
               Step {String(index + 1).padStart(2, "0")}
             </p>
             <p className="mt-1.5 font-display text-lg font-medium leading-tight text-foreground sm:text-xl">
               {step.label}
             </p>
             {step.sublabel ? (
-              <p className="mt-2 text-xs leading-5 text-muted">{step.sublabel}</p>
+              <p className="mt-2 text-sm leading-6 text-muted">{step.sublabel}</p>
             ) : null}
           </div>
           {index < steps.length - 1 ? (
@@ -267,7 +523,7 @@ export function CompactBars({ items }: CompactBarsProps) {
           key={item.label}
           className="grid grid-cols-[minmax(8rem,12rem)_1fr_3.5rem] items-center gap-4"
         >
-          <p className="text-xs font-medium leading-5 text-foreground">
+          <p className="text-sm font-medium leading-6 text-foreground">
             {item.label}
           </p>
           <div className="h-3 bg-foreground/[0.05]">
@@ -280,7 +536,7 @@ export function CompactBars({ items }: CompactBarsProps) {
               aria-hidden="true"
             />
           </div>
-          <p className="text-right text-xs font-medium leading-5 text-foreground">
+          <p className="text-right text-sm font-medium leading-5 text-foreground">
             {item.display}
           </p>
         </div>

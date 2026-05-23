@@ -6,8 +6,11 @@ import { wellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-prev
 import {
   DeltaCards,
   KpiStrip,
+  ModalIcon,
+  ModalTabs,
   ModalSectionLabel,
   ProjectModalShell,
+  SkillsImpactColumns,
 } from "./ProjectModalShell";
 
 type ScarletWellProjectModalProps = {
@@ -18,19 +21,54 @@ type ScarletWellProjectModalProps = {
 
 type TabKey = "insights" | "pulse" | "portfolio" | "sample";
 
-const tabs: Array<{ key: TabKey; label: string }> = [
-  { key: "insights", label: "Program Insights" },
-  { key: "pulse", label: "Pulse" },
-  { key: "portfolio", label: "Portfolio" },
-  { key: "sample", label: "Sample Program" },
+const tabs: Array<{ id: TabKey; label: string }> = [
+  { id: "insights", label: "Program Insights" },
+  { id: "pulse", label: "Pulse" },
+  { id: "portfolio", label: "Portfolio" },
+  { id: "sample", label: "Sample Program" },
 ];
 
-const skills = ["Program evaluation", "Data modeling", "Strategic planning"];
+const studioFlow = [
+  { icon: "clipboard" as const, label: "Final reports" },
+  { icon: "layers" as const, label: "Portfolio model" },
+  { icon: "bar-chart" as const, label: "Cycle pulse" },
+  { icon: "target" as const, label: "Planning decisions" },
+];
+
+const skills = [
+  {
+    title: "Program evaluation",
+    detail: "Compared reach, activities, budget, and reporting status across wellness grants.",
+    icon: "layers" as const,
+  },
+  {
+    title: "Data modeling",
+    detail: "Structured cycle-level metrics so efficiency and participation trends could be read together.",
+    icon: "bar-chart" as const,
+  },
+  {
+    title: "Strategic planning",
+    detail: "Translated portfolio signals into follow-up actions for active and completed programs.",
+    icon: "target" as const,
+  },
+];
 
 const impacts = [
-  "Compared 41 wellness programs in one system",
-  "Made funding and participation patterns easier to evaluate",
-  "Helped identify efficiency gains across grant cycles",
+  {
+    title: "Compared 41 wellness programs in one system",
+    detail: "Gave program leaders a shared view of grant activity instead of isolated reports.",
+    icon: "monitor" as const,
+  },
+  {
+    title: "Surfaced year-over-year efficiency",
+    detail: "Made lower documented spend and higher participation visible at the portfolio level.",
+    icon: "wallet" as const,
+  },
+  {
+    title: "Clarified follow-up priorities",
+    detail: "Separated ready reports, active programs, and items needing coordinator attention.",
+    icon: "check-circle" as const,
+  },
 ];
 
 export function ScarletWellProjectModal({
@@ -41,10 +79,10 @@ export function ScarletWellProjectModal({
   const [active, setActive] = useState<TabKey>("insights");
 
   const kpis = [
-    { label: "Participants reached", value: "3,003" },
-    { label: "Activities analyzed", value: "210" },
-    { label: "Budget reviewed", value: "$41K+" },
-    { label: "Programs evaluated", value: "41" },
+    { label: "Participants reached", value: "3,003", icon: "users" as const },
+    { label: "Activities analyzed", value: "210", icon: "calendar-check" as const },
+    { label: "Budget reviewed", value: "$41K+", icon: "wallet" as const },
+    { label: "Programs evaluated", value: "41", icon: "layers" as const },
   ];
 
   return (
@@ -63,39 +101,20 @@ export function ScarletWellProjectModal({
       </section>
 
       <section>
-        <div
-          role="tablist"
-          aria-label="ScarletWell Studio views"
-          className="-mx-2 flex overflow-x-auto border-b border-line"
-        >
-          {tabs.map((tab) => {
-            const isActive = active === tab.key;
-            return (
-              <button
-                key={tab.key}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                aria-controls={`sw-panel-${tab.key}`}
-                id={`sw-tab-${tab.key}`}
-                onClick={() => setActive(tab.key)}
-                className="focus-ring relative whitespace-nowrap px-3 py-3 text-sm font-medium leading-5 transition-colors sm:px-4"
-                style={{
-                  color: isActive ? "var(--foreground)" : "var(--quiet)",
-                }}
-              >
-                {tab.label}
-                <span
-                  aria-hidden="true"
-                  className="absolute inset-x-2 -bottom-px h-0.5 sm:inset-x-3"
-                  style={{
-                    background: isActive ? "var(--foreground)" : "transparent",
-                  }}
-                />
-              </button>
-            );
-          })}
+        <ModalSectionLabel>Dashboard workflow</ModalSectionLabel>
+        <div className="mt-5">
+          <StudioFlow />
         </div>
+      </section>
+
+      <section>
+        <ModalTabs
+          items={tabs}
+          active={active}
+          onChange={setActive}
+          ariaLabel="ScarletWell Studio views"
+          idPrefix="sw"
+        />
 
         <div className="mt-6">
           {active === "insights" ? (
@@ -110,50 +129,38 @@ export function ScarletWellProjectModal({
         </div>
       </section>
 
-      <section>
-        <ModalSectionLabel>Skills used → Impact created</ModalSectionLabel>
-        <div className="mt-5 flex flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-6">
-          <div className="lg:flex-1">
-            <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-              Skills used
-            </p>
-            <ul className="mt-3 space-y-3">
-              {skills.map((s) => (
-                <li
-                  key={s}
-                  className="border-t border-line pt-3 text-sm font-medium leading-5 text-foreground"
-                >
-                  {s}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div
-            aria-hidden="true"
-            className="flex items-center justify-center text-quiet lg:px-2"
-          >
-            <span className="lg:hidden">↓</span>
-            <span className="hidden lg:inline">→</span>
-          </div>
-          <div className="lg:flex-1">
-            <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-              Impact created
-            </p>
-            <ul className="mt-3 space-y-3">
-              {impacts.map((i) => (
-                <li
-                  key={i}
-                  className="border-t pt-3 text-sm font-medium leading-5 text-foreground"
-                  style={{ borderColor: "var(--sage-line)" }}
-                >
-                  {i}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
+      <SkillsImpactColumns skills={skills} impact={impacts} />
     </ProjectModalShell>
+  );
+}
+
+function StudioFlow() {
+  return (
+    <div className="flex flex-col gap-3 lg:flex-row lg:items-stretch">
+      {studioFlow.map((step, index) => (
+        <div key={step.label} className="flex flex-1 items-stretch gap-3">
+          <div
+            className="flex flex-1 items-center gap-3 border border-line px-4 py-4"
+            style={
+              index === studioFlow.length - 1
+                ? { borderColor: "var(--sage-line)", background: "var(--sage-soft)" }
+                : { background: "var(--background)" }
+            }
+          >
+            <ModalIcon name={step.icon} className="h-4 w-4 shrink-0 text-quiet" />
+            <p className="text-[0.95rem] font-medium leading-6 text-foreground">
+              {step.label}
+            </p>
+          </div>
+          {index < studioFlow.length - 1 ? (
+            <div aria-hidden="true" className="flex items-center text-quiet">
+              <span className="lg:hidden">↓</span>
+              <ModalIcon name="arrow-right" className="hidden h-4 w-4 lg:block" />
+            </div>
+          ) : null}
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -207,10 +214,10 @@ function InsightsPanel({ data }: { data: ScarletWellBriefData }) {
     <TabPanel id="insights">
       <div>
         <div className="flex items-baseline justify-between gap-4">
-          <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+          <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
             Year-over-year change
           </p>
-          <p className="text-xs leading-5 text-quiet">2024-25 → 2025-26</p>
+          <p className="text-sm leading-5 text-quiet">2024-25 → 2025-26</p>
         </div>
         <div className="mt-5">
           <DeltaCards items={deltas} />
@@ -250,9 +257,9 @@ function InsightsPanel({ data }: { data: ScarletWellBriefData }) {
         />
       </div>
 
-      <p className="max-w-2xl text-sm leading-6 text-muted">
-        Higher reach with lower documented spend — cost per participant dropped
-        roughly 51% year over year.
+      <p className="max-w-2xl text-[0.95rem] leading-7 text-muted">
+        Year-over-year efficiency improved: documented cost per participant
+        dropped roughly 51% while participant reach increased.
       </p>
     </TabPanel>
   );
@@ -282,7 +289,7 @@ function MiniCompare({
 
   return (
     <div>
-      <p className="text-xs font-medium leading-5 text-foreground">{title}</p>
+      <p className="text-sm font-medium leading-6 text-foreground">{title}</p>
       <div className="mt-2 space-y-2">
         <Bar
           label={previousLabel}
@@ -314,7 +321,7 @@ function Bar({
 }) {
   return (
     <div className="grid grid-cols-[minmax(7rem,9rem)_1fr_4.5rem] items-center gap-4">
-      <p className="text-xs leading-5 text-muted">{label}</p>
+      <p className="text-sm leading-6 text-muted">{label}</p>
       <div className="h-3 bg-foreground/[0.05]">
         <div
           className="h-full transition-all duration-500"
@@ -322,7 +329,7 @@ function Bar({
           aria-hidden="true"
         />
       </div>
-      <p className="text-right text-xs font-medium leading-5 text-foreground">
+      <p className="text-right text-sm font-medium leading-5 text-foreground">
         {display}
       </p>
     </div>
@@ -346,7 +353,7 @@ function PulsePanel() {
   return (
     <TabPanel id="pulse">
       <div>
-        <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+        <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
           Current cycle monitoring
         </p>
         <div className="mt-4 grid gap-x-8 gap-y-6 border-y border-line py-7 sm:grid-cols-2 lg:grid-cols-4">
@@ -367,25 +374,29 @@ function PulsePanel() {
               >
                 {s.value}
               </p>
-              <p className="mt-2 text-[0.7rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
-                {s.label}
-              </p>
+              <div className="mt-2 flex items-center gap-1.5 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+                <ModalIcon
+                  name={s.attention ? "target" : "check-circle"}
+                  className="h-4 w-4"
+                />
+                <span>{s.label}</span>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
       <div>
-        <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+        <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
           What to do next
         </p>
         <ol className="mt-4 divide-y divide-[color:var(--line)] border-y border-line">
           {nextItems.map((item, idx) => (
             <li
               key={item}
-              className="flex items-baseline gap-4 py-3 text-sm leading-6 text-foreground"
+              className="flex items-start gap-3 py-3 text-[0.95rem] leading-6 text-foreground"
             >
-              <span className="text-[0.7rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+              <span className="pt-0.5 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
                 {String(idx + 1).padStart(2, "0")}
               </span>
               <span>{item}</span>
@@ -421,7 +432,7 @@ function PortfolioPanel() {
   return (
     <TabPanel id="portfolio">
       <div>
-        <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+        <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
           Portfolio comparison · 41 programs
         </p>
         <div className="mt-4 grid grid-cols-2 border border-line">
@@ -436,43 +447,43 @@ function PortfolioPanel() {
               }}
             >
               <div className="flex items-center gap-2">
-                <p className="text-xs font-medium leading-5 text-foreground sm:text-sm">
+                <p className="text-sm font-medium leading-6 text-foreground">
                   {q.title}
                 </p>
                 {q.recommended ? (
                   <span
-                    className="text-[0.55rem] font-medium uppercase leading-4 tracking-[0.16em]"
+                    className="text-[0.72rem] font-medium uppercase leading-4 tracking-[0.14em]"
                     style={{ color: "rgba(72,38,29,0.7)" }}
                   >
                     Priority
                   </span>
                 ) : null}
               </div>
-              <p className="mt-2 text-xs leading-5 text-muted">{q.detail}</p>
+              <p className="mt-2 text-sm leading-6 text-muted">{q.detail}</p>
             </div>
           ))}
         </div>
-        <p className="mt-1 text-[0.65rem] uppercase leading-5 tracking-[0.16em] text-quiet">
+        <p className="mt-1 text-[0.75rem] uppercase leading-5 tracking-[0.14em] text-quiet">
           Reach →
         </p>
       </div>
 
       <div>
-        <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+        <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
           Funding signal
         </p>
         <ul className="mt-4 divide-y divide-[color:var(--line)] border-y border-line">
           <li className="flex items-baseline justify-between gap-4 py-3 text-sm leading-6 text-foreground">
             <span>Repeat recipients across cycles</span>
-            <span className="text-xs text-muted">Multi-cycle visibility</span>
+            <span className="text-sm text-muted">Multi-cycle visibility</span>
           </li>
           <li className="flex items-baseline justify-between gap-4 py-3 text-sm leading-6 text-foreground">
             <span>Cost efficiency leaders</span>
-            <span className="text-xs text-muted">Lower $ / participant</span>
+            <span className="text-sm text-muted">Lower $ / participant</span>
           </li>
           <li className="flex items-baseline justify-between gap-4 py-3 text-sm leading-6 text-foreground">
             <span>Programs to re-scope</span>
-            <span className="text-xs text-muted">Low reach / high cost</span>
+            <span className="text-sm text-muted">Low reach / high cost</span>
           </li>
         </ul>
       </div>
@@ -492,13 +503,13 @@ function SampleProgramPanel() {
   const outcomes = [
     "Mindfulness",
     "Accessibility",
-    "Community engagement",
+    "Attendance-informed planning",
   ];
 
   return (
     <TabPanel id="sample">
       <div>
-        <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+        <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
           Program profile
         </p>
         <div className="mt-3 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
@@ -515,16 +526,17 @@ function SampleProgramPanel() {
               <p className="font-display text-3xl font-medium leading-none text-foreground">
                 {s.value}
               </p>
-              <p className="mt-2 text-[0.7rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
-                {s.label}
-              </p>
+              <div className="mt-2 flex items-center gap-1.5 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+                <ModalIcon name="calendar-check" className="h-4 w-4" />
+                <span>{s.label}</span>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
       <div>
-        <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+        <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
           Cumulative attendees by cycle
         </p>
         <div className="mt-4 space-y-2">
@@ -537,7 +549,7 @@ function SampleProgramPanel() {
                 key={p.cycle}
                 className="grid grid-cols-[minmax(8rem,10rem)_1fr_3rem] items-center gap-4"
               >
-                <p className="text-xs leading-5 text-muted">{p.cycle}</p>
+                <p className="text-sm leading-6 text-muted">{p.cycle}</p>
                 <div className="h-3 bg-foreground/[0.05]">
                   <div
                     className="h-full transition-all duration-500"
@@ -550,8 +562,8 @@ function SampleProgramPanel() {
                     aria-hidden="true"
                   />
                 </div>
-                <p className="text-right text-xs font-medium leading-5 text-foreground">
-                  {p.value}
+                <p className="text-right text-sm font-medium leading-5 text-foreground">
+                  {p.displayValue}
                 </p>
               </div>
             );
@@ -560,8 +572,8 @@ function SampleProgramPanel() {
       </div>
 
       <div>
-        <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-          Evaluation outcomes
+        <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+          What the dashboard surfaced
         </p>
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           {outcomes.map((o) => (

@@ -1,7 +1,12 @@
 "use client";
 
 import type { WellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
-import { ProjectModalShell } from "./ProjectModalShell";
+import {
+  ModalIcon,
+  type ModalIconName,
+  ProjectModalShell,
+  SkillsImpactColumns,
+} from "./ProjectModalShell";
 
 type WellnessThroughClayProjectModalProps = {
   data: WellnessThroughClayPreviewData;
@@ -10,16 +15,10 @@ type WellnessThroughClayProjectModalProps = {
 };
 
 const processSteps = [
-  "Workshops",
-  "Attendance + feedback",
-  "Insights",
-  "Outreach + event design",
-];
-
-const sessionAverages = [
-  { label: "Spring 2025", value: 12.8, display: "12.8 / session" },
-  { label: "Summer 2025", value: 18.7, display: "18.7 / session" },
-  { label: "2025–2026", value: 16.3, display: "16.3 / session" },
+  { label: "Workshops", icon: "calendar-check" as const },
+  { label: "Attendance + feedback", icon: "clipboard" as const },
+  { label: "Planning insights", icon: "bar-chart" as const },
+  { label: "Outreach + event design", icon: "target" as const },
 ];
 
 const quotes = [
@@ -28,19 +27,47 @@ const quotes = [
   "It was nice creating something without pressure.",
 ];
 
-const skills = ["Program operations", "Feedback analysis", "Outreach strategy"];
+const skills = [
+  {
+    title: "Program operations",
+    detail: "Planned recurring ceramics workshops, attendance tracking, and session logistics.",
+    icon: "calendar-check" as const,
+  },
+  {
+    title: "Feedback analysis",
+    detail: "Used attendance and reflection signals to understand workshop demand and student experience.",
+    icon: "clipboard" as const,
+  },
+  {
+    title: "Outreach strategy",
+    detail: "Connected cycle-level learning to event design and campus visibility.",
+    icon: "target" as const,
+  },
+];
 
 const impacts = [
-  "Improved workshop planning with attendance and feedback data",
-  "Strengthened student wellness and community-building experiences",
-  "Connected creative programming to measurable outcomes",
+  {
+    title: "Improved workshop planning",
+    detail: "Used attendance and feedback data to adjust programming across three cycles.",
+    icon: "bar-chart" as const,
+  },
+  {
+    title: "Supported low-pressure wellness experiences",
+    detail: "Created recurring sessions where students could participate without performance pressure.",
+    icon: "message-square" as const,
+  },
+  {
+    title: "Connected creative programming to evidence",
+    detail: "Made reach, session count, and external proof visible for future planning.",
+    icon: "monitor" as const,
+  },
 ];
 
 const kpis = [
-  { label: "Cumulative attendees", value: "250+", highlight: true },
-  { label: "Sessions", value: "18" },
-  { label: "Cycles", value: "3" },
-  { label: "Avg / session", value: "14–16" },
+  { label: "Cumulative attendees", value: "250+", highlight: true, icon: "users" as const },
+  { label: "Sessions", value: "18", icon: "calendar-check" as const },
+  { label: "Cycles", value: "3", icon: "layers" as const },
+  { label: "Avg / session", value: "14–16", icon: "bar-chart" as const },
 ];
 
 export function WellnessThroughClayProjectModal({
@@ -56,6 +83,36 @@ export function WellnessThroughClayProjectModal({
   const instagramHref = linkMap["Instagram"] ?? null;
   const rutgersCasHref = linkMap["Rutgers CAS"] ?? null;
   const dailyTargumHref = linkMap["Daily Targum"] ?? null;
+  const cumulativeGrowthPoints = data.cumulativeGrowth.points.map((point) => ({
+    ...point,
+    cycleLabel: point.cycle.replace("-", "–"),
+    displayValue:
+      "displayValue" in point && typeof point.displayValue === "string"
+        ? point.displayValue
+        : `${point.value}`,
+  }));
+  const externalProofItems = [
+    {
+      label: "Website",
+      href: websiteHref,
+      display: "wellnessthroughclay.com",
+    },
+    {
+      label: "Rutgers CAS",
+      href: rutgersCasHref,
+      display: "Rutgers CAS",
+    },
+    {
+      label: "Daily Targum",
+      href: dailyTargumHref,
+      display: "Daily Targum",
+    },
+    {
+      label: "Instagram",
+      href: instagramHref,
+      display: "@ru_wellness_clay",
+    },
+  ];
 
   return (
     <ProjectModalShell
@@ -73,19 +130,20 @@ export function WellnessThroughClayProjectModal({
         <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-2">
           {processSteps.map((step, idx) => (
             <div
-              key={step}
+              key={step.label}
               className="flex flex-1 items-center gap-2"
             >
-              <p className="flex-1 text-xs leading-5 text-foreground">
-                {step}
+              <p className="flex flex-1 items-center gap-2.5 text-sm font-medium leading-6 text-foreground sm:text-[0.96rem]">
+                <ModalIcon name={step.icon} className="h-4 w-4 shrink-0 text-quiet" />
+                <span>{step.label}</span>
               </p>
               {idx < processSteps.length - 1 ? (
                 <span
                   aria-hidden="true"
-                  className="text-[0.7rem] text-quiet/70"
+                  className="text-[0.82rem] text-quiet/70"
                 >
                   <span className="sm:hidden">↓</span>
-                  <span className="hidden sm:inline">→</span>
+                  <ModalIcon name="arrow-right" className="hidden h-4 w-4 sm:block" />
                 </span>
               ) : null}
             </div>
@@ -94,11 +152,11 @@ export function WellnessThroughClayProjectModal({
       </section>
 
       <section>
-        <SessionAveragesViz items={sessionAverages} />
-        <p className="mt-5 max-w-xl text-xs leading-6 text-muted">
-          Attendance stabilized while expanding across student and faculty
-          audiences.
-        </p>
+        <CumulativeGrowthChart
+          label={data.cumulativeGrowth.label}
+          items={cumulativeGrowthPoints}
+          caption="Cumulative reach grew across three programming cycles while the model became more consistent."
+        />
       </section>
 
       <section>
@@ -108,7 +166,7 @@ export function WellnessThroughClayProjectModal({
               key={idx}
               className="border-t border-line pt-5"
             >
-              <blockquote className="font-display text-base italic leading-7 text-foreground sm:text-[1.05rem]">
+              <blockquote className="font-display text-[1.02rem] italic leading-7 text-foreground sm:text-[1.12rem]">
                 <span aria-hidden="true" className="text-quiet/60">
                   &ldquo;
                 </span>
@@ -123,82 +181,29 @@ export function WellnessThroughClayProjectModal({
       </section>
 
       <section>
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-stretch lg:gap-5">
-          <div className="lg:flex-1">
-            <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-              Skills used
-            </p>
-            <ul className="mt-2.5 space-y-2">
-              {skills.map((s) => (
-                <li
-                  key={s}
-                  className="border-t border-line pt-2 text-sm leading-5 text-foreground"
-                >
-                  {s}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div
-            aria-hidden="true"
-            className="flex items-center justify-center text-quiet/70 lg:px-1"
-          >
-            <span className="lg:hidden">↓</span>
-            <span className="hidden lg:inline">→</span>
-          </div>
-          <div className="lg:flex-1">
-            <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-              Impact created
-            </p>
-            <ul className="mt-2.5 space-y-2">
-              {impacts.map((i) => (
-                <li
-                  key={i}
-                  className="border-t pt-2 text-sm leading-5 text-foreground"
-                  style={{ borderColor: "var(--sage-line)" }}
-                >
-                  {i}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        <p className="mt-4 max-w-2xl text-xs leading-6 text-muted">
+        <ExternalProofRow items={externalProofItems} />
+      </section>
+
+      <SkillsImpactColumns skills={skills} impact={impacts} />
+
+      <section>
+        <p className="mt-4 max-w-2xl text-sm leading-6 text-muted sm:text-[0.96rem]">
           Supported 250+ cumulative participants across 18 sessions while
           iterating programming through attendance and feedback insights.
         </p>
       </section>
 
-      <section>
-        <div className="grid gap-6 lg:grid-cols-[1.55fr_1fr] lg:items-start">
-          <WebsiteEmbed href={websiteHref} />
-          <ExternalLinksList
-            items={[
-              {
-                label: "Website",
-                href: websiteHref,
-                display: "wellnessthroughclay.com",
-              },
-              {
-                label: "Rutgers CAS",
-                href: rutgersCasHref,
-                display: "Read article",
-                group: "Articles",
-              },
-              {
-                label: "Daily Targum",
-                href: dailyTargumHref,
-                display: "Read article",
-                group: "Articles",
-              },
-              {
-                label: "Instagram",
-                href: instagramHref,
-                display: "@ru_wellness_clay",
-              },
-            ]}
-          />
-        </div>
+      <section className="border-t border-line pt-4">
+        <a
+          href={websiteHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="focus-ring inline-flex items-center gap-2 text-sm font-medium leading-6 text-foreground transition hover:opacity-70 sm:text-[0.96rem]"
+        >
+          <ModalIcon name="monitor" className="h-4 w-4 text-quiet" />
+          <span>Open public project site</span>
+          <span aria-hidden="true">↗</span>
+        </a>
       </section>
     </ProjectModalShell>
   );
@@ -207,7 +212,12 @@ export function WellnessThroughClayProjectModal({
 function KpiStripTight({
   items,
 }: {
-  items: Array<{ label: string; value: string; highlight?: boolean }>;
+  items: Array<{
+    label: string;
+    value: string;
+    highlight?: boolean;
+    icon?: ModalIconName;
+  }>;
 }) {
   return (
     <div className="grid gap-x-6 gap-y-4 border-y border-line py-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -228,44 +238,135 @@ function KpiStripTight({
           >
             {item.value}
           </p>
-          <p className="mt-1.5 text-[0.65rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
-            {item.label}
-          </p>
+          <div className="mt-1.5 flex items-center gap-1.5 text-[0.76rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+            {item.icon ? <ModalIcon name={item.icon} className="h-4 w-4" /> : null}
+            <span>{item.label}</span>
+          </div>
         </div>
       ))}
     </div>
   );
 }
 
-function SessionAveragesViz({
+function CumulativeGrowthChart({
+  label,
   items,
+  caption,
 }: {
-  items: Array<{ label: string; value: number; display: string }>;
+  label: string;
+  items: Array<{
+    cycle: string;
+    cycleLabel: string;
+    value: number;
+    displayValue: string;
+  }>;
+  caption: string;
 }) {
-  const max = Math.max(...items.map((i) => i.value));
+  const width = 760;
+  const height = 240;
+  const paddingX = 36;
+  const top = 30;
+  const bottom = 56;
+  const chartHeight = height - top - bottom;
+  const max = Math.max(...items.map((item) => item.value));
+
+  const points = items.map((item, index) => {
+    const x =
+      items.length === 1
+        ? width / 2
+        : paddingX + (index * (width - paddingX * 2)) / (items.length - 1);
+    const y = top + chartHeight - (item.value / max) * chartHeight;
+    return { ...item, x, y };
+  });
+
+  const linePath = points
+    .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`)
+    .join(" ");
+  const areaPath = [
+    `M ${points[0]?.x ?? 0} ${height - bottom + 4}`,
+    ...points.map((point) => `L ${point.x} ${point.y}`),
+    `L ${points[points.length - 1]?.x ?? width} ${height - bottom + 4}`,
+    "Z",
+  ].join(" ");
+
   return (
-    <div className="space-y-3">
-      {items.map((item) => (
-        <div
-          key={item.label}
-          className="grid grid-cols-[minmax(7rem,9rem)_1fr_5.5rem] items-center gap-4"
+    <div>
+      <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+        {label}
+      </p>
+      <div className="mt-4">
+        <svg
+          viewBox={`0 0 ${width} ${height}`}
+          className="h-auto w-full overflow-visible"
+          role="img"
+          aria-label="Cumulative attendee growth across three Wellness Through Clay programming cycles"
         >
-          <p className="text-xs leading-5 text-foreground">{item.label}</p>
-          <div className="h-px bg-foreground/[0.07]">
-            <div
-              className="h-full"
-              style={{
-                width: `${(item.value / max) * 100}%`,
-                background: "rgba(72,38,29,0.45)",
-              }}
-              aria-hidden="true"
-            />
-          </div>
-          <p className="text-right text-xs leading-5 text-muted">
-            {item.display}
-          </p>
+          <defs>
+            <linearGradient id="wtc-growth-fill" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stopColor="rgba(151, 164, 127, 0.22)" />
+              <stop offset="100%" stopColor="rgba(151, 164, 127, 0)" />
+            </linearGradient>
+          </defs>
+          <line
+            x1={paddingX}
+            x2={width - paddingX}
+            y1={height - bottom + 4}
+            y2={height - bottom + 4}
+            stroke="rgba(72, 38, 29, 0.14)"
+            strokeWidth="1"
+          />
+          <path d={areaPath} fill="url(#wtc-growth-fill)" />
+          <path
+            d={linePath}
+            fill="none"
+            stroke="rgba(72, 38, 29, 0.58)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {points.map((point, index) => {
+            const isLast = index === points.length - 1;
+            return (
+              <g key={point.cycle}>
+                <circle
+                  cx={point.x}
+                  cy={point.y}
+                  r={isLast ? 5 : 4}
+                  fill={isLast ? "var(--sage)" : "rgba(72, 38, 29, 0.5)"}
+                />
+                <text
+                  x={point.x}
+                  y={point.y - 14}
+                  fill="rgba(72, 38, 29, 0.86)"
+                  fontSize="16"
+                  fontFamily="var(--font-sans, sans-serif)"
+                  textAnchor="middle"
+                >
+                  {point.displayValue}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3 sm:gap-4">
+          {items.map((item, index) => (
+            <div key={item.cycle} className="border-t border-line pt-3">
+              <p className="text-sm leading-6 text-muted sm:text-[0.96rem]">
+                {item.cycleLabel}
+              </p>
+              <p
+                className="mt-1 font-display text-[1.35rem] font-medium leading-none text-foreground"
+                style={index === items.length - 1 ? { color: "var(--sage-deep)" } : undefined}
+              >
+                {item.displayValue}
+              </p>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
+      <p className="mt-4 max-w-2xl text-sm leading-6 text-muted sm:text-[0.96rem]">
+        {caption}
+      </p>
     </div>
   );
 }
@@ -274,137 +375,63 @@ type ExternalLinkItem = {
   label: string;
   href: string | null;
   display: string;
-  group?: string;
 };
 
-function ExternalLinksList({ items }: { items: ExternalLinkItem[] }) {
-  const groups: Array<{ key: string; items: ExternalLinkItem[] }> = [];
-  for (const item of items) {
-    const key = item.group ?? item.label;
-    let bucket = groups.find((g) => g.key === key);
-    if (!bucket) {
-      bucket = { key, items: [] };
-      groups.push(bucket);
-    }
-    bucket.items.push(item);
-  }
-
+function ExternalProofRow({ items }: { items: ExternalLinkItem[] }) {
   return (
-    <ul className="divide-y divide-[color:var(--line)] border-y border-line">
-      {groups.map((group) => (
-        <li key={group.key} className="py-3">
-          {group.items.length === 1 ? (
-            <ExternalRow item={group.items[0]} />
-          ) : (
-            <div>
-              <p className="text-xs font-medium leading-5 text-foreground">
-                {group.key}
-              </p>
-              <ul className="mt-1.5 space-y-1.5">
-                {group.items.map((item) => (
-                  <li key={item.label}>
-                    <ExternalSubRow item={item} />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function ExternalRow({ item }: { item: ExternalLinkItem }) {
-  return (
-    <div className="flex items-baseline justify-between gap-4">
-      <span className="text-xs font-medium leading-5 text-foreground">
-        {item.label}
-      </span>
-      {item.href ? (
-        <a
-          href={item.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="focus-ring inline-flex items-baseline gap-1 text-xs leading-5 text-muted transition hover:text-foreground"
-        >
-          <span>{item.display}</span>
-          <span aria-hidden="true">↗</span>
-        </a>
-      ) : (
-        <span className="text-xs leading-5 text-quiet">{item.display}</span>
-      )}
+    <div className="border-y border-line py-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-8">
+        <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet lg:min-w-[8.5rem]">
+          External proof
+        </p>
+        <ul className="flex flex-wrap gap-x-6 gap-y-3">
+          {items.map((item) => (
+            <li key={item.label}>
+              <ExternalProofLink item={item} />
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
 
-function ExternalSubRow({ item }: { item: ExternalLinkItem }) {
+function ExternalProofLink({ item }: { item: ExternalLinkItem }) {
+  const iconByLabel: Record<string, ModalIconName> = {
+    Website: "monitor",
+    "Rutgers CAS": "layers",
+    "Daily Targum": "clipboard",
+    Instagram: "message-square",
+  };
+  const content = (
+    <>
+      <ModalIcon
+        name={iconByLabel[item.label] ?? "monitor"}
+        className="h-4 w-4 text-quiet"
+      />
+      <span className="font-medium text-foreground">{item.label}</span>
+      <span className="text-muted">-</span>
+      <span>{item.display}</span>
+      {item.href ? <span aria-hidden="true">↗</span> : null}
+    </>
+  );
+
   if (!item.href) {
     return (
-      <span className="text-xs leading-5 text-quiet">{item.label}</span>
+      <span className="inline-flex items-center gap-1 text-sm leading-6 text-muted sm:text-[0.96rem]">
+        {content}
+      </span>
     );
   }
+
   return (
     <a
       href={item.href}
       target="_blank"
       rel="noopener noreferrer"
-      className="focus-ring inline-flex items-baseline gap-1 text-xs leading-5 text-muted transition hover:text-foreground"
+      className="focus-ring inline-flex items-center gap-1 text-sm leading-6 text-muted transition hover:text-foreground sm:text-[0.96rem]"
     >
-      <span>{item.label}</span>
-      <span aria-hidden="true">↗</span>
+      {content}
     </a>
-  );
-}
-
-function WebsiteEmbed({ href }: { href: string }) {
-  return (
-    <div className="group relative overflow-hidden border border-line">
-      <div
-        className="flex items-center gap-2 border-b border-line px-3 py-2"
-        style={{ background: "var(--sage-soft)" }}
-      >
-        <div
-          aria-hidden="true"
-          className="flex items-center gap-1.5"
-        >
-          <span
-            className="block h-2 w-2 rounded-full"
-            style={{ background: "rgba(72,38,29,0.18)" }}
-          />
-          <span
-            className="block h-2 w-2 rounded-full"
-            style={{ background: "rgba(72,38,29,0.18)" }}
-          />
-          <span
-            className="block h-2 w-2 rounded-full"
-            style={{ background: "rgba(72,38,29,0.18)" }}
-          />
-        </div>
-        <div className="flex-1 truncate text-center text-[0.65rem] leading-5 tracking-[0.04em] text-muted">
-          wellnessthroughclay.com
-        </div>
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Open Wellness Through Clay in a new tab"
-          className="focus-ring text-[0.65rem] leading-5 text-muted transition hover:text-foreground"
-        >
-          Open ↗
-        </a>
-      </div>
-      <div className="relative h-[26rem] overflow-hidden sm:h-[30rem]">
-        <iframe
-          src={href}
-          title="Wellness Through Clay live homepage preview"
-          loading="lazy"
-          className="absolute inset-0 h-full w-full transition-transform duration-500 ease-out group-hover:scale-[1.01]"
-          style={{ border: 0 }}
-          sandbox="allow-same-origin allow-scripts allow-popups"
-          referrerPolicy="no-referrer-when-downgrade"
-        />
-      </div>
-    </div>
   );
 }

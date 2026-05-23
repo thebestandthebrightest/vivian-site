@@ -144,12 +144,10 @@ function getTravelItems(): TravelItem[] {
     .filter((filename) =>
       supportedTravelExtensions.has(extname(filename).toLowerCase()),
     )
-    .sort((first, second) =>
-      first.localeCompare(second, undefined, { sensitivity: "base" }),
-    )
     .map((filename) => {
       const extension = extname(filename).toLowerCase();
-      const kind = extension === ".mp4" || extension === ".mov" ? "video" : "image";
+      const kind: TravelItem["kind"] =
+        extension === ".mp4" || extension === ".mov" ? "video" : "image";
 
       return {
         filename,
@@ -157,7 +155,12 @@ function getTravelItems(): TravelItem[] {
         label: travelLabels[filename] ?? formatTravelLabel(filename),
         src: `/travel/${encodeURIComponent(filename)}`,
       };
-    });
+    })
+    .sort((first, second) =>
+      first.label.localeCompare(second.label, undefined, {
+        sensitivity: "base",
+      }),
+    );
 }
 
 function TravelStrip() {
@@ -172,8 +175,8 @@ const sectionGridClass =
 const sectionHeadingClass =
   "font-display text-3xl font-medium leading-[1.05] text-foreground sm:text-[2.5rem]";
 
-const eyebrowClass =
-  "text-[0.7rem] font-medium uppercase tracking-[0.18em] text-quiet";
+const subsectionLabelClass =
+  "text-[0.7rem] font-medium uppercase tracking-[0.18em] text-foreground";
 
 export default function AboutPage() {
   return (
@@ -216,8 +219,7 @@ export default function AboutPage() {
           <MotionReveal>
             <div className={sectionGridClass}>
               <div>
-                <p className={eyebrowClass}>01</p>
-                <h2 className={`${sectionHeadingClass} mt-3`}>Education</h2>
+                <h2 className={sectionHeadingClass}>Education</h2>
               </div>
               <div className="space-y-10">
                 <div className="space-y-1">
@@ -233,7 +235,7 @@ export default function AboutPage() {
                 </div>
 
                 <div>
-                  <p className={eyebrowClass}>Honors &amp; Awards</p>
+                  <p className={subsectionLabelClass}>Honors &amp; Awards</p>
                   <ul className="mt-3 space-y-1 text-sm leading-7 text-muted">
                     {education.honors.map((item) => (
                       <li key={item}>{item}</li>
@@ -242,7 +244,7 @@ export default function AboutPage() {
                 </div>
 
                 <div>
-                  <p className={eyebrowClass}>Relevant coursework</p>
+                  <p className={subsectionLabelClass}>Relevant coursework</p>
                   <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">
                     {education.coursework}
                   </p>
@@ -256,8 +258,7 @@ export default function AboutPage() {
           <MotionReveal>
             <div className={sectionGridClass}>
               <div>
-                <p className={eyebrowClass}>02</p>
-                <h2 className={`${sectionHeadingClass} mt-3`}>
+                <h2 className={sectionHeadingClass}>
                   Research &amp; Writing
                 </h2>
               </div>
@@ -287,8 +288,7 @@ export default function AboutPage() {
           <MotionReveal>
             <div className={sectionGridClass}>
               <div>
-                <p className={eyebrowClass}>03</p>
-                <h2 className={`${sectionHeadingClass} mt-3`}>Capabilities</h2>
+                <h2 className={sectionHeadingClass}>Capabilities</h2>
               </div>
               <div className="grid gap-x-12 gap-y-9 sm:grid-cols-2">
                 {capabilities.map((group) => (
@@ -312,13 +312,8 @@ export default function AboutPage() {
           <MotionReveal>
             <div className={sectionGridClass}>
               <div>
-                <p className={eyebrowClass}>04</p>
-                <h2 className={`${sectionHeadingClass} mt-3`}>Travel</h2>
+                <h2 className={sectionHeadingClass}>Travel</h2>
               </div>
-              <p className="max-w-xl text-sm leading-7 text-muted">
-                A running record of the places that have shaped how I see systems,
-                people, and pace.
-              </p>
             </div>
             <div className="mt-10 lg:mt-12">
               <TravelStrip />

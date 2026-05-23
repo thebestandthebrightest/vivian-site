@@ -7,7 +7,13 @@ import type {
   SjmsPreviewData,
   SjmsScoringRow,
 } from "@/lib/sjms-preview-data";
-import { ModalSectionLabel, ProjectModalShell } from "./ProjectModalShell";
+import {
+  ModalIcon,
+  type ModalIconName,
+  ModalSectionLabel,
+  ProjectModalShell,
+  SkillsImpactColumns,
+} from "./ProjectModalShell";
 
 type SjmsProjectModalProps = {
   data: SjmsPreviewData;
@@ -86,51 +92,28 @@ export function SjmsProjectModal({
         ) : null}
       </section>
 
-      <section className="border-t border-line pt-10">
-        <div className="grid gap-10 lg:grid-cols-[1fr_auto_1fr] lg:items-start lg:gap-12">
-          <div>
-            <ModalSectionLabel>Skills used</ModalSectionLabel>
-            <ul className="mt-5 space-y-5">
-              {data.skills.map((skill) => (
-                <li key={skill.title}>
-                  <p className="text-sm font-medium leading-5 text-foreground">
-                    {skill.title}
-                  </p>
-                  <p className="mt-1.5 text-sm leading-6 text-muted">
-                    {skill.detail}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div
-            aria-hidden="true"
-            className="hidden self-stretch lg:flex lg:items-center"
-          >
-            <ArrowIcon className="h-5 w-5 text-quiet" />
-          </div>
-
-          <div>
-            <ModalSectionLabel>Impact</ModalSectionLabel>
-            <ul className="mt-5 space-y-5">
-              {data.impact.map((item) => (
-                <li key={item.title}>
-                  <p className="text-sm font-medium leading-5 text-foreground">
-                    {item.title}
-                  </p>
-                  <p className="mt-1.5 text-sm leading-6 text-muted">
-                    {item.detail}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
+      <SkillsImpactColumns
+        skills={data.skills.map((item, index) => ({
+          title: item.title,
+          detail: item.detail,
+          icon: (["monitor", "check-circle", "sliders"] as const)[index],
+        }))}
+        impact={data.impact.map((item, index) => ({
+          title: item.title,
+          detail: item.detail,
+          icon: (["layers", "target", "wallet"] as const)[index],
+        }))}
+      />
     </ProjectModalShell>
   );
 }
+
+const sjmsKpiIcons: Record<string, ModalIconName> = {
+  "Awards supported": "wallet",
+  "Review stages": "layers",
+  "Scoring logic": "check-circle",
+  "Reviewer workflow": "monitor",
+};
 
 function SjmsKpiStrip({ items }: { items: SjmsKpi[] }) {
   return (
@@ -156,9 +139,13 @@ function SjmsKpiStrip({ items }: { items: SjmsKpi[] }) {
           >
             {item.value}
           </p>
-          <p className="mt-2 text-[0.7rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
-            {item.label}
-          </p>
+          <div className="mt-2 flex items-center gap-1.5 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+            <ModalIcon
+              name={sjmsKpiIcons[item.label] ?? "bar-chart"}
+              className="h-4 w-4"
+            />
+            <span>{item.label}</span>
+          </div>
         </div>
       ))}
     </div>
@@ -181,11 +168,17 @@ function SjmsFlow({ steps }: { steps: SjmsFlowStep[] }) {
                 : { background: "var(--background)" }
             }
           >
-            <p className="font-display text-lg font-medium leading-tight text-foreground sm:text-xl">
-              {step.label}
-            </p>
+            <div className="flex items-center gap-2.5">
+              <ModalIcon
+                name={flowIconForIndex(index)}
+                className="h-4 w-4 shrink-0 text-quiet"
+              />
+              <p className="text-[0.95rem] font-medium leading-6 text-foreground">
+                {step.label}
+              </p>
+            </div>
             {step.sublabel ? (
-              <p className="mt-2 text-xs leading-5 text-muted">{step.sublabel}</p>
+              <p className="mt-2 text-sm leading-6 text-muted">{step.sublabel}</p>
             ) : null}
           </div>
           {index < steps.length - 1 ? (
@@ -194,13 +187,17 @@ function SjmsFlow({ steps }: { steps: SjmsFlowStep[] }) {
               className="flex items-center justify-center self-stretch text-quiet"
             >
               <span className="sm:hidden">↓</span>
-              <span className="hidden sm:inline">→</span>
+              <ModalIcon name="arrow-right" className="hidden h-4 w-4 sm:block" />
             </div>
           ) : null}
         </div>
       ))}
     </div>
   );
+}
+
+function flowIconForIndex(index: number): ModalIconName {
+  return (["clipboard", "check-circle", "bar-chart", "target"] as const)[index] ?? "layers";
 }
 
 function ScoringTable({
@@ -219,7 +216,7 @@ function ScoringTable({
               <th
                 key={col}
                 scope="col"
-                className="border-b border-line px-4 py-3 text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet"
+                className="border-b border-line px-4 py-3 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet"
               >
                 {col}
               </th>
@@ -237,7 +234,7 @@ function ScoringTable({
                 <Cell isLast={isLast}>
                   <EligibilityLabel value={row.eligibility} />
                 </Cell>
-                <Cell isLast={isLast} className="font-display text-base text-foreground">
+                <Cell isLast={isLast} className="font-display text-lg text-foreground">
                   {row.reviewerAvg}
                 </Cell>
                 <Cell isLast={isLast}>
@@ -279,7 +276,7 @@ function EligibilityLabel({ value }: { value: string }) {
   const isComplete = value.toLowerCase() === "complete";
   return (
     <span
-      className="text-xs font-medium leading-5"
+      className="text-sm font-medium leading-5"
       style={{ color: isComplete ? "var(--foreground)" : "var(--quiet)" }}
     >
       {value}
@@ -291,7 +288,7 @@ function ValidationPill({ value }: { value: "Pass" | "Flag" }) {
   const isFlag = value === "Flag";
   return (
     <span
-      className="inline-flex items-center border px-2.5 py-1 text-[0.65rem] font-medium uppercase leading-4 tracking-[0.16em]"
+      className="inline-flex items-center gap-1.5 border px-2.5 py-1 text-[0.75rem] font-medium uppercase leading-4 tracking-[0.14em]"
       style={
         isFlag
           ? {
@@ -306,7 +303,11 @@ function ValidationPill({ value }: { value: "Pass" | "Flag" }) {
             }
       }
     >
-      {value}
+      <ModalIcon
+        name={isFlag ? "target" : "check-circle"}
+        className="h-3.5 w-3.5"
+      />
+      <span>{value}</span>
     </span>
   );
 }

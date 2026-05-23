@@ -13,8 +13,8 @@ import { pslPreviewData } from "@/lib/psl-preview-data";
 import { scarletWellBriefData } from "@/lib/scarletwell-preview-data";
 import { sjmsPreviewData } from "@/lib/sjms-preview-data";
 import { wellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
-import { AboutContent } from "./AboutContent";
 import { IfnhProjectModal } from "./IfnhProjectModal";
+import { ProfileModalContent } from "./ProfileModalContent";
 import { ProjectModalShell } from "./ProjectModalShell";
 import { PslProjectModal } from "./PslProjectModal";
 import { ScarletWellProjectModal } from "./ScarletWellProjectModal";
@@ -268,15 +268,14 @@ function AboutModal({
     <ProjectModalShell
       isOpen={isOpen}
       onClose={onClose}
-      labelledById="home-about-modal-title"
-      title="About"
+      labelledById="home-profile-modal-title"
+      title="Profile"
       summary="Public Health student at Rutgers working across strategy, analytics, operations, and systems that help organizations make clearer decisions."
       showHeader={false}
-      childrenClassName=""
     >
-      <AboutContent
+      <ProfileModalContent
         travelItems={travelItems}
-        titleId="home-about-modal-title"
+        titleId="home-profile-modal-title"
       />
     </ProjectModalShell>
   );
@@ -327,7 +326,7 @@ function ContactCard() {
           className="focus-ring block w-full py-1.5 text-left font-display text-[1.48rem] font-normal leading-[1.22] text-foreground/65 transition hover:text-foreground hover:opacity-100 sm:text-[1.62rem] motion-reduce:transition-none"
           href="https://www.linkedin.com/in/vivianglenn"
         >
-          linkedin.com/in/vivianglenn
+          LinkedIn
         </a>
       </li>
     </ul>

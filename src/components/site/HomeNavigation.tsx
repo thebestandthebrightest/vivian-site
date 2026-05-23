@@ -4,7 +4,7 @@ import {
   useEffect,
   useRef,
   useState,
-  forwardRef,
+  type ReactNode,
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import type { TravelItem } from "@/components/site/TravelScrollStrip";
@@ -23,6 +23,7 @@ import { WellnessThroughClayProjectModal } from "./WellnessThroughClayProjectMod
 
 type ProjectModalKey = "scarletwell" | "psl" | "ifnh" | "wtc" | "sjms";
 type ModalKey = "about" | ProjectModalKey | null;
+type PopoverKey = "work" | "contact";
 
 type HomeNavigationProps = {
   aboutTravelItems: TravelItem[];
@@ -37,81 +38,79 @@ const workItems: Array<{ label: string; modalKey: ProjectModalKey }> = [
 ];
 
 const navItemClass =
-  "focus-ring group relative inline-flex justify-center font-display text-[2.85rem] font-medium uppercase leading-[0.88] tracking-[0.015em] text-foreground transition duration-300 ease-out hover:-translate-y-0.5 hover:opacity-75 sm:text-[4.5rem] lg:text-[5.15rem] motion-reduce:transition-none";
+  "group relative inline-flex justify-center font-display text-[2.85rem] font-medium uppercase leading-[0.88] tracking-[0.015em] text-foreground outline-none transition duration-300 ease-out hover:-translate-y-0.5 hover:opacity-75 focus-visible:opacity-75 sm:text-[4.5rem] lg:text-[5.15rem] motion-reduce:transition-none";
 
 const popoverCardClass =
-  "modal-panel-in border border-line bg-background text-left shadow-[0_18px_45px_rgba(72,38,29,0.12)]";
+  "modal-panel-in border border-line bg-background text-left shadow-[0_18px_42px_rgba(72,38,29,0.10)]";
+const popoverPositionClass =
+  "absolute left-1/2 top-full z-20 mt-5 w-[calc(100vw-32px)] max-w-[30rem] -translate-x-1/2 px-7 py-6 sm:px-8";
 
 export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
   const [activeModal, setActiveModal] = useState<ModalKey>(null);
-  const [isWorkOpen, setIsWorkOpen] = useState(false);
-  const [isWorkPinned, setIsWorkPinned] = useState(false);
-  const [isContactOpen, setIsContactOpen] = useState(false);
-  const workMenuRef = useRef<HTMLDivElement>(null);
-  const contactCardRef = useRef<HTMLDivElement>(null);
+  const [activePopover, setActivePopover] = useState<PopoverKey | null>(null);
+  const [pinnedPopover, setPinnedPopover] = useState<PopoverKey | null>(null);
+  const workPopoverRef = useRef<HTMLDivElement>(null);
+  const contactPopoverRef = useRef<HTMLDivElement>(null);
 
-  const closeWorkMenu = () => {
-    setIsWorkOpen(false);
-    setIsWorkPinned(false);
+  const closePopovers = () => {
+    setActivePopover(null);
+    setPinnedPopover(null);
   };
 
   const openModal = (modalKey: Exclude<ModalKey, null>) => {
-    closeWorkMenu();
-    setIsContactOpen(false);
+    closePopovers();
     setActiveModal(modalKey);
   };
 
-  const handleWorkPointerEnter = (
+  const handlePopoverPointerEnter = (
+    popover: PopoverKey,
     event: ReactPointerEvent<HTMLDivElement>,
   ) => {
     if (event.pointerType === "mouse") {
-      setIsWorkOpen(true);
+      setActivePopover(popover);
+      setPinnedPopover((current) => (current === popover ? current : null));
     }
   };
 
-  const handleWorkPointerLeave = (
+  const handlePopoverPointerLeave = (
+    popover: PopoverKey,
     event: ReactPointerEvent<HTMLDivElement>,
   ) => {
-    if (event.pointerType === "mouse" && !isWorkPinned) {
-      setIsWorkOpen(false);
+    if (event.pointerType === "mouse" && pinnedPopover !== popover) {
+      setActivePopover((current) => (current === popover ? null : current));
     }
   };
 
-  const handleWorkClick = () => {
-    if (isWorkPinned) {
-      closeWorkMenu();
+  const handlePopoverClick = (popover: PopoverKey) => {
+    setActiveModal(null);
+
+    if (activePopover === popover && pinnedPopover === popover) {
+      closePopovers();
       return;
     }
 
-    setIsWorkOpen(true);
-    setIsWorkPinned(true);
+    setActivePopover(popover);
+    setPinnedPopover(popover);
   };
 
   useEffect(() => {
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target as Node;
+      const activeRef =
+        activePopover === "work" ? workPopoverRef : contactPopoverRef;
 
       if (
-        isWorkOpen &&
-        workMenuRef.current &&
-        !workMenuRef.current.contains(target)
+        activePopover &&
+        activeRef.current &&
+        !activeRef.current.contains(target)
       ) {
-        closeWorkMenu();
-      }
-
-      if (
-        isContactOpen &&
-        contactCardRef.current &&
-        !contactCardRef.current.contains(target)
-      ) {
-        setIsContactOpen(false);
+        closePopovers();
       }
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        closeWorkMenu();
-        setIsContactOpen(false);
+        closePopovers();
         setActiveModal(null);
       }
     };
@@ -123,12 +122,12 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isWorkOpen, isContactOpen]);
+  }, [activePopover]);
 
   return (
     <>
       <main className="flex min-h-svh items-center justify-center bg-background px-5 py-12 text-foreground sm:px-10 lg:px-14">
-        <div className="flex w-full max-w-[46rem] flex-col items-center text-center">
+        <div className="flex w-full max-w-[46rem] -translate-y-14 flex-col items-center text-center sm:-translate-y-12">
           <nav
             className="flex flex-col items-center gap-5 sm:gap-6 md:gap-7"
             aria-label="Primary navigation"
@@ -146,71 +145,69 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
             </h1>
 
             <div
-              ref={workMenuRef}
+              ref={workPopoverRef}
               className="relative flex justify-center"
-              onMouseEnter={() => setIsWorkOpen(true)}
-              onMouseLeave={() => {
-                if (!isWorkPinned) {
-                  setIsWorkOpen(false);
-                }
-              }}
-              onPointerEnter={handleWorkPointerEnter}
-              onPointerLeave={handleWorkPointerLeave}
+              onPointerEnter={(event) =>
+                handlePopoverPointerEnter("work", event)
+              }
+              onPointerLeave={(event) =>
+                handlePopoverPointerLeave("work", event)
+              }
             >
               <button
                 type="button"
-                aria-expanded={isWorkOpen}
+                aria-expanded={activePopover === "work"}
                 aria-controls="home-work-popover"
-                onClick={handleWorkClick}
+                onClick={() => handlePopoverClick("work")}
                 className={navItemClass}
               >
                 <span>WORK</span>
                 <span className="absolute -bottom-2 left-0 h-px w-0 bg-foreground transition-[width] duration-300 ease-out group-hover:w-full" />
               </button>
 
-              {isWorkOpen ? (
-                <div
-                  id="home-work-popover"
-                  className={`${popoverCardClass} absolute left-1/2 top-full z-20 mt-5 w-[min(31rem,calc(100vw-2.5rem))] -translate-x-1/2 px-7 py-6 sm:px-8`}
-                >
-                  <ul className="space-y-3">
+              {activePopover === "work" ? (
+                <HomePopover id="home-work-popover" ariaLabel="Work projects">
+                  <ul className="space-y-2.5">
                     {workItems.map((item) => (
                       <li key={item.label}>
                         <button
                           type="button"
                           onClick={() => openModal(item.modalKey)}
-                          className="focus-ring block w-full py-1 text-left font-display text-[1.55rem] font-medium leading-[1.12] text-foreground transition hover:opacity-70 sm:text-[1.7rem] motion-reduce:transition-none"
+                          className="focus-ring block w-full py-1.5 text-left font-display text-[1.48rem] font-medium leading-[1.12] text-foreground transition hover:opacity-70 sm:text-[1.62rem] motion-reduce:transition-none"
                         >
                           {item.label}
                         </button>
                       </li>
                     ))}
                   </ul>
-                </div>
+                </HomePopover>
               ) : null}
             </div>
 
-            <div className="relative flex justify-center">
+            <div
+              ref={contactPopoverRef}
+              className="relative flex justify-center"
+              onPointerEnter={(event) =>
+                handlePopoverPointerEnter("contact", event)
+              }
+              onPointerLeave={(event) =>
+                handlePopoverPointerLeave("contact", event)
+              }
+            >
               <button
                 type="button"
-                aria-haspopup="dialog"
-                aria-expanded={isContactOpen}
+                aria-expanded={activePopover === "contact"}
                 aria-controls="home-contact-card"
-                onClick={() => {
-                  closeWorkMenu();
-                  setActiveModal(null);
-                  setIsContactOpen((current) => !current);
-                }}
+                onClick={() => handlePopoverClick("contact")}
                 className={navItemClass}
               >
                 <span>CONTACT</span>
                 <span className="absolute -bottom-2 left-0 h-px w-0 bg-foreground transition-[width] duration-300 ease-out group-hover:w-full" />
               </button>
-              {isContactOpen ? (
-                <ContactCard
-                  ref={contactCardRef}
-                  onClose={() => setIsContactOpen(false)}
-                />
+              {activePopover === "contact" ? (
+                <HomePopover id="home-contact-card" ariaLabel="Contact">
+                  <ContactCard />
+                </HomePopover>
               ) : null}
             </div>
           </nav>
@@ -278,56 +275,52 @@ function AboutModal({
   );
 }
 
-const ContactCard = forwardRef<HTMLDivElement, { onClose: () => void }>(
-  function ContactCard(
-    {
-      onClose,
-    }: {
-      onClose: () => void;
-    },
-    ref,
-  ) {
-    return (
-      <div
-        ref={ref}
-        id="home-contact-card"
-        role="dialog"
-        aria-label="Contact"
-        className={`${popoverCardClass} absolute left-1/2 top-full z-20 mt-5 w-[min(28rem,calc(100vw-2.5rem))] -translate-x-1/2 px-6 py-5 sm:px-7`}
-      >
-        <div className="flex items-start justify-between gap-5">
-          <p className="max-w-[20rem] text-sm leading-7 text-muted">
-            Based in New Jersey. Open to thoughtful conversations,
-            collaborations, and coffee chats.
-          </p>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close contact"
-            className="focus-ring -mr-1 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center text-2xl font-light leading-none text-foreground transition hover:opacity-70 motion-reduce:transition-none"
+function HomePopover({
+  id,
+  ariaLabel,
+  children,
+}: {
+  id: string;
+  ariaLabel: string;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      id={id}
+      role="dialog"
+      aria-label={ariaLabel}
+      className={`${popoverCardClass} ${popoverPositionClass}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+function ContactCard() {
+  return (
+    <div>
+      <p className="text-[1.48rem] font-medium leading-[1.18] text-foreground sm:text-[1.62rem]">
+        Based in New Jersey. Open to thoughtful conversations, collaborations,
+        and coffee chats.
+      </p>
+      <div className="mt-5 space-y-2 border-t border-line pt-4 text-[0.98rem] leading-7 text-foreground">
+        <p>
+          <a
+            className="focus-ring underline decoration-foreground/25 underline-offset-4 transition-opacity duration-300 hover:opacity-70 motion-reduce:transition-none"
+            href="mailto:gvivian321@gmail.com"
           >
-            <span aria-hidden="true">×</span>
-          </button>
-        </div>
-        <div className="mt-5 space-y-2 text-base leading-7 text-foreground">
-          <p>
-            <a
-              className="focus-ring underline decoration-foreground/25 underline-offset-4 transition-opacity duration-300 hover:opacity-70 motion-reduce:transition-none"
-              href="mailto:gvivian321@gmail.com"
-            >
-              gvivian321@gmail.com
-            </a>
-          </p>
-          <p>
-            <a
-              className="focus-ring underline decoration-foreground/25 underline-offset-4 transition-opacity duration-300 hover:opacity-70 motion-reduce:transition-none"
-              href="https://www.linkedin.com/in/vivianglenn"
-            >
-              linkedin.com/in/vivianglenn
-            </a>
-          </p>
-        </div>
+            gvivian321@gmail.com
+          </a>
+        </p>
+        <p>
+          <a
+            className="focus-ring underline decoration-foreground/25 underline-offset-4 transition-opacity duration-300 hover:opacity-70 motion-reduce:transition-none"
+            href="https://www.linkedin.com/in/vivianglenn"
+          >
+            linkedin.com/in/vivianglenn
+          </a>
+        </p>
       </div>
-    );
-  },
-);
+    </div>
+  );
+}

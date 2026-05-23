@@ -94,21 +94,19 @@ export function ProjectModalShell({
         aria-modal="true"
         aria-labelledby={labelledById}
         onKeyDown={handleKeyDown}
-        className={`modal-panel-in mx-auto h-screen w-full overflow-y-auto bg-background sm:h-[calc(100vh-2.5rem)] sm:border sm:border-line ${panelClassName}`}
+        className={`modal-panel-in relative mx-auto h-screen w-full overflow-y-auto bg-background sm:h-[calc(100vh-2.5rem)] sm:border sm:border-line ${panelClassName}`}
       >
-        <div className={`mx-auto w-full px-6 pb-18 pt-3 sm:px-10 lg:px-12 ${contentClassName}`}>
-          <div className="sticky top-0 z-10 -mx-6 flex justify-end bg-background/96 px-6 py-3 sm:-mx-10 sm:px-10 lg:-mx-12 lg:px-12">
-            <button
-              ref={closeButtonRef}
-              type="button"
-              onClick={onClose}
-              aria-label={closeLabel}
-              className="focus-ring modal-close-button text-2xl font-light leading-none motion-reduce:transition-none"
-            >
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
+        <button
+          ref={closeButtonRef}
+          type="button"
+          onClick={onClose}
+          aria-label={closeLabel}
+          className="focus-ring modal-close-button absolute right-3 top-3 z-20 text-2xl font-light leading-none motion-reduce:transition-none sm:right-4 sm:top-4"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
 
+        <div className={`mx-auto w-full px-6 pb-18 pt-12 sm:px-10 sm:pt-14 lg:px-12 ${contentClassName}`}>
           {showHeader ? (
             <header className="grid gap-6 pb-12 pt-6 lg:grid-cols-[1fr_0.9fr] lg:items-end lg:gap-10">
               <div>

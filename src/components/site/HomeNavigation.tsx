@@ -4,13 +4,16 @@ import {
   useEffect,
   useRef,
   useState,
+  forwardRef,
   type PointerEvent as ReactPointerEvent,
 } from "react";
+import type { TravelItem } from "@/components/site/TravelScrollStrip";
 import { ifnhPreviewData } from "@/lib/ifnh-preview-data";
 import { pslPreviewData } from "@/lib/psl-preview-data";
 import { scarletWellBriefData } from "@/lib/scarletwell-preview-data";
 import { sjmsPreviewData } from "@/lib/sjms-preview-data";
 import { wellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
+import { AboutContent } from "./AboutContent";
 import { IfnhProjectModal } from "./IfnhProjectModal";
 import { ProjectModalShell } from "./ProjectModalShell";
 import { PslProjectModal } from "./PslProjectModal";
@@ -19,7 +22,11 @@ import { SjmsProjectModal } from "./SjmsProjectModal";
 import { WellnessThroughClayProjectModal } from "./WellnessThroughClayProjectModal";
 
 type ProjectModalKey = "scarletwell" | "psl" | "ifnh" | "wtc" | "sjms";
-type ModalKey = "about" | "contact" | ProjectModalKey | null;
+type ModalKey = "about" | ProjectModalKey | null;
+
+type HomeNavigationProps = {
+  aboutTravelItems: TravelItem[];
+};
 
 const workItems: Array<{ label: string; modalKey: ProjectModalKey }> = [
   { label: "ScarletWell Studio", modalKey: "scarletwell" },
@@ -32,11 +39,16 @@ const workItems: Array<{ label: string; modalKey: ProjectModalKey }> = [
 const navItemClass =
   "focus-ring group relative inline-flex justify-center font-display text-[2.85rem] font-medium uppercase leading-[0.88] tracking-[0.015em] text-foreground transition duration-300 ease-out hover:-translate-y-0.5 hover:opacity-75 sm:text-[4.5rem] lg:text-[5.15rem] motion-reduce:transition-none";
 
-export function HomeNavigation() {
+const popoverCardClass =
+  "modal-panel-in border border-line bg-background text-left shadow-[0_18px_45px_rgba(72,38,29,0.12)]";
+
+export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
   const [activeModal, setActiveModal] = useState<ModalKey>(null);
   const [isWorkOpen, setIsWorkOpen] = useState(false);
   const [isWorkPinned, setIsWorkPinned] = useState(false);
+  const [isContactOpen, setIsContactOpen] = useState(false);
   const workMenuRef = useRef<HTMLDivElement>(null);
+  const contactCardRef = useRef<HTMLDivElement>(null);
 
   const closeWorkMenu = () => {
     setIsWorkOpen(false);
@@ -45,6 +57,7 @@ export function HomeNavigation() {
 
   const openModal = (modalKey: Exclude<ModalKey, null>) => {
     closeWorkMenu();
+    setIsContactOpen(false);
     setActiveModal(modalKey);
   };
 
@@ -76,18 +89,29 @@ export function HomeNavigation() {
 
   useEffect(() => {
     const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as Node;
+
       if (
         isWorkOpen &&
         workMenuRef.current &&
-        !workMenuRef.current.contains(event.target as Node)
+        !workMenuRef.current.contains(target)
       ) {
         closeWorkMenu();
+      }
+
+      if (
+        isContactOpen &&
+        contactCardRef.current &&
+        !contactCardRef.current.contains(target)
+      ) {
+        setIsContactOpen(false);
       }
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         closeWorkMenu();
+        setIsContactOpen(false);
         setActiveModal(null);
       }
     };
@@ -99,7 +123,7 @@ export function HomeNavigation() {
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isWorkOpen]);
+  }, [isWorkOpen, isContactOpen]);
 
   return (
     <>
@@ -147,15 +171,15 @@ export function HomeNavigation() {
               {isWorkOpen ? (
                 <div
                   id="home-work-popover"
-                  className="modal-panel-in absolute left-1/2 top-full z-20 mt-4 w-[min(19rem,calc(100vw-3rem))] -translate-x-1/2 border border-line bg-background/98 px-5 py-4 text-left shadow-[0_18px_45px_rgba(72,38,29,0.12)]"
+                  className={`${popoverCardClass} absolute left-1/2 top-full z-20 mt-5 w-[min(31rem,calc(100vw-2.5rem))] -translate-x-1/2 px-7 py-6 sm:px-8`}
                 >
-                  <ul className="space-y-1.5">
+                  <ul className="space-y-3">
                     {workItems.map((item) => (
                       <li key={item.label}>
                         <button
                           type="button"
                           onClick={() => openModal(item.modalKey)}
-                          className="focus-ring block w-full py-1.5 text-left font-display text-[1.35rem] font-medium leading-tight text-foreground transition hover:opacity-70 motion-reduce:transition-none"
+                          className="focus-ring block w-full py-1 text-left font-display text-[1.55rem] font-medium leading-[1.12] text-foreground transition hover:opacity-70 sm:text-[1.7rem] motion-reduce:transition-none"
                         >
                           {item.label}
                         </button>
@@ -166,15 +190,29 @@ export function HomeNavigation() {
               ) : null}
             </div>
 
-            <button
-              type="button"
-              aria-haspopup="dialog"
-              onClick={() => openModal("contact")}
-              className={navItemClass}
-            >
-              <span>CONTACT</span>
-              <span className="absolute -bottom-2 left-0 h-px w-0 bg-foreground transition-[width] duration-300 ease-out group-hover:w-full" />
-            </button>
+            <div className="relative flex justify-center">
+              <button
+                type="button"
+                aria-haspopup="dialog"
+                aria-expanded={isContactOpen}
+                aria-controls="home-contact-card"
+                onClick={() => {
+                  closeWorkMenu();
+                  setActiveModal(null);
+                  setIsContactOpen((current) => !current);
+                }}
+                className={navItemClass}
+              >
+                <span>CONTACT</span>
+                <span className="absolute -bottom-2 left-0 h-px w-0 bg-foreground transition-[width] duration-300 ease-out group-hover:w-full" />
+              </button>
+              {isContactOpen ? (
+                <ContactCard
+                  ref={contactCardRef}
+                  onClose={() => setIsContactOpen(false)}
+                />
+              ) : null}
+            </div>
           </nav>
         </div>
       </main>
@@ -182,10 +220,7 @@ export function HomeNavigation() {
       <AboutModal
         isOpen={activeModal === "about"}
         onClose={() => setActiveModal(null)}
-      />
-      <ContactModal
-        isOpen={activeModal === "contact"}
-        onClose={() => setActiveModal(null)}
+        travelItems={aboutTravelItems}
       />
       <ScarletWellProjectModal
         data={scarletWellBriefData}
@@ -219,9 +254,11 @@ export function HomeNavigation() {
 function AboutModal({
   isOpen,
   onClose,
+  travelItems,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  travelItems: TravelItem[];
 }) {
   return (
     <ProjectModalShell
@@ -230,85 +267,67 @@ function AboutModal({
       labelledById="home-about-modal-title"
       title="About"
       summary="Public Health student at Rutgers working across strategy, analytics, operations, and systems that help organizations make clearer decisions."
-      panelClassName="sm:max-w-[62rem]"
-      contentClassName="max-w-4xl"
+      showHeader={false}
+      childrenClassName=""
     >
-      <section className="grid gap-10 md:grid-cols-[1fr_1fr] md:gap-14">
-        <div className="space-y-5 text-base leading-8 text-muted sm:text-lg">
-          <p>
-            I&apos;m interested in translating messy information into clear
-            tools, decisions, and operating rhythms.
-          </p>
-          <p>
-            My work sits where research, program design, analytics, and
-            AI-assisted execution become practical infrastructure.
-          </p>
-        </div>
-        <div className="space-y-7">
-          <div>
-            <p className="text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-              Education
-            </p>
-            <div className="mt-3 space-y-1 text-sm leading-7">
-              <p className="font-medium text-foreground">Rutgers University</p>
-              <p className="text-muted">Bachelor of Science, Public Health</p>
-              <p className="text-quiet">Class of 2027 / GPA: 3.97/4.0</p>
-            </div>
-          </div>
-          <div>
-            <p className="text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-              Capabilities
-            </p>
-            <ul className="mt-3 grid gap-x-8 gap-y-1 text-sm leading-7 text-muted sm:grid-cols-2">
-              <li>Operational strategy</li>
-              <li>Program evaluation</li>
-              <li>Dashboard systems</li>
-              <li>Decision-support tools</li>
-              <li>AI-assisted synthesis</li>
-              <li>Workflow design</li>
-            </ul>
-          </div>
-        </div>
-      </section>
+      <AboutContent
+        travelItems={travelItems}
+        titleId="home-about-modal-title"
+      />
     </ProjectModalShell>
   );
 }
 
-function ContactModal({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
-  return (
-    <ProjectModalShell
-      isOpen={isOpen}
-      onClose={onClose}
-      labelledById="home-contact-modal-title"
-      title="Contact"
-      summary="Based in New Jersey. Open to thoughtful conversations, collaborations, and coffee chats."
-      panelClassName="sm:max-w-[44rem]"
-      contentClassName="max-w-2xl"
-    >
-      <section className="space-y-3 text-base leading-8 text-muted sm:text-lg">
-        <p>
-          <a
-            className="focus-ring text-foreground underline decoration-foreground/25 underline-offset-4 transition-opacity duration-300 hover:opacity-70 motion-reduce:transition-none"
-            href="mailto:gvivian321@gmail.com"
+const ContactCard = forwardRef<HTMLDivElement, { onClose: () => void }>(
+  function ContactCard(
+    {
+      onClose,
+    }: {
+      onClose: () => void;
+    },
+    ref,
+  ) {
+    return (
+      <div
+        ref={ref}
+        id="home-contact-card"
+        role="dialog"
+        aria-label="Contact"
+        className={`${popoverCardClass} absolute left-1/2 top-full z-20 mt-5 w-[min(28rem,calc(100vw-2.5rem))] -translate-x-1/2 px-6 py-5 sm:px-7`}
+      >
+        <div className="flex items-start justify-between gap-5">
+          <p className="max-w-[20rem] text-sm leading-7 text-muted">
+            Based in New Jersey. Open to thoughtful conversations,
+            collaborations, and coffee chats.
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close contact"
+            className="focus-ring -mr-1 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center text-2xl font-light leading-none text-foreground transition hover:opacity-70 motion-reduce:transition-none"
           >
-            gvivian321@gmail.com
-          </a>
-        </p>
-        <p>
-          <a
-            className="focus-ring text-foreground underline decoration-foreground/25 underline-offset-4 transition-opacity duration-300 hover:opacity-70 motion-reduce:transition-none"
-            href="https://www.linkedin.com/in/vivianglenn"
-          >
-            linkedin.com/in/vivianglenn
-          </a>
-        </p>
-      </section>
-    </ProjectModalShell>
-  );
-}
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div className="mt-5 space-y-2 text-base leading-7 text-foreground">
+          <p>
+            <a
+              className="focus-ring underline decoration-foreground/25 underline-offset-4 transition-opacity duration-300 hover:opacity-70 motion-reduce:transition-none"
+              href="mailto:gvivian321@gmail.com"
+            >
+              gvivian321@gmail.com
+            </a>
+          </p>
+          <p>
+            <a
+              className="focus-ring underline decoration-foreground/25 underline-offset-4 transition-opacity duration-300 hover:opacity-70 motion-reduce:transition-none"
+              href="https://www.linkedin.com/in/vivianglenn"
+            >
+              linkedin.com/in/vivianglenn
+            </a>
+          </p>
+        </div>
+      </div>
+    );
+  },
+);

@@ -17,9 +17,10 @@ type ProjectModalShellProps = {
   eyebrow?: string;
   children?: ReactNode;
   closeLabel?: string;
-  showCloseIcon?: boolean;
   panelClassName?: string;
   contentClassName?: string;
+  childrenClassName?: string;
+  showHeader?: boolean;
 };
 
 export function ProjectModalShell({
@@ -31,8 +32,10 @@ export function ProjectModalShell({
   eyebrow,
   children,
   closeLabel = "Close modal",
-  panelClassName = "sm:max-w-[78rem]",
-  contentClassName = "max-w-6xl",
+  panelClassName = "sm:max-w-[92rem]",
+  contentClassName = "max-w-[82rem]",
+  childrenClassName = "space-y-10 lg:space-y-12",
+  showHeader = true,
 }: ProjectModalShellProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -100,32 +103,34 @@ export function ProjectModalShell({
               type="button"
               onClick={onClose}
               aria-label={closeLabel}
-              className="focus-ring inline-flex h-10 w-10 items-center justify-center text-2xl font-light leading-none text-foreground transition hover:opacity-70 motion-reduce:transition-none"
+              className="focus-ring inline-flex h-8 w-8 items-center justify-center text-2xl font-light leading-none text-foreground transition hover:opacity-70 motion-reduce:transition-none"
             >
               <span aria-hidden="true">×</span>
             </button>
           </div>
 
-          <header className="grid gap-6 pb-10 pt-6 lg:grid-cols-[1fr_0.9fr] lg:items-end lg:gap-10">
-            <div>
-              {eyebrow ? (
-                <p className="mb-3 text-[0.72rem] font-medium uppercase leading-5 tracking-[0.2em] text-quiet">
-                  {eyebrow}
-                </p>
-              ) : null}
-              <h2
-                id={labelledById}
-                className="font-display text-[clamp(2.6rem,6vw,4.25rem)] font-medium leading-[0.95] text-foreground"
-              >
-                {title}
-              </h2>
-            </div>
-            <p className="max-w-xl text-base leading-7 text-muted sm:text-[1.05rem]">
-              {summary}
-            </p>
-          </header>
+          {showHeader ? (
+            <header className="grid gap-6 pb-10 pt-6 lg:grid-cols-[1fr_0.9fr] lg:items-end lg:gap-10">
+              <div>
+                {eyebrow ? (
+                  <p className="mb-3 text-[0.72rem] font-medium uppercase leading-5 tracking-[0.2em] text-quiet">
+                    {eyebrow}
+                  </p>
+                ) : null}
+                <h2
+                  id={labelledById}
+                  className="font-display text-[clamp(2.6rem,6vw,4.25rem)] font-medium leading-[0.95] text-foreground"
+                >
+                  {title}
+                </h2>
+              </div>
+              <p className="max-w-xl text-base leading-7 text-muted sm:text-[1.05rem]">
+                {summary}
+              </p>
+            </header>
+          ) : null}
 
-          <div className="space-y-10 lg:space-y-12">{children}</div>
+          <div className={childrenClassName}>{children}</div>
         </div>
       </div>
     </div>

@@ -150,8 +150,6 @@ export function SjmsProjectModal({
       title={data.title}
       summary={data.summary}
       eyebrow={data.eyebrow}
-      panelClassName="sm:max-w-[74rem]"
-      contentClassName="max-w-5xl"
     >
       <section>
         <ModalSectionLabel>Impact snapshot</ModalSectionLabel>

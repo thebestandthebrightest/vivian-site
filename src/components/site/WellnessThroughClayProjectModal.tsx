@@ -82,10 +82,6 @@ export function WellnessThroughClayProjectModal({
       labelledById="wtc-modal-title"
       title="Wellness Through Clay"
       summary="Student wellness initiative built through iterative programming, attendance insights, and community feedback."
-      closeLabel="CLOSE"
-      showCloseIcon={false}
-      panelClassName="sm:max-w-[92rem]"
-      contentClassName="max-w-[82rem]"
     >
       <KpiStripTight items={kpis} />
       <ProcessRow steps={processSteps} />

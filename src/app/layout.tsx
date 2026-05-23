@@ -16,7 +16,7 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "Vivian Glenn | Strategy. Analytics. Systems.",
+  title: "Vivian Glenn",
   description:
     "A consulting-forward personal site for Vivian Glenn, Public Health at Rutgers, focused on strategy, analytics, and operational systems.",
 };

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { WellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
 import {
-  ModalArrow,
   ModalInlineLink,
   ModalSectionLabel,
   ProjectModalShell,
@@ -19,7 +18,7 @@ type WellnessThroughClayProjectModalProps = {
 const processSteps = [
   "Workshops",
   "Attendance + feedback",
-  "Insights",
+  "Insight",
   "Outreach + event design",
 ];
 
@@ -126,8 +125,8 @@ export function WellnessThroughClayProjectModal({
         </div>
       </section>
       <section>
-        <CumulativeGrowthBars
-          label={data.cumulativeGrowth.label}
+        <CumulativeReachLine
+          label="Cumulative reach"
           items={data.cumulativeGrowth.points}
           caption="Cumulative reach grew across three programming cycles while the model became more consistent."
         />
@@ -136,7 +135,7 @@ export function WellnessThroughClayProjectModal({
         <QuoteList items={quotes} />
       </section>
       <section>
-        <EvidenceReach items={evidenceLinks} />
+        <ProofPoints items={evidenceLinks} />
       </section>
       <SkillsImpactColumns skills={skills} impact={impacts} />
       <LiveSitePreview href={websiteHref} />
@@ -175,28 +174,26 @@ function KpiStripTight({
 function ProcessRow({ steps }: { steps: string[] }) {
   return (
     <section aria-label="Wellness Through Clay process">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-0">
+      <ol className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((step, index) => (
-          <div
+          <li
             key={step}
-            className="flex flex-1 items-center gap-3 lg:min-w-0"
+            className="flex h-full flex-col justify-between border border-line bg-background px-5 py-5"
           >
-            <p className="min-w-0 text-base font-medium leading-6 text-foreground sm:text-[1.05rem]">
+            <p className="text-[0.7rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+              Step {String(index + 1).padStart(2, "0")}
+            </p>
+            <p className="mt-3 text-[1.02rem] font-medium leading-6 text-foreground sm:text-[1.05rem]">
               {step}
             </p>
-            {index < steps.length - 1 ? (
-              <span aria-hidden="true" className="ml-auto hidden shrink-0 lg:mx-5 lg:inline-flex">
-                <ModalArrow />
-              </span>
-            ) : null}
-          </div>
+          </li>
         ))}
-      </div>
+      </ol>
     </section>
   );
 }
 
-function CumulativeGrowthBars({
+function CumulativeReachLine({
   label,
   items,
   caption,
@@ -209,40 +206,99 @@ function CumulativeGrowthBars({
   }>;
   caption: string;
 }) {
-  const max = Math.max(...items.map((item) => item.value));
+  const width = 720;
+  const height = 220;
+  const padX = 56;
+  const padTop = 32;
+  const padBottom = 44;
+  const innerW = width - padX * 2;
+  const innerH = height - padTop - padBottom;
+
+  const max = Math.max(...items.map((i) => i.value));
+  const min = Math.min(...items.map((i) => i.value));
+  const range = Math.max(1, max - min);
+  const pad = range * 0.25;
+  const yMax = max + pad;
+  const yMin = Math.max(0, min - pad);
+  const yRange = Math.max(1, yMax - yMin);
+
+  const points = items.map((item, idx) => {
+    const x =
+      items.length === 1
+        ? padX + innerW / 2
+        : padX + (innerW * idx) / (items.length - 1);
+    const y = padTop + innerH - ((item.value - yMin) / yRange) * innerH;
+    return { ...item, x, y, isLast: idx === items.length - 1 };
+  });
+
+  const linePath = points
+    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`)
+    .join(" ");
+
+  const baselineY = padTop + innerH;
 
   return (
     <section>
       <ModalSectionLabel>{label}</ModalSectionLabel>
-      <div className="mt-5 space-y-5">
-        {items.map((item, index) => {
-          const isLast = index === items.length - 1;
-          const displayValue = item.displayValue ?? String(item.value);
-          return (
-            <div key={item.cycle}>
-              <div className="mb-2 flex items-baseline justify-between gap-4">
-                <p className="text-base font-medium leading-6 text-foreground sm:text-[1.05rem]">
-                  {item.cycle.replace("-", "–")}
-                </p>
-                <p
-                  className="font-display text-[1.45rem] font-medium leading-none text-foreground"
-                  style={isLast ? { color: "var(--sage-deep)" } : undefined}
-                >
-                  {displayValue}
-                </p>
-              </div>
-              <div className="h-2.5 w-full bg-line/45">
-                <div
-                  className="h-full transition-[width] duration-500 ease-out motion-reduce:transition-none"
-                  style={{
-                    width: `${Math.max(8, (item.value / max) * 100)}%`,
-                    background: isLast ? "var(--accent)" : "rgba(72, 38, 29, 0.34)",
-                  }}
-                />
-              </div>
-            </div>
-          );
-        })}
+      <div className="mt-5 w-full">
+        <svg
+          viewBox={`0 0 ${width} ${height}`}
+          role="img"
+          aria-label={`${label}: ${points
+            .map((p) => `${p.cycle.replace("-", "–")} ${p.displayValue ?? p.value}`)
+            .join(", ")}`}
+          className="block h-auto w-full"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <line
+            x1={padX}
+            x2={width - padX}
+            y1={baselineY}
+            y2={baselineY}
+            stroke="var(--line)"
+            strokeWidth={1}
+          />
+          <path
+            d={linePath}
+            fill="none"
+            stroke="var(--accent)"
+            strokeWidth={1.6}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {points.map((p) => (
+            <g key={p.cycle}>
+              <circle
+                cx={p.x}
+                cy={p.y}
+                r={p.isLast ? 5 : 3.25}
+                fill={p.isLast ? "var(--accent)" : "var(--background)"}
+                stroke="var(--accent)"
+                strokeWidth={1.6}
+              />
+              <text
+                x={p.x}
+                y={p.y - 14}
+                textAnchor="middle"
+                fontSize={13}
+                fontWeight={500}
+                fill={p.isLast ? "var(--sage-deep)" : "var(--foreground)"}
+              >
+                {p.displayValue ?? String(p.value)}
+              </text>
+              <text
+                x={p.x}
+                y={baselineY + 22}
+                textAnchor="middle"
+                fontSize={11}
+                fill="var(--quiet)"
+                letterSpacing={1.4}
+              >
+                {p.cycle.replace("-", "–").toUpperCase()}
+              </text>
+            </g>
+          ))}
+        </svg>
       </div>
       <p className="mt-5 max-w-3xl text-[0.98rem] leading-7 text-muted">{caption}</p>
     </section>
@@ -253,10 +309,13 @@ function QuoteList({ items }: { items: string[] }) {
   return (
     <section>
       <ModalSectionLabel>Participant signal</ModalSectionLabel>
-      <div className="mt-5 grid gap-7 sm:grid-cols-3 sm:gap-10">
+      <div className="mt-5 grid gap-3 sm:grid-cols-3">
         {items.map((quote) => (
-          <figure key={quote} className="border-t border-line pt-5">
-            <blockquote className="font-display text-[1.18rem] italic leading-8 text-foreground sm:text-[1.24rem]">
+          <figure
+            key={quote}
+            className="h-full border border-line bg-background px-5 py-5"
+          >
+            <blockquote className="font-display text-[1.1rem] italic leading-7 text-foreground sm:text-[1.16rem]">
               “{quote}”
             </blockquote>
           </figure>
@@ -272,47 +331,50 @@ type EvidenceLinkItem = {
   display: string;
 };
 
-function EvidenceReach({ items }: { items: EvidenceLinkItem[] }) {
+function ProofPoints({ items }: { items: EvidenceLinkItem[] }) {
   return (
     <section>
-      <ModalSectionLabel>Evidence + reach</ModalSectionLabel>
-      <div className="mt-5">
-        <ul className="flex flex-wrap gap-x-5 gap-y-3 lg:flex-nowrap">
-          {items.map((item) => (
-            <li key={item.label}>
-              <EvidenceLink item={item} />
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ModalSectionLabel>Proof points</ModalSectionLabel>
+      <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {items.map((item) => (
+          <li key={item.label}>
+            <ProofPointCard item={item} />
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
 
-function EvidenceLink({ item }: { item: EvidenceLinkItem }) {
-  const content = (
+function ProofPointCard({ item }: { item: EvidenceLinkItem }) {
+  const body = (
     <>
-      <span className="font-medium text-foreground">{item.label}</span>
-      <span className="text-muted">—</span>
-      <span>{item.display}</span>
+      <p className="text-[0.7rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+        {item.label}
+      </p>
+      <p className="mt-2 text-[0.98rem] font-medium leading-6 text-foreground">
+        {item.display}
+      </p>
     </>
   );
 
   if (!item.href) {
     return (
-      <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-[0.96rem] leading-7 text-muted xl:text-base">
-        {content}
-      </span>
+      <div className="block h-full border border-line bg-background px-4 py-4">
+        {body}
+      </div>
     );
   }
 
   return (
-    <ModalInlineLink
+    <a
       href={item.href}
-      className="whitespace-nowrap text-[0.96rem] leading-7 text-muted xl:text-base"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="focus-ring proof-point-card group block h-full border border-line bg-background px-4 py-4 transition-colors duration-200 hover:border-foreground/40 motion-reduce:transition-none"
     >
-      {content}
-    </ModalInlineLink>
+      {body}
+    </a>
   );
 }
 

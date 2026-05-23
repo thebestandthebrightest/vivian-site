@@ -307,29 +307,29 @@ function HomePopover({
 
 function ContactCard() {
   return (
-    <ul className="space-y-2.5">
-      <li>
-        <p className="px-0 py-1.5 font-display text-[0.98rem] font-normal leading-[1.45] text-foreground/70 sm:text-[1.05rem]">
-          Based in New Jersey. Open to thoughtful conversations,
-          collaborations, and coffee chats.
-        </p>
-      </li>
-      <li>
-        <a
-          className="focus-ring block w-full py-1.5 text-left font-display text-[1.48rem] font-medium leading-[1.12] text-foreground transition hover:opacity-70 sm:text-[1.62rem] motion-reduce:transition-none"
-          href="mailto:gvivian321@gmail.com"
-        >
-          gvivian321@gmail.com
-        </a>
-      </li>
-      <li>
-        <a
-          className="focus-ring block w-full py-1.5 text-left font-display text-[1.48rem] font-medium leading-[1.12] text-foreground transition hover:opacity-70 sm:text-[1.62rem] motion-reduce:transition-none"
-          href="https://www.linkedin.com/in/vivianglenn"
-        >
-          linkedin.com/in/vivianglenn
-        </a>
-      </li>
-    </ul>
+    <div className="space-y-4">
+      <p className="font-display text-[1.48rem] font-normal leading-[1.22] text-foreground sm:text-[1.62rem]">
+        Based in New Jersey. Open to thoughtful conversations,
+        collaborations, and coffee chats.
+      </p>
+      <ul className="space-y-1.5">
+        <li>
+          <a
+            className="focus-ring block w-full py-1 text-left font-display text-[1.08rem] font-medium leading-[1.2] text-foreground/80 transition hover:opacity-70 sm:text-[1.16rem] motion-reduce:transition-none"
+            href="mailto:gvivian321@gmail.com"
+          >
+            gvivian321@gmail.com
+          </a>
+        </li>
+        <li>
+          <a
+            className="focus-ring block w-full py-1 text-left font-display text-[1.08rem] font-medium leading-[1.2] text-foreground/80 transition hover:opacity-70 sm:text-[1.16rem] motion-reduce:transition-none"
+            href="https://www.linkedin.com/in/vivianglenn"
+          >
+            linkedin.com/in/vivianglenn
+          </a>
+        </li>
+      </ul>
+    </div>
   );
 }

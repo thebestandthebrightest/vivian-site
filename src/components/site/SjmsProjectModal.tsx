@@ -12,9 +12,11 @@ import type {
   SjmsScoringRow,
 } from "@/lib/sjms-preview-data";
 import {
+  ModalArrow,
   ModalSectionLabel,
   ModalTabs,
   ProjectModalShell,
+  SkillsImpactColumns,
 } from "./ProjectModalShell";
 
 type SjmsProjectModalProps = {
@@ -196,22 +198,7 @@ export function SjmsProjectModal({
         </div>
       </section>
 
-      <section className="border-t border-line pt-10">
-        <div className="grid gap-10 lg:grid-cols-[1fr_auto_1fr] lg:items-start lg:gap-12">
-          <NumberedList heading="Skills used" items={data.skills} />
-          <div
-            aria-hidden="true"
-            className="hidden self-stretch text-quiet lg:flex lg:items-center"
-          >
-            <SjmsIcon name="arrow-right" className="h-5 w-5" />
-          </div>
-          <NumberedList
-            heading="Impact created"
-            items={data.impact}
-            accentBorder
-          />
-        </div>
-      </section>
+      <SkillsImpactColumns skills={data.skills} impact={data.impact} />
     </ProjectModalShell>
   );
 }
@@ -272,7 +259,7 @@ function OverviewTab({
     <div className="space-y-6">
       <div className="hidden flex-wrap items-center gap-3 border-b border-line pb-4 text-[0.72rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet sm:flex">
         {steps.map((step, index) => (
-          <div key={step.label} className="flex items-center gap-3">
+            <div key={step.label} className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <SjmsIcon
                 name={FLOW_ICONS[index] ?? "list-check"}
@@ -281,7 +268,7 @@ function OverviewTab({
               <span>{step.label}</span>
             </div>
             {index < steps.length - 1 ? (
-              <SjmsIcon name="arrow-right" className="h-3.5 w-3.5" />
+              <ModalArrow className="text-[0.95rem]" />
             ) : null}
           </div>
         ))}
@@ -371,7 +358,7 @@ function DecisionTrailTab({
           aria-hidden="true"
           className="hidden self-stretch text-quiet lg:flex lg:items-center lg:justify-center"
         >
-          <SjmsIcon name="arrow-right" className="h-4 w-4" />
+          <ModalArrow />
         </div>
         <CompactList heading="After" items={after} accent />
       </div>
@@ -538,44 +525,6 @@ function CompactList({
           </li>
         ))}
       </ul>
-    </div>
-  );
-}
-
-function NumberedList({
-  heading,
-  items,
-  accentBorder = false,
-}: {
-  heading: string;
-  items: Array<{ title: string }>;
-  accentBorder?: boolean;
-}) {
-  return (
-    <div>
-      <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-        {heading}
-      </p>
-      <ol className="mt-5 space-y-4">
-        {items.map((item, index) => (
-          <li
-            key={item.title}
-            className="border-t pt-4"
-            style={{
-              borderColor: accentBorder ? "var(--sage-line)" : "var(--line)",
-            }}
-          >
-            <div className="flex items-start gap-3">
-              <span className="font-display text-[1.15rem] leading-none text-foreground">
-                {index + 1}.
-              </span>
-              <p className="text-[0.95rem] font-medium leading-6 text-foreground">
-                {item.title}
-              </p>
-            </div>
-          </li>
-        ))}
-      </ol>
     </div>
   );
 }

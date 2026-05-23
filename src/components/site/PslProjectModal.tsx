@@ -2,7 +2,14 @@
 
 import { useState, type ReactNode, type SVGProps } from "react";
 import type { PslPreviewData } from "@/lib/psl-preview-data";
-import { KpiStrip, ModalSectionLabel, ProjectModalShell } from "./ProjectModalShell";
+import {
+  KpiStrip,
+  ModalArrow,
+  ModalSectionLabel,
+  ModalTabs,
+  ProjectModalShell,
+  SkillsImpactColumns,
+} from "./ProjectModalShell";
 
 type PslProjectModalProps = {
   data: PslPreviewData;
@@ -145,35 +152,20 @@ export function PslProjectModal({
       </section>
 
       <section>
-        <div
-          role="tablist"
-          aria-label="PSL case study sections"
-          className="flex flex-wrap gap-x-7 gap-y-2 border-b border-line"
-        >
-          {TABS.map((tab) => {
-            const isActive = tab.id === activeTab;
-            return (
-              <button
-                key={tab.id}
-                role="tab"
-                type="button"
-                aria-selected={isActive}
-                onClick={() => setActiveTab(tab.id)}
-                className="focus-ring relative -mb-px py-3 text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] transition hover:opacity-100 motion-reduce:transition-none"
-                style={{
-                  color: isActive ? "var(--foreground)" : "var(--quiet)",
-                  borderBottom: isActive
-                    ? "1.5px solid var(--foreground)"
-                    : "1.5px solid transparent",
-                }}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
+        <ModalTabs
+          items={TABS}
+          active={activeTab}
+          onChange={setActiveTab}
+          ariaLabel="PSL case study sections"
+          idPrefix="psl"
+        />
 
-        <div className="mt-7">
+        <div
+          className="mt-7"
+          role="tabpanel"
+          id={`psl-panel-${activeTab}`}
+          aria-labelledby={`psl-tab-${activeTab}`}
+        >
           {activeTab === "overall" ? <OverallTab data={data} /> : null}
           {activeTab === "competency" ? <CompetencyTab data={data} /> : null}
           {activeTab === "themes" ? <ThemesTab data={data} /> : null}
@@ -181,52 +173,7 @@ export function PslProjectModal({
         </div>
       </section>
 
-      <section className="border-t border-line pt-10">
-        <div className="grid gap-10 lg:grid-cols-[1fr_auto_1fr] lg:items-start lg:gap-12">
-          <div>
-            <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.22em] text-quiet">
-              Skills I used
-            </p>
-            <ul className="mt-5 space-y-5">
-              {data.skills.map((skill) => (
-                <li key={skill.title}>
-                  <p className="text-sm font-medium leading-5 text-foreground">
-                    {skill.title}
-                  </p>
-                  <p className="mt-1.5 text-sm leading-6 text-muted">
-                    {skill.detail}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div
-            aria-hidden="true"
-            className="hidden self-stretch lg:flex lg:items-center"
-          >
-            <Icon name="arrow-right" className="h-5 w-5 text-quiet" />
-          </div>
-
-          <div>
-            <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.22em] text-quiet">
-              Impact
-            </p>
-            <ul className="mt-5 space-y-5">
-              {data.impact.map((item) => (
-                <li key={item.title}>
-                  <p className="text-sm font-medium leading-5 text-foreground">
-                    {item.title}
-                  </p>
-                  <p className="mt-1.5 text-sm leading-6 text-muted">
-                    {item.detail}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
+      <SkillsImpactColumns skills={data.skills} impact={data.impact} />
     </ProjectModalShell>
   );
 }
@@ -298,11 +245,10 @@ function PipelineArrow({ emphasized = false }: { emphasized?: boolean }) {
   return (
     <div
       aria-hidden="true"
-      className="flex items-center justify-center self-stretch text-quiet"
+      className="hidden items-center justify-center self-stretch text-quiet lg:flex"
       style={emphasized ? { color: "var(--foreground)" } : undefined}
     >
-      <span className="lg:hidden">↓</span>
-      <span className="hidden lg:inline">→</span>
+      <ModalArrow />
     </div>
   );
 }

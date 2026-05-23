@@ -5,10 +5,13 @@ import type { ScarletWellBriefData } from "@/lib/scarletwell-preview-data";
 import { wellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
 import {
   KpiStrip,
+  ModalArrow,
   ModalIcon,
   type ModalIconName,
   ModalSectionLabel,
+  ModalTabs,
   ProjectModalShell,
+  SkillsImpactColumns,
 } from "./ProjectModalShell";
 
 type ScarletWellProjectModalProps = {
@@ -37,14 +40,20 @@ const skills = [
   {
     title: "Program evaluation",
     icon: "layers" as const,
+    detail:
+      "Structured portfolio review around reach, funding, reporting status, and repeat-cycle performance.",
   },
   {
     title: "Data modeling",
     icon: "bar-chart" as const,
+    detail:
+      "Connected activity, participant, and budget records so cross-cycle comparisons stayed usable.",
   },
   {
     title: "Strategic planning",
     icon: "target" as const,
+    detail:
+      "Turned dashboard signals into funding, planning, and follow-up decisions for the next cycle.",
   },
 ];
 
@@ -52,14 +61,20 @@ const impacts = [
   {
     title: "Compared 41 wellness programs in one system",
     icon: "monitor" as const,
+    detail:
+      "Made the full portfolio easier to scan without jumping across scattered reports.",
   },
   {
     title: "Made funding and participation patterns easier to evaluate",
     icon: "wallet" as const,
+    detail:
+      "Surfaced where spend, reach, and program activity were moving together or drifting apart.",
   },
   {
     title: "Helped identify efficiency gains across grant cycles",
     icon: "target" as const,
+    detail:
+      "Showed higher reach with lower documented spend, including a large drop in cost per participant.",
   },
 ];
 
@@ -141,7 +156,13 @@ export function ScarletWellProjectModal({
       </section>
 
       <section>
-        <ScarletWellTabs active={active} onChange={setActive} />
+        <ModalTabs
+          items={tabs}
+          active={active}
+          onChange={setActive}
+          ariaLabel="ScarletWell Studio views"
+          idPrefix="sw"
+        />
 
         <div className="mt-6">
           {active === "insights" ? (
@@ -183,51 +204,12 @@ function StudioFlow() {
             </p>
           </div>
           {index < studioFlow.length - 1 ? (
-            <div aria-hidden="true" className="flex items-center text-quiet">
-              <span className="lg:hidden">↓</span>
-              <ModalIcon name="arrow-right" className="hidden h-4 w-4 lg:block" />
+            <div aria-hidden="true" className="hidden items-center text-quiet lg:flex">
+              <ModalArrow />
             </div>
           ) : null}
         </div>
       ))}
-    </div>
-  );
-}
-
-function ScarletWellTabs({
-  active,
-  onChange,
-}: {
-  active: TabKey;
-  onChange: (id: TabKey) => void;
-}) {
-  return (
-    <div role="tablist" aria-label="ScarletWell Studio views" className="overflow-x-auto border-b border-line md:overflow-visible">
-      <div className="flex min-w-max gap-6 md:grid md:min-w-0 md:grid-cols-4 md:gap-4">
-        {tabs.map((tab) => {
-          const isActive = tab.id === active;
-          return (
-            <button
-              key={tab.id}
-              id={`sw-tab-${tab.id}`}
-              role="tab"
-              type="button"
-              aria-selected={isActive}
-              aria-controls={`sw-panel-${tab.id}`}
-              onClick={() => onChange(tab.id)}
-              className="focus-ring relative -mb-px py-3 text-left text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] transition hover:opacity-100 motion-reduce:transition-none md:text-center"
-              style={{
-                color: isActive ? "var(--foreground)" : "var(--quiet)",
-                borderBottom: isActive
-                  ? "1.5px solid var(--foreground)"
-                  : "1.5px solid transparent",
-              }}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
     </div>
   );
 }
@@ -499,10 +481,7 @@ function PulsePanel() {
                 {String(idx + 1).padStart(2, "0")}
               </span>
               <span>{item}</span>
-              <ScarletWellIcon
-                name="arrow-right"
-                className="h-4 w-4 shrink-0 text-quiet"
-              />
+              <span aria-hidden="true" className="modal-arrow">→</span>
             </li>
           ))}
         </ol>
@@ -725,57 +704,7 @@ function SampleProgramPanel() {
 }
 
 function SkillsImpactSection() {
-  return (
-    <section className="border-t border-line pt-10">
-      <div className="grid gap-10 lg:grid-cols-2 lg:gap-12">
-        <div>
-          <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-            Skills used
-          </p>
-          <ol className="mt-4 divide-y divide-[color:var(--line)] border-y border-line">
-            {skills.map((skill, index) => (
-              <li
-                key={skill.title}
-                className="grid grid-cols-[2.5rem_auto_1fr] items-center gap-3 py-3 text-[0.95rem] leading-6 text-foreground"
-              >
-                <span className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-                  {index + 1}
-                </span>
-                <ScarletWellIcon
-                  name={skill.icon}
-                  className="h-4 w-4 shrink-0 text-quiet"
-                />
-                <span>{skill.title}</span>
-              </li>
-            ))}
-          </ol>
-        </div>
-
-        <div>
-          <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-            Impact created
-          </p>
-          <ol className="mt-4 divide-y divide-[color:var(--line)] border-y border-line">
-            {impacts.map((impact, index) => (
-              <li
-                key={impact.title}
-                className="grid grid-cols-[2.5rem_auto_1fr] items-center gap-3 py-3 text-[0.95rem] leading-6 text-foreground"
-              >
-                <span className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-                  {index + 1}
-                </span>
-                <ScarletWellIcon
-                  name={impact.icon}
-                  className="h-4 w-4 shrink-0 text-quiet"
-                />
-                <span>{impact.title}</span>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
-    </section>
-  );
+  return <SkillsImpactColumns skills={skills} impact={impacts} />;
 }
 
 function ScarletWellIcon({

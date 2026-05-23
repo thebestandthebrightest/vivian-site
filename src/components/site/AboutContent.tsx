@@ -129,7 +129,7 @@ export function AboutContent({ travelItems, titleId }: AboutContentProps) {
         </MotionReveal>
       </Section>
 
-      <Section className="pb-20 lg:pb-24">
+      <Section className="modal-rule pb-20 pt-12 lg:pb-24 lg:pt-14">
         <MotionReveal>
           <div className={sectionGridClass}>
             <div>
@@ -168,7 +168,7 @@ export function AboutContent({ travelItems, titleId }: AboutContentProps) {
         </MotionReveal>
       </Section>
 
-      <Section className="pb-20 lg:pb-24">
+      <Section className="modal-rule pb-20 pt-12 lg:pb-24 lg:pt-14">
         <MotionReveal>
           <div className={sectionGridClass}>
             <div>
@@ -196,7 +196,7 @@ export function AboutContent({ travelItems, titleId }: AboutContentProps) {
         </MotionReveal>
       </Section>
 
-      <Section className="pb-20 lg:pb-24">
+      <Section className="modal-rule pb-20 pt-12 lg:pb-24 lg:pt-14">
         <MotionReveal>
           <div className={sectionGridClass}>
             <div>
@@ -220,7 +220,7 @@ export function AboutContent({ travelItems, titleId }: AboutContentProps) {
         </MotionReveal>
       </Section>
 
-      <Section className="pb-24 lg:pb-28">
+      <Section className="modal-rule pb-24 pt-12 lg:pb-28 lg:pt-14">
         <MotionReveal>
           <div className={sectionGridClass}>
             <div>

@@ -132,7 +132,7 @@ function ProjectRow({
           {isOpenable ? (
             <span className="inline-flex items-center gap-2 text-[0.7rem] font-medium uppercase leading-5 tracking-[0.18em] text-foreground">
               <span>Open</span>
-              <span aria-hidden="true" className="text-quiet">+</span>
+              <span aria-hidden="true" className="modal-arrow text-[0.9rem]">→</span>
             </span>
           ) : (
             <span className="text-[0.7rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">

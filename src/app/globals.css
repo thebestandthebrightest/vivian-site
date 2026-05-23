@@ -6,11 +6,12 @@
   --muted: rgba(72, 38, 29, 0.72);
   --quiet: rgba(72, 38, 29, 0.58);
   --line: rgba(72, 38, 29, 0.14);
-  --accent: #B2CDFF;
-  --accent-soft: rgba(178, 205, 255, 0.45);
-  --sage: #DDE3B2;
-  --sage-soft: rgba(221, 227, 178, 0.4);
-  --sage-line: rgba(168, 178, 122, 0.55);
+  --accent: #b8c896;
+  --accent-soft: rgba(184, 200, 150, 0.28);
+  --sage: #dbe5c9;
+  --sage-soft: rgba(219, 229, 201, 0.38);
+  --sage-line: rgba(146, 161, 110, 0.5);
+  --sage-deep: #728057;
 }
 
 @theme inline {
@@ -72,6 +73,67 @@ a {
 
 .focus-ring:focus-visible {
   outline-color: var(--foreground);
+}
+
+.system-eyebrow {
+  color: var(--quiet);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  line-height: 1.25rem;
+  text-transform: uppercase;
+}
+
+.modal-rule {
+  border-top: 1px solid var(--line);
+}
+
+.modal-arrow {
+  color: var(--quiet);
+  display: inline-flex;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.modal-close-button {
+  align-items: center;
+  color: var(--foreground);
+  display: inline-flex;
+  height: 2rem;
+  justify-content: center;
+  transition: opacity 200ms ease;
+  width: 2rem;
+}
+
+.modal-close-button:hover {
+  opacity: 0.68;
+}
+
+.modal-popover {
+  border: 1px solid var(--line);
+  background: var(--background);
+  box-shadow: 0 18px 42px rgba(72, 38, 29, 0.1);
+}
+
+.modal-inline-link {
+  align-items: center;
+  color: var(--foreground);
+  display: inline-flex;
+  gap: 0.45rem;
+  text-decoration: none;
+  transition:
+    color 200ms ease,
+    opacity 200ms ease;
+}
+
+.modal-inline-link:hover {
+  opacity: 0.72;
+}
+
+.modal-inline-link-arrow {
+  color: var(--quiet);
+  font-size: 0.95em;
+  line-height: 1;
 }
 
 @keyframes modal-panel-in {

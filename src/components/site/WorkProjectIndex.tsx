@@ -54,7 +54,7 @@ function ProjectRow({
             {project.summary}
           </p>
           <p className="mt-3 text-xs font-medium uppercase tracking-[0.18em] text-quiet md:hidden">
-            View project
+            View project →
           </p>
         </div>
       </button>

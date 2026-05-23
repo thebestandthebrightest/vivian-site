@@ -32,9 +32,9 @@ export function ProjectModalShell({
   eyebrow,
   children,
   closeLabel = "Close modal",
-  panelClassName = "sm:max-w-[92rem]",
-  contentClassName = "max-w-[82rem]",
-  childrenClassName = "space-y-10 lg:space-y-12",
+  panelClassName = "sm:max-w-[95rem]",
+  contentClassName = "max-w-[84rem]",
+  childrenClassName = "space-y-12 lg:space-y-14",
   showHeader = true,
 }: ProjectModalShellProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -96,26 +96,24 @@ export function ProjectModalShell({
         onKeyDown={handleKeyDown}
         className={`modal-panel-in mx-auto h-screen w-full overflow-y-auto bg-background sm:h-[calc(100vh-2.5rem)] sm:border sm:border-line ${panelClassName}`}
       >
-        <div className={`mx-auto w-full px-6 pb-16 pt-3 sm:px-10 lg:px-12 ${contentClassName}`}>
-          <div className="sticky top-0 z-10 -mx-6 flex justify-end bg-background/95 px-6 py-3 sm:-mx-10 sm:px-10 lg:-mx-12 lg:px-12">
+        <div className={`mx-auto w-full px-6 pb-18 pt-3 sm:px-10 lg:px-12 ${contentClassName}`}>
+          <div className="sticky top-0 z-10 -mx-6 flex justify-end bg-background/96 px-6 py-3 sm:-mx-10 sm:px-10 lg:-mx-12 lg:px-12">
             <button
               ref={closeButtonRef}
               type="button"
               onClick={onClose}
               aria-label={closeLabel}
-              className="focus-ring inline-flex h-8 w-8 items-center justify-center text-2xl font-light leading-none text-foreground transition hover:opacity-70 motion-reduce:transition-none"
+              className="focus-ring modal-close-button text-2xl font-light leading-none motion-reduce:transition-none"
             >
               <span aria-hidden="true">×</span>
             </button>
           </div>
 
           {showHeader ? (
-            <header className="grid gap-6 pb-10 pt-6 lg:grid-cols-[1fr_0.9fr] lg:items-end lg:gap-10">
+            <header className="grid gap-6 pb-12 pt-6 lg:grid-cols-[1fr_0.9fr] lg:items-end lg:gap-10">
               <div>
                 {eyebrow ? (
-                  <p className="mb-3 text-[0.72rem] font-medium uppercase leading-5 tracking-[0.2em] text-quiet">
-                    {eyebrow}
-                  </p>
+                  <p className="system-eyebrow mb-3">{eyebrow}</p>
                 ) : null}
                 <h2
                   id={labelledById}
@@ -124,7 +122,7 @@ export function ProjectModalShell({
                   {title}
                 </h2>
               </div>
-              <p className="max-w-xl text-base leading-7 text-muted sm:text-[1.05rem]">
+              <p className="max-w-xl text-[0.98rem] leading-7 text-muted sm:text-[1.05rem]">
                 {summary}
               </p>
             </header>
@@ -139,9 +137,7 @@ export function ProjectModalShell({
 
 export function ModalSectionLabel({ children }: { children: ReactNode }) {
   return (
-    <p className="text-[0.72rem] font-medium uppercase leading-5 tracking-[0.2em] text-quiet">
-      {children}
-    </p>
+    <p className="system-eyebrow">{children}</p>
   );
 }
 
@@ -286,7 +282,7 @@ export function ModalTabs<T extends string>({
 }: ModalTabsProps<T>) {
   return (
     <div role="tablist" aria-label={ariaLabel} className="overflow-x-auto border-b border-line">
-      <div className="flex min-w-max gap-7 lg:min-w-0 lg:flex-wrap">
+      <div className="flex min-w-max gap-6 lg:min-w-0 lg:flex-wrap">
         {items.map((item) => {
           const isActive = item.id === active;
           return (
@@ -298,12 +294,12 @@ export function ModalTabs<T extends string>({
               aria-selected={isActive}
               aria-controls={`${idPrefix}-panel-${item.id}`}
               onClick={() => onChange(item.id)}
-              className="focus-ring relative -mb-px py-3 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] transition hover:opacity-100 motion-reduce:transition-none"
+              className="focus-ring relative -mb-px py-3 text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] transition hover:opacity-100 motion-reduce:transition-none"
               style={{
                 color: isActive ? "var(--foreground)" : "var(--quiet)",
                 borderBottom: isActive
-                  ? "1.5px solid var(--foreground)"
-                  : "1.5px solid transparent",
+                  ? "1px solid var(--accent)"
+                  : "1px solid transparent",
               }}
             >
               {item.label}
@@ -324,28 +320,24 @@ export type ModalListItem = {
 export function SkillsImpactColumns({
   skills,
   impact,
-  accent = "sage",
 }: {
   skills: ModalListItem[];
   impact: ModalListItem[];
-  accent?: "sage" | "accent";
 }) {
-  const impactBorder = accent === "accent" ? "var(--accent)" : "var(--sage-line)";
-
   return (
     <section className="border-t border-line pt-10">
       <div className="grid gap-10 lg:grid-cols-[1fr_auto_1fr] lg:items-start lg:gap-12">
-        <ModalListColumn heading="Skills used" items={skills} />
+        <ModalListColumn heading="SKILLS USED" items={skills} />
         <div
           aria-hidden="true"
-          className="hidden self-stretch text-quiet lg:flex lg:items-center"
+          className="hidden self-stretch justify-center lg:flex lg:items-center"
         >
-          <ModalIcon name="arrow-right" className="h-5 w-5" />
+          <ModalArrow />
         </div>
         <ModalListColumn
-          heading="Impact created"
+          heading="IMPACT"
           items={impact}
-          borderColor={impactBorder}
+          borderColor="var(--sage-line)"
         />
       </div>
     </section>
@@ -363,9 +355,7 @@ function ModalListColumn({
 }) {
   return (
     <div>
-      <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-        {heading}
-      </p>
+      <p className="system-eyebrow">{heading}</p>
       <ul className="mt-5 space-y-5">
         {items.map((item) => (
           <li key={item.title} className="border-t pt-4" style={{ borderColor }}>
@@ -413,10 +403,7 @@ export function KpiStrip({ items }: KpiStripProps) {
             style={
               item.highlight
                 ? {
-                    background: "var(--sage-soft)",
-                    boxShadow: "inset 0 -0.35em 0 var(--sage-soft)",
-                    display: "inline-block",
-                    padding: "0 0.2em",
+                    color: "var(--sage-deep)",
                   }
                 : undefined
             }
@@ -480,7 +467,7 @@ type FlowDiagramProps = {
 
 export function FlowDiagram({ steps }: FlowDiagramProps) {
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch sm:gap-3">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-3">
       {steps.map((step, index) => (
         <div key={step.label} className="flex flex-1 items-stretch gap-2 sm:gap-3">
           <div
@@ -507,10 +494,9 @@ export function FlowDiagram({ steps }: FlowDiagramProps) {
           {index < steps.length - 1 ? (
             <div
               aria-hidden="true"
-              className="flex items-center justify-center self-stretch text-quiet"
+              className="hidden items-center justify-center self-stretch sm:flex"
             >
-              <span className="sm:hidden">↓</span>
-              <span className="hidden sm:inline">→</span>
+              <ModalArrow />
             </div>
           ) : null}
         </div>
@@ -552,6 +538,40 @@ export function CompactBars({ items }: CompactBarsProps) {
         </div>
       ))}
     </div>
+  );
+}
+
+export function ModalArrow({
+  className = "",
+}: {
+  className?: string;
+}) {
+  return (
+    <span aria-hidden="true" className={`modal-arrow ${className}`}>
+      →
+    </span>
+  );
+}
+
+export function ModalInlineLink({
+  href,
+  children,
+  className = "",
+}: {
+  href: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`focus-ring modal-inline-link ${className}`}
+    >
+      <span>{children}</span>
+      <span className="modal-inline-link-arrow">→</span>
+    </a>
   );
 }
 

@@ -3,10 +3,12 @@
 import { useMemo, useState, type ReactNode, type SVGProps } from "react";
 import type { IfnhPreviewData } from "@/lib/ifnh-preview-data";
 import {
+  ModalArrow,
   ModalIcon,
   ModalSectionLabel,
   ModalTabs,
   ProjectModalShell,
+  SkillsImpactColumns,
 } from "./ProjectModalShell";
 
 type IfnhProjectModalProps = {
@@ -132,20 +134,44 @@ const ROADMAP: Array<{ title: string; body: string }> = [
 ];
 
 const SKILLS = [
-  "Survey analysis",
-  "Capacity modeling",
-  "Recommendation design",
+  {
+    title: "Survey analysis",
+    detail:
+      "Read student response patterns across behavior, openness, and environmental constraints.",
+  },
+  {
+    title: "Capacity modeling",
+    detail:
+      "Compared usable seating against modeled peak demand to clarify where space pressure showed up.",
+  },
+  {
+    title: "Recommendation design",
+    detail:
+      "Translated signal patterns into layout and programming actions the team could test next.",
+  },
 ] as const;
 
 const IMPACTS = [
-  "Identified the 30-point connection gap",
-  "Modeled a +30 seat peak shortfall",
-  "Prioritized space and programming changes",
+  {
+    title: "Identified the 30-point connection gap",
+    detail:
+      "Showed where social openness existed without converting into actual interaction.",
+  },
+  {
+    title: "Modeled a +30 seat peak shortfall",
+    detail:
+      "Made layout capacity part of the decision instead of treating it as background context.",
+  },
+  {
+    title: "Prioritized space and programming changes",
+    detail:
+      "Focused the next steps on the changes most likely to improve connection and comfort.",
+  },
 ] as const;
 
-const BLUE_ACCENT = "#5f7f9c";
-const BLUE_SOFT = "rgba(95, 127, 156, 0.14)";
-const BLUE_LINE = "rgba(95, 127, 156, 0.38)";
+const ACCENT = "var(--accent)";
+const ACCENT_SOFT = "var(--accent-soft)";
+const ACCENT_LINE = "var(--sage-line)";
 
 const INSIGHT_ICON_PATHS: Record<InsightIconName, ReactNode> = {
   clipboard: (
@@ -342,12 +368,8 @@ function InsightFlow() {
             </p>
           </div>
           {index < FLOW.length - 1 ? (
-            <div aria-hidden="true" className="flex items-center text-quiet">
-              <span className="lg:hidden">↓</span>
-              <ModalIcon
-                name="arrow-right"
-                className="hidden h-4 w-4 lg:block"
-              />
+            <div aria-hidden="true" className="hidden items-center text-quiet lg:flex">
+              <ModalArrow />
             </div>
           ) : null}
         </div>
@@ -419,9 +441,9 @@ function OverviewTab({ data }: { data: IfnhPreviewData }) {
             <span
               className="inline-flex items-center border px-3 py-1 text-[0.72rem] font-medium uppercase leading-4 tracking-[0.14em]"
               style={{
-                borderColor: BLUE_LINE,
-                background: BLUE_SOFT,
-                color: BLUE_ACCENT,
+                borderColor: ACCENT_LINE,
+                background: ACCENT_SOFT,
+                color: "var(--sage-deep)",
               }}
             >
               +{data.capacity.overage} seat shortfall
@@ -452,8 +474,8 @@ function ConversionStep({
       style={
         emphasized
           ? {
-              borderColor: BLUE_LINE,
-              background: BLUE_SOFT,
+              borderColor: ACCENT_LINE,
+              background: ACCENT_SOFT,
             }
           : {
               borderColor: "var(--line)",
@@ -477,7 +499,7 @@ function ConversionStep({
           className="h-full"
           style={{
             width: `${step.value}%`,
-            background: emphasized ? BLUE_ACCENT : "rgba(72, 38, 29, 0.22)",
+            background: emphasized ? ACCENT : "rgba(72, 38, 29, 0.22)",
           }}
         />
       </div>
@@ -492,18 +514,17 @@ function SequenceConnector({ badge }: { badge?: string }) {
         <span
           className="inline-flex items-center border px-2 py-1 text-[0.65rem] font-medium uppercase leading-4 tracking-[0.14em]"
           style={{
-            borderColor: BLUE_LINE,
-            background: BLUE_SOFT,
-            color: BLUE_ACCENT,
+            borderColor: ACCENT_LINE,
+            background: ACCENT_SOFT,
+            color: "var(--sage-deep)",
           }}
         >
           {badge}
         </span>
       ) : null}
-      <span aria-hidden="true" className="lg:hidden">
-        ↓
+      <span aria-hidden="true" className="hidden lg:inline-flex">
+        <ModalArrow />
       </span>
-      <ModalIcon name="arrow-right" className="hidden h-4 w-4 lg:block" />
     </div>
   );
 }
@@ -535,7 +556,7 @@ function CapacityComparison({
           className="h-full transition-all duration-500"
           style={{
             width: `${widthPct}%`,
-            background: isAccent ? BLUE_ACCENT : "rgba(72, 38, 29, 0.2)",
+            background: isAccent ? ACCENT : "rgba(72, 38, 29, 0.2)",
           }}
         />
       </div>
@@ -749,7 +770,7 @@ function SliderControl({
         value={value}
         onChange={(event) => onChange(Number(event.target.value))}
         className="ifnh-slider mt-3 w-full"
-        style={{ accentColor: BLUE_ACCENT }}
+        style={{ accentColor: ACCENT }}
         aria-label={label}
       />
       <div className="mt-1 flex justify-between text-[0.75rem] uppercase leading-5 tracking-[0.14em] text-quiet">
@@ -882,7 +903,7 @@ function SignalBar({ level }: { level: SignalLevel }) {
           key={index}
           className="h-2 flex-1"
           style={{
-            background: index < filled ? BLUE_ACCENT : "rgba(72, 38, 29, 0.08)",
+            background: index < filled ? ACCENT : "rgba(72, 38, 29, 0.08)",
           }}
         />
       ))}
@@ -951,52 +972,5 @@ function RecommendationTab() {
 }
 
 function SkillsImpactSection() {
-  return (
-    <section className="border-t border-line pt-10">
-      <div className="grid gap-10 lg:grid-cols-[1fr_auto_1fr] lg:items-start lg:gap-12">
-        <NumberedListColumn heading="Skills used:" items={SKILLS} />
-        <div
-          aria-hidden="true"
-          className="hidden self-stretch text-quiet lg:flex lg:items-center"
-        >
-          <ModalIcon name="arrow-right" className="h-5 w-5" />
-        </div>
-        <NumberedListColumn heading="Impact created:" items={IMPACTS} />
-      </div>
-    </section>
-  );
-}
-
-function NumberedListColumn({
-  heading,
-  items,
-}: {
-  heading: string;
-  items: readonly string[];
-}) {
-  return (
-    <div>
-      <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-        {heading}
-      </p>
-      <ol className="mt-5 space-y-5">
-        {items.map((item, index) => (
-          <li
-            key={item}
-            className="grid grid-cols-[2.1rem_1fr] items-start gap-3 border-t border-line pt-4"
-          >
-            <span
-              className="font-display text-2xl font-medium leading-none text-quiet"
-              aria-hidden="true"
-            >
-              {index + 1}.
-            </span>
-            <p className="text-[0.95rem] font-medium leading-6 text-foreground">
-              {item}
-            </p>
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
+  return <SkillsImpactColumns skills={[...SKILLS]} impact={[...IMPACTS]} />;
 }

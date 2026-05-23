@@ -2,7 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { WellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
-import { ProjectModalShell } from "./ProjectModalShell";
+import {
+  ModalArrow,
+  ModalInlineLink,
+  ModalSectionLabel,
+  ProjectModalShell,
+  SkillsImpactColumns,
+} from "./ProjectModalShell";
 
 type WellnessThroughClayProjectModalProps = {
   data: WellnessThroughClayPreviewData;
@@ -24,15 +30,39 @@ const quotes = [
 ];
 
 const skills = [
-  "Program operations",
-  "Feedback analysis",
-  "Outreach strategy",
+  {
+    title: "Program operations",
+    detail:
+      "Ran recurring workshop cycles across planning, facilitation, attendance tracking, and follow-up logistics.",
+  },
+  {
+    title: "Feedback analysis",
+    detail:
+      "Used attendance and participant feedback to understand what kept the program steady over time.",
+  },
+  {
+    title: "Outreach strategy",
+    detail:
+      "Adjusted event framing and promotion based on what drew students back across multiple cycles.",
+  },
 ];
 
 const impacts = [
-  "Supported 250+ cumulative attendees",
-  "Strengthened creative wellness programming across 18 sessions",
-  "Connected attendance and feedback data to future event design",
+  {
+    title: "Supported 250+ cumulative attendees",
+    detail:
+      "Built a repeatable format that kept participation strong across three programming cycles.",
+  },
+  {
+    title: "Strengthened creative wellness programming across 18 sessions",
+    detail:
+      "Showed that the initiative could keep a calm, low-pressure format without losing engagement.",
+  },
+  {
+    title: "Connected attendance and feedback data to future event design",
+    detail:
+      "Made future outreach and event planning more evidence-based instead of intuitive only.",
+  },
 ];
 
 const kpis = [
@@ -83,16 +113,32 @@ export function WellnessThroughClayProjectModal({
       title="Wellness Through Clay"
       summary="Student wellness initiative built through iterative programming, attendance insights, and community feedback."
     >
-      <KpiStripTight items={kpis} />
-      <ProcessRow steps={processSteps} />
-      <CumulativeGrowthBars
-        label={data.cumulativeGrowth.label}
-        items={data.cumulativeGrowth.points}
-        caption="Cumulative reach grew across three programming cycles while the model became more consistent."
-      />
-      <QuoteList items={quotes} />
-      <EvidenceReach items={evidenceLinks} />
-      <SkillsImpactSummary skills={skills} impacts={impacts} />
+      <section>
+        <ModalSectionLabel>Impact snapshot</ModalSectionLabel>
+        <div className="mt-4">
+          <KpiStripTight items={kpis} />
+        </div>
+      </section>
+      <section>
+        <ModalSectionLabel>Data to action</ModalSectionLabel>
+        <div className="mt-5">
+          <ProcessRow steps={processSteps} />
+        </div>
+      </section>
+      <section>
+        <CumulativeGrowthBars
+          label={data.cumulativeGrowth.label}
+          items={data.cumulativeGrowth.points}
+          caption="Cumulative reach grew across three programming cycles while the model became more consistent."
+        />
+      </section>
+      <section>
+        <QuoteList items={quotes} />
+      </section>
+      <section>
+        <EvidenceReach items={evidenceLinks} />
+      </section>
+      <SkillsImpactColumns skills={skills} impact={impacts} />
       <LiveSitePreview href={websiteHref} />
     </ProjectModalShell>
   );
@@ -108,16 +154,16 @@ function KpiStripTight({
   }>;
 }) {
   return (
-    <section className="grid gap-x-6 gap-y-5 border-y border-line py-5 sm:grid-cols-2 lg:grid-cols-4">
+    <section className="grid gap-x-8 gap-y-6 border-y border-line py-7 sm:grid-cols-2 lg:grid-cols-4">
       {items.map((item) => (
         <div key={item.label}>
           <p
-            className="font-display text-[2.15rem] font-medium leading-none text-foreground lg:text-[2.45rem]"
-            style={item.highlight ? { color: "var(--sage-deep, #7a8556)" } : undefined}
+            className="font-display text-4xl font-medium leading-none text-foreground lg:text-[2.75rem]"
+            style={item.highlight ? { color: "var(--sage-deep)" } : undefined}
           >
             {item.value}
           </p>
-          <p className="mt-2 text-[0.82rem] font-medium uppercase leading-5 tracking-[0.13em] text-quiet">
+          <p className="mt-2 text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
             {item.label}
           </p>
         </div>
@@ -139,12 +185,8 @@ function ProcessRow({ steps }: { steps: string[] }) {
               {step}
             </p>
             {index < steps.length - 1 ? (
-              <span
-                aria-hidden="true"
-                className="ml-auto shrink-0 text-base leading-none text-quiet/55 lg:mx-5"
-              >
-                <span className="lg:hidden">↓</span>
-                <span className="hidden lg:inline">→</span>
+              <span aria-hidden="true" className="ml-auto hidden shrink-0 lg:mx-5 lg:inline-flex">
+                <ModalArrow />
               </span>
             ) : null}
           </div>
@@ -171,9 +213,7 @@ function CumulativeGrowthBars({
 
   return (
     <section>
-      <p className="text-[0.78rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
-        {label}
-      </p>
+      <ModalSectionLabel>{label}</ModalSectionLabel>
       <div className="mt-5 space-y-5">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
@@ -186,7 +226,7 @@ function CumulativeGrowthBars({
                 </p>
                 <p
                   className="font-display text-[1.45rem] font-medium leading-none text-foreground"
-                  style={isLast ? { color: "var(--sage-deep, #7a8556)" } : undefined}
+                  style={isLast ? { color: "var(--sage-deep)" } : undefined}
                 >
                   {displayValue}
                 </p>
@@ -196,7 +236,7 @@ function CumulativeGrowthBars({
                   className="h-full transition-[width] duration-500 ease-out motion-reduce:transition-none"
                   style={{
                     width: `${Math.max(8, (item.value / max) * 100)}%`,
-                    background: isLast ? "var(--sage)" : "rgba(72, 38, 29, 0.34)",
+                    background: isLast ? "var(--accent)" : "rgba(72, 38, 29, 0.34)",
                   }}
                 />
               </div>
@@ -204,9 +244,7 @@ function CumulativeGrowthBars({
           );
         })}
       </div>
-      <p className="mt-5 max-w-3xl text-base leading-7 text-muted">
-        {caption}
-      </p>
+      <p className="mt-5 max-w-3xl text-[0.98rem] leading-7 text-muted">{caption}</p>
     </section>
   );
 }
@@ -214,7 +252,8 @@ function CumulativeGrowthBars({
 function QuoteList({ items }: { items: string[] }) {
   return (
     <section>
-      <div className="grid gap-7 sm:grid-cols-3 sm:gap-10">
+      <ModalSectionLabel>Participant signal</ModalSectionLabel>
+      <div className="mt-5 grid gap-7 sm:grid-cols-3 sm:gap-10">
         {items.map((quote) => (
           <figure key={quote} className="border-t border-line pt-5">
             <blockquote className="font-display text-[1.18rem] italic leading-8 text-foreground sm:text-[1.24rem]">
@@ -236,10 +275,8 @@ type EvidenceLinkItem = {
 function EvidenceReach({ items }: { items: EvidenceLinkItem[] }) {
   return (
     <section>
-      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[max-content_1fr] lg:items-baseline lg:gap-7">
-        <p className="whitespace-nowrap text-[0.78rem] font-medium uppercase leading-5 tracking-[0.12em] text-quiet">
-          Evidence + reach
-        </p>
+      <ModalSectionLabel>Evidence + reach</ModalSectionLabel>
+      <div className="mt-5">
         <ul className="flex flex-wrap gap-x-5 gap-y-3 lg:flex-nowrap">
           {items.map((item) => (
             <li key={item.label}>
@@ -258,7 +295,6 @@ function EvidenceLink({ item }: { item: EvidenceLinkItem }) {
       <span className="font-medium text-foreground">{item.label}</span>
       <span className="text-muted">—</span>
       <span>{item.display}</span>
-      {item.href ? <span aria-hidden="true">↗</span> : null}
     </>
   );
 
@@ -271,70 +307,18 @@ function EvidenceLink({ item }: { item: EvidenceLinkItem }) {
   }
 
   return (
-    <a
+    <ModalInlineLink
       href={item.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="focus-ring inline-flex items-center gap-1.5 whitespace-nowrap text-[0.96rem] leading-7 text-muted transition hover:text-foreground motion-reduce:transition-none xl:text-base"
+      className="whitespace-nowrap text-[0.96rem] leading-7 text-muted xl:text-base"
     >
       {content}
-    </a>
-  );
-}
-
-function SkillsImpactSummary({
-  skills,
-  impacts,
-}: {
-  skills: string[];
-  impacts: string[];
-}) {
-  return (
-    <section>
-      <div className="grid gap-9 lg:grid-cols-[1fr_auto_1fr] lg:items-start lg:gap-12">
-        <NumberedColumn heading="Skills used" items={skills} />
-        <div
-          aria-hidden="true"
-          className="hidden self-stretch text-quiet/55 lg:flex lg:items-center"
-        >
-          →
-        </div>
-        <NumberedColumn heading="Impact created" items={impacts} />
-      </div>
-    </section>
-  );
-}
-
-function NumberedColumn({
-  heading,
-  items,
-}: {
-  heading: string;
-  items: string[];
-}) {
-  return (
-    <div>
-      <p className="text-[0.78rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
-        {heading}
-      </p>
-      <ol className="mt-4 space-y-3">
-        {items.map((item, index) => (
-          <li
-            key={item}
-            className="grid grid-cols-[1.75rem_1fr] gap-3 border-t border-line pt-3 text-base leading-7 text-foreground"
-          >
-            <span className="text-sm leading-7 text-quiet">{index + 1}.</span>
-            <span>{item}</span>
-          </li>
-        ))}
-      </ol>
-    </div>
+    </ModalInlineLink>
   );
 }
 
 function LiveSitePreview({ href }: { href: string }) {
-  const previewWidth = 1280;
-  const previewHeight = 920;
+  const previewWidth = 1440;
+  const previewHeight = 900;
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [previewBlocked, setPreviewBlocked] = useState(false);
@@ -360,42 +344,37 @@ function LiveSitePreview({ href }: { href: string }) {
   }, []);
 
   return (
-    <section className="border-t border-line pt-7">
-      <h3 className="font-display text-[1.8rem] font-medium leading-tight text-foreground">
-        Live site preview
-      </h3>
+    <section className="border-t border-line pt-10">
+      <ModalSectionLabel>Live site preview</ModalSectionLabel>
       <div
         ref={containerRef}
-        className="mt-5 w-full overflow-hidden bg-background"
-        style={{ height: `${Math.round(previewHeight * scale)}px` }}
+        className="mt-5 w-full max-w-[72rem] overflow-hidden border border-line bg-background p-3 sm:p-4"
+        style={{ height: `${Math.round(previewHeight * scale) + 24}px` }}
       >
-        <iframe
-          title="Wellness Through Clay live site preview"
-          src={href}
-          width={previewWidth}
-          height={previewHeight}
-          loading="lazy"
-          onError={() => setPreviewBlocked(true)}
-          className="block border-0"
-          style={{
-            height: `${previewHeight}px`,
-            transform: `scale(${scale})`,
-            transformOrigin: "top left",
-            width: `${previewWidth}px`,
-          }}
-        />
+        <div className="overflow-hidden bg-background" style={{ height: `${Math.round(previewHeight * scale)}px` }}>
+          <iframe
+            title="Wellness Through Clay live site preview"
+            src={href}
+            width={previewWidth}
+            height={previewHeight}
+            loading="lazy"
+            onError={() => setPreviewBlocked(true)}
+            className="block border-0"
+            style={{
+              height: `${previewHeight}px`,
+              transform: `scale(${scale})`,
+              transformOrigin: "top left",
+              width: `${previewWidth}px`,
+            }}
+          />
+        </div>
       </div>
       {previewBlocked ? (
-        <p className="mt-3 text-base leading-7 text-muted">
+        <p className="mt-3 text-[0.98rem] leading-7 text-muted">
           Preview blocked by the live site.{" "}
-          <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="focus-ring font-medium text-foreground transition hover:opacity-70 motion-reduce:transition-none"
-          >
+          <ModalInlineLink href={href} className="font-medium">
             Open wellnessthroughclay.com
-          </a>
+          </ModalInlineLink>
         </p>
       ) : null}
     </section>

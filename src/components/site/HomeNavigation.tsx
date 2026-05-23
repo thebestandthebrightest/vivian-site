@@ -40,10 +40,9 @@ const workItems: Array<{ label: string; modalKey: ProjectModalKey }> = [
 const navItemClass =
   "group relative inline-flex justify-center font-display text-[2.85rem] font-medium uppercase leading-[0.88] tracking-[0.015em] text-foreground outline-none transition duration-300 ease-out hover:-translate-y-0.5 hover:opacity-75 focus-visible:opacity-75 sm:text-[4.5rem] lg:text-[5.15rem] motion-reduce:transition-none";
 
-const popoverCardClass =
-  "modal-panel-in border border-line bg-background text-left shadow-[0_18px_42px_rgba(72,38,29,0.10)]";
-const popoverPositionClass =
-  "absolute left-1/2 top-full z-20 mt-5 w-[calc(100vw-32px)] max-w-[30rem] -translate-x-1/2 px-7 py-6 sm:px-8";
+const popoverCardClass = "modal-panel-in modal-popover text-left";
+const basePopoverPositionClass =
+  "absolute left-1/2 top-full z-20 mt-5 w-[calc(100vw-32px)] -translate-x-1/2 px-7 py-6 sm:px-8";
 
 export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
   const [activeModal, setActiveModal] = useState<ModalKey>(null);
@@ -166,7 +165,11 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
               </button>
 
               {activePopover === "work" ? (
-                <HomePopover id="home-work-popover" ariaLabel="Work projects">
+                <HomePopover
+                  id="home-work-popover"
+                  ariaLabel="Work projects"
+                  className="max-w-[31rem]"
+                >
                   <ul className="space-y-2.5">
                     {workItems.map((item) => (
                       <li key={item.label}>
@@ -205,8 +208,12 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
                 <span className="absolute -bottom-2 left-0 h-px w-0 bg-foreground transition-[width] duration-300 ease-out group-hover:w-full" />
               </button>
               {activePopover === "contact" ? (
-                <HomePopover id="home-contact-card" ariaLabel="Contact">
-                  <ContactCard />
+                <HomePopover
+                  id="home-contact-card"
+                  ariaLabel="Contact"
+                  className="max-w-[28rem]"
+                >
+                  <ContactCard onClose={closePopovers} />
                 </HomePopover>
               ) : null}
             </div>
@@ -279,30 +286,42 @@ function HomePopover({
   id,
   ariaLabel,
   children,
+  className = "",
 }: {
   id: string;
   ariaLabel: string;
   children: ReactNode;
+  className?: string;
 }) {
   return (
     <div
       id={id}
       role="dialog"
       aria-label={ariaLabel}
-      className={`${popoverCardClass} ${popoverPositionClass}`}
+      className={`${popoverCardClass} ${basePopoverPositionClass} ${className}`}
     >
       {children}
     </div>
   );
 }
 
-function ContactCard() {
+function ContactCard({ onClose }: { onClose: () => void }) {
   return (
     <div>
-      <p className="text-[1.48rem] font-medium leading-[1.18] text-foreground sm:text-[1.62rem]">
-        Based in New Jersey. Open to thoughtful conversations, collaborations,
-        and coffee chats.
-      </p>
+      <div className="flex items-start justify-between gap-5">
+        <p className="max-w-[19rem] text-[1.28rem] font-medium leading-[1.22] text-foreground sm:text-[1.36rem]">
+          Based in New Jersey. Open to thoughtful conversations,
+          collaborations, and coffee chats.
+        </p>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close contact"
+          className="focus-ring modal-close-button -mr-1 -mt-1 shrink-0 text-2xl font-light leading-none motion-reduce:transition-none"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
       <div className="mt-5 space-y-2 border-t border-line pt-4 text-[0.98rem] leading-7 text-foreground">
         <p>
           <a

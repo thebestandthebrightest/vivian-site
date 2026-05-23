@@ -115,13 +115,37 @@ export const sjmsPreviewData: SjmsPreviewData = {
   usageNote:
     "The dashboard gave reviewers and organizers a single workflow for evaluating applications and preparing final award decisions.",
   skills: [
-    { title: "JavaScript workflow design" },
-    { title: "Rubric-based data modeling" },
-    { title: "Operations automation" },
+    {
+      title: "JavaScript workflow design",
+      detail:
+        "Structured the review process so evaluators could move through submissions in one consistent flow.",
+    },
+    {
+      title: "Rubric-based data modeling",
+      detail:
+        "Mapped scoring logic, validation states, and reviewer inputs into a clean decision structure.",
+    },
+    {
+      title: "Operations automation",
+      detail:
+        "Reduced manual score handling and made award preparation easier to trace.",
+    },
   ],
   impact: [
-    { title: "Centralized reviewer evaluation" },
-    { title: "Improved decision traceability" },
-    { title: "Supported $3,000 in awards" },
+    {
+      title: "Centralized reviewer evaluation",
+      detail:
+        "Replaced scattered notes and spreadsheets with one shared scoring surface.",
+    },
+    {
+      title: "Improved decision traceability",
+      detail:
+        "Made it easier to connect eligibility, reviewer averages, and final scholarship decisions.",
+    },
+    {
+      title: "Supported $3,000 in awards",
+      detail:
+        "Helped organizers manage final award decisions with a cleaner operational process.",
+    },
   ],
 };

@@ -211,9 +211,9 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
                 <HomePopover
                   id="home-contact-card"
                   ariaLabel="Contact"
-                  className="max-w-[28rem]"
+                  className="max-w-[31rem]"
                 >
-                  <ContactCard onClose={closePopovers} />
+                  <ContactCard />
                 </HomePopover>
               ) : null}
             </div>
@@ -305,41 +305,31 @@ function HomePopover({
   );
 }
 
-function ContactCard({ onClose }: { onClose: () => void }) {
+function ContactCard() {
   return (
-    <div>
-      <div className="flex items-start justify-between gap-5">
-        <p className="max-w-[19rem] text-[1.28rem] font-medium leading-[1.22] text-foreground sm:text-[1.36rem]">
+    <ul className="space-y-2.5">
+      <li>
+        <p className="px-0 py-1.5 font-display text-[0.98rem] font-normal leading-[1.45] text-foreground/70 sm:text-[1.05rem]">
           Based in New Jersey. Open to thoughtful conversations,
           collaborations, and coffee chats.
         </p>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close contact"
-          className="focus-ring modal-close-button -mr-1 -mt-1 shrink-0 text-2xl font-light leading-none motion-reduce:transition-none"
+      </li>
+      <li>
+        <a
+          className="focus-ring block w-full py-1.5 text-left font-display text-[1.48rem] font-medium leading-[1.12] text-foreground transition hover:opacity-70 sm:text-[1.62rem] motion-reduce:transition-none"
+          href="mailto:gvivian321@gmail.com"
         >
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div className="mt-5 space-y-2 border-t border-line pt-4 text-[0.98rem] leading-7 text-foreground">
-        <p>
-          <a
-            className="focus-ring underline decoration-foreground/25 underline-offset-4 transition-opacity duration-300 hover:opacity-70 motion-reduce:transition-none"
-            href="mailto:gvivian321@gmail.com"
-          >
-            gvivian321@gmail.com
-          </a>
-        </p>
-        <p>
-          <a
-            className="focus-ring underline decoration-foreground/25 underline-offset-4 transition-opacity duration-300 hover:opacity-70 motion-reduce:transition-none"
-            href="https://www.linkedin.com/in/vivianglenn"
-          >
-            linkedin.com/in/vivianglenn
-          </a>
-        </p>
-      </div>
-    </div>
+          gvivian321@gmail.com
+        </a>
+      </li>
+      <li>
+        <a
+          className="focus-ring block w-full py-1.5 text-left font-display text-[1.48rem] font-medium leading-[1.12] text-foreground transition hover:opacity-70 sm:text-[1.62rem] motion-reduce:transition-none"
+          href="https://www.linkedin.com/in/vivianglenn"
+        >
+          linkedin.com/in/vivianglenn
+        </a>
+      </li>
+    </ul>
   );
 }

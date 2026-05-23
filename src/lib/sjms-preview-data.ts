@@ -1,35 +1,144 @@
-import type { SimpleProjectModalData } from "@/components/site/SimpleProjectModal";
+export type SjmsKpi = {
+  label: string;
+  value: string;
+  numeric: boolean;
+  highlight?: boolean;
+};
 
-export const sjmsPreviewData: SimpleProjectModalData = {
-  title: "South Jersey Medical Society",
-  subtitle: "Scholarship review system",
+export type SjmsFlowStep = {
+  label: string;
+  sublabel?: string;
+  emphasized?: boolean;
+};
+
+export type SjmsScoringRow = {
+  applicant: string;
+  eligibility: string;
+  reviewerAvg: string;
+  validation: "Pass" | "Flag";
+  decision: string;
+};
+
+export type SjmsListItem = {
+  title: string;
+  detail: string;
+};
+
+export type SjmsPreviewData = {
+  eyebrow: string;
+  title: string;
+  summary: string;
+  kpis: SjmsKpi[];
+  flow: SjmsFlowStep[];
+  scoring: {
+    columns: string[];
+    rows: SjmsScoringRow[];
+  };
+  before: string[];
+  after: string[];
+  usage: string[];
+  usageNote: string;
+  skills: SjmsListItem[];
+  impact: SjmsListItem[];
+};
+
+export const sjmsPreviewData: SjmsPreviewData = {
+  eyebrow: "South Jersey Medical Society",
+  title: "SJMS Scholarship Dashboard",
   summary:
-    "A JavaScript-enabled review dashboard that centralizes reviewer evaluations, automates scoring, and organizes award decisions.",
+    "Built a JavaScript-enabled review dashboard to centralize evaluator scoring, validate submissions, and support $3,000 in scholarship award decisions.",
   kpis: [
-    { label: "Awards supported", value: "$3,000", highlight: true },
-    { label: "Review steps", value: "4" },
-    { label: "Scoring", value: "Auto" },
-    { label: "Workflow", value: "1 view" },
+    { label: "Awards supported", value: "$3,000", numeric: true, highlight: true },
+    { label: "Review stages", value: "4", numeric: true },
+    { label: "Scoring logic", value: "Automated", numeric: false },
+    { label: "Reviewer workflow", value: "Unified", numeric: false },
   ],
   flow: [
     { label: "Applications", sublabel: "Submitted by candidates" },
     { label: "Reviewer scoring", sublabel: "Rubric-based evaluation" },
     {
       label: "Validation",
-      sublabel: "Aggregated scores",
+      sublabel: "Scores and completion checks",
       emphasized: true,
     },
-    { label: "Award decisions", sublabel: "Final allocation" },
+    { label: "Award decisions", sublabel: "Final allocation support" },
   ],
-  whatChanged: [
-    "Replaced scattered reviewer spreadsheets with one shared scoring view.",
-    "Made award decisions traceable back to rubric inputs.",
-    "Cut reviewer coordination time across the award cycle.",
+  scoring: {
+    columns: ["Applicant", "Eligibility", "Reviewer avg.", "Validation", "Decision"],
+    rows: [
+      {
+        applicant: "Candidate A",
+        eligibility: "Complete",
+        reviewerAvg: "4.7",
+        validation: "Pass",
+        decision: "Finalist",
+      },
+      {
+        applicant: "Candidate B",
+        eligibility: "Missing item",
+        reviewerAvg: "4.1",
+        validation: "Flag",
+        decision: "Review",
+      },
+      {
+        applicant: "Candidate C",
+        eligibility: "Complete",
+        reviewerAvg: "3.8",
+        validation: "Pass",
+        decision: "Hold",
+      },
+    ],
+  },
+  before: [
+    "Reviewer notes lived across scattered spreadsheets",
+    "Score aggregation was manual",
+    "Award decisions were harder to trace",
+  ],
+  after: [
+    "One shared scoring view",
+    "Automated rubric totals",
+    "Clear validation and decision trail",
   ],
   usage: [
     "Application review",
     "Reviewer scoring",
     "Award decisions",
     "Cycle reporting",
+  ],
+  usageNote:
+    "The dashboard gave reviewers and organizers a single workflow for evaluating applications and preparing final award decisions.",
+  skills: [
+    {
+      title: "JavaScript workflow design",
+      detail:
+        "Built scoring and validation logic into a shared review interface.",
+    },
+    {
+      title: "Rubric-based data modeling",
+      detail:
+        "Structured reviewer inputs into consistent, comparable scores.",
+    },
+    {
+      title: "Operations automation",
+      detail:
+        "Reduced manual coordination across the scholarship review cycle.",
+    },
+  ],
+  impact: [
+    {
+      title: "Centralized reviewer evaluation",
+      detail:
+        "Replaced scattered review materials with one shared scoring view.",
+    },
+    {
+      title: "Improved decision traceability",
+      detail:
+        "Made award decisions easier to connect back to rubric inputs.",
+    },
+    {
+      title: "Supported $3,000 in awards",
+      detail:
+        "Helped organize the review process for scholarship allocation.",
+    },
   ],
 };

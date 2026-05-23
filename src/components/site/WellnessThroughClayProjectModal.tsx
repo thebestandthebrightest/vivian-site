@@ -1,11 +1,7 @@
 "use client";
 
 import type { WellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
-import {
-  KpiStrip,
-  ModalSectionLabel,
-  ProjectModalShell,
-} from "./ProjectModalShell";
+import { ProjectModalShell } from "./ProjectModalShell";
 
 type WellnessThroughClayProjectModalProps = {
   data: WellnessThroughClayPreviewData;
@@ -13,29 +9,23 @@ type WellnessThroughClayProjectModalProps = {
   onClose: () => void;
 };
 
-const behindTheScenes = [
-  { label: "Workshops", sublabel: "Ceramics sessions on campus" },
-  { label: "Attendance + feedback", sublabel: "Sign-ins · session notes" },
-  { label: "Insights", sublabel: "What students return for" },
-  { label: "Outreach + event design", sublabel: "Next session shape" },
+const processSteps = [
+  "Workshops",
+  "Attendance + feedback",
+  "Insights",
+  "Outreach + event design",
 ];
 
-const themes = [
-  {
-    title: "Mood reset",
-    detail:
-      "Participants described the workshops as a calming reset during busy academic weeks.",
-  },
-  {
-    title: "Connection",
-    detail:
-      "Students used the sessions as a low-pressure way to meet people and build community.",
-  },
-  {
-    title: "Creative confidence",
-    detail:
-      "Participants valued having a space to make something without needing prior art experience.",
-  },
+const sessionAverages = [
+  { label: "Spring 2025", value: 12.8, display: "12.8 / session" },
+  { label: "Summer 2025", value: 18.7, display: "18.7 / session" },
+  { label: "2025–2026", value: 16.3, display: "16.3 / session" },
+];
+
+const quotes = [
+  "This gave me a reason to slow down during a stressful week.",
+  "I met people here I wouldn't have talked to otherwise.",
+  "It was nice creating something without pressure.",
 ];
 
 const skills = ["Program operations", "Feedback analysis", "Outreach strategy"];
@@ -46,31 +36,26 @@ const impacts = [
   "Connected creative programming to measurable outcomes",
 ];
 
+const kpis = [
+  { label: "Cumulative attendees", value: "250+", highlight: true },
+  { label: "Sessions", value: "18" },
+  { label: "Cycles", value: "3" },
+  { label: "Avg / session", value: "14–16" },
+];
+
 export function WellnessThroughClayProjectModal({
   data,
   isOpen,
   onClose,
 }: WellnessThroughClayProjectModalProps) {
-  const kpis = [
-    { label: "Cumulative attendees", value: "250+", highlight: true },
-    { label: "Sessions", value: "18" },
-    { label: "Cycles", value: "3" },
-    { label: "Avg / session", value: "14–16" },
-  ];
-
-  const cycleStrip = data.cumulativeGrowth.points;
-
   const linkMap = Object.fromEntries(
     data.projectLinks.map((link) => [link.label, link.href]),
   ) as Record<string, string | null>;
 
-  const externalLinks = [
-    { label: "Website", href: linkMap["Website"] ?? null },
-    { label: "Articles", href: linkMap["Daily Targum"] ?? null },
-    { label: "Instagram", href: linkMap["Instagram"] ?? null },
-  ];
-
-  const websiteHref = linkMap["Website"] ?? null;
+  const websiteHref = linkMap["Website"] ?? "https://wellnessthroughclay.com";
+  const instagramHref = linkMap["Instagram"] ?? null;
+  const rutgersCasHref = linkMap["Rutgers CAS"] ?? null;
+  const dailyTargumHref = linkMap["Daily Targum"] ?? null;
 
   return (
     <ProjectModalShell
@@ -78,39 +63,30 @@ export function WellnessThroughClayProjectModal({
       onClose={onClose}
       labelledById="wtc-modal-title"
       title="Wellness Through Clay"
-      summary="Ceramics workshops showing how data, feedback, and operations shape student wellness experiences."
+      summary="Student wellness initiative built through iterative programming and attendance insights."
     >
       <section>
-        <ModalSectionLabel>Impact snapshot</ModalSectionLabel>
-        <div className="mt-4">
-          <KpiStrip items={kpis} />
-        </div>
+        <KpiStripTight items={kpis} />
       </section>
 
       <section>
-        <ModalSectionLabel>Behind the scenes</ModalSectionLabel>
-        <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-stretch sm:gap-3">
-          {behindTheScenes.map((step, idx) => (
+        <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-2">
+          {processSteps.map((step, idx) => (
             <div
-              key={step.label}
-              className="flex flex-1 items-stretch gap-2 sm:gap-3"
+              key={step}
+              className="flex flex-1 items-center gap-2"
             >
-              <div className="flex-1 border-t border-line py-3 sm:py-4">
-                <p className="text-sm font-medium leading-5 text-foreground">
-                  {step.label}
-                </p>
-                <p className="mt-1 text-xs leading-5 text-muted">
-                  {step.sublabel}
-                </p>
-              </div>
-              {idx < behindTheScenes.length - 1 ? (
-                <div
+              <p className="flex-1 text-xs leading-5 text-foreground">
+                {step}
+              </p>
+              {idx < processSteps.length - 1 ? (
+                <span
                   aria-hidden="true"
-                  className="flex items-center justify-center self-stretch px-1 text-quiet"
+                  className="text-[0.7rem] text-quiet/70"
                 >
                   <span className="sm:hidden">↓</span>
                   <span className="hidden sm:inline">→</span>
-                </div>
+                </span>
               ) : null}
             </div>
           ))}
@@ -118,82 +94,45 @@ export function WellnessThroughClayProjectModal({
       </section>
 
       <section>
-        <ModalSectionLabel>Cycle growth</ModalSectionLabel>
-        <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-stretch sm:gap-3">
-          {cycleStrip.map((point, idx) => {
-            const isLast = idx === cycleStrip.length - 1;
-            return (
-              <div
-                key={point.cycle}
-                className="flex flex-1 items-stretch gap-2 sm:gap-3"
-              >
-                <div
-                  className="flex-1 px-4 py-4"
-                  style={{
-                    border: isLast
-                      ? "1px solid var(--sage-line)"
-                      : "1px solid var(--line)",
-                    background: isLast ? "var(--sage-soft)" : undefined,
-                  }}
-                >
-                  <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-                    {point.cycle}
-                  </p>
-                  <p className="mt-1 font-display text-3xl font-medium leading-none text-foreground">
-                    {point.value}
-                  </p>
-                  <p className="mt-2 text-xs leading-5 text-muted">
-                    Cumulative attendees
-                  </p>
-                </div>
-                {!isLast ? (
-                  <div
-                    aria-hidden="true"
-                    className="flex items-center justify-center self-stretch px-1 text-quiet"
-                  >
-                    <span className="sm:hidden">↓</span>
-                    <span className="hidden sm:inline">→</span>
-                  </div>
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
-        <p className="mt-4 max-w-2xl text-sm leading-6 text-muted">
-          250+ attendees across students, faculty, and staff · 18 sessions · 3
-          cycles.
+        <SessionAveragesViz items={sessionAverages} />
+        <p className="mt-5 max-w-xl text-xs leading-6 text-muted">
+          Attendance stabilized while expanding across student and faculty
+          audiences.
         </p>
       </section>
 
       <section>
-        <ModalSectionLabel>What participants shared</ModalSectionLabel>
-        <div className="mt-5 grid gap-4 sm:grid-cols-3">
-          {themes.map((t) => (
-            <div
-              key={t.title}
-              className="border-t border-line pt-3"
+        <div className="grid gap-8 sm:grid-cols-3 sm:gap-10">
+          {quotes.map((quote, idx) => (
+            <figure
+              key={idx}
+              className="border-t border-line pt-5"
             >
-              <p className="text-sm font-medium leading-5 text-foreground">
-                {t.title}
-              </p>
-              <p className="mt-2 text-sm leading-6 text-muted">{t.detail}</p>
-            </div>
+              <blockquote className="font-display text-base italic leading-7 text-foreground sm:text-[1.05rem]">
+                <span aria-hidden="true" className="text-quiet/60">
+                  &ldquo;
+                </span>
+                {quote}
+                <span aria-hidden="true" className="text-quiet/60">
+                  &rdquo;
+                </span>
+              </blockquote>
+            </figure>
           ))}
         </div>
       </section>
 
       <section>
-        <ModalSectionLabel>Skills used → Impact created</ModalSectionLabel>
-        <div className="mt-5 flex flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-6">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-stretch lg:gap-5">
           <div className="lg:flex-1">
             <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
               Skills used
             </p>
-            <ul className="mt-3 space-y-3">
+            <ul className="mt-2.5 space-y-2">
               {skills.map((s) => (
                 <li
                   key={s}
-                  className="border-t border-line pt-3 text-sm font-medium leading-5 text-foreground"
+                  className="border-t border-line pt-2 text-sm leading-5 text-foreground"
                 >
                   {s}
                 </li>
@@ -202,7 +141,7 @@ export function WellnessThroughClayProjectModal({
           </div>
           <div
             aria-hidden="true"
-            className="flex items-center justify-center text-quiet lg:px-2"
+            className="flex items-center justify-center text-quiet/70 lg:px-1"
           >
             <span className="lg:hidden">↓</span>
             <span className="hidden lg:inline">→</span>
@@ -211,11 +150,11 @@ export function WellnessThroughClayProjectModal({
             <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
               Impact created
             </p>
-            <ul className="mt-3 space-y-3">
+            <ul className="mt-2.5 space-y-2">
               {impacts.map((i) => (
                 <li
                   key={i}
-                  className="border-t pt-3 text-sm font-medium leading-5 text-foreground"
+                  className="border-t pt-2 text-sm leading-5 text-foreground"
                   style={{ borderColor: "var(--sage-line)" }}
                 >
                   {i}
@@ -224,95 +163,248 @@ export function WellnessThroughClayProjectModal({
             </ul>
           </div>
         </div>
+        <p className="mt-4 max-w-2xl text-xs leading-6 text-muted">
+          Supported 250+ cumulative participants across 18 sessions while
+          iterating programming through attendance and feedback insights.
+        </p>
       </section>
 
       <section>
-        <ModalSectionLabel>Explore the project</ModalSectionLabel>
-        <div className="mt-5 grid gap-6 lg:grid-cols-[1.4fr_1fr] lg:items-start">
-          <WebsitePreview href={websiteHref} />
-          <div>
-            <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-              Links
-            </p>
-            <ul className="mt-3 divide-y divide-[color:var(--line)] border-y border-line">
-              {externalLinks.map((link) => (
-                <li
-                  key={link.label}
-                  className="flex items-baseline justify-between gap-4 py-3 text-sm leading-5"
-                >
-                  <span className="font-medium text-foreground">
-                    {link.label}
-                  </span>
-                  {link.href ? (
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="focus-ring text-foreground underline underline-offset-4 transition hover:opacity-70"
-                    >
-                      Visit ↗
-                    </a>
-                  ) : (
-                    <span className="text-xs uppercase tracking-[0.16em] text-quiet">
-                      Coming soon
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div className="grid gap-6 lg:grid-cols-[1.55fr_1fr] lg:items-start">
+          <WebsiteEmbed href={websiteHref} />
+          <ExternalLinksList
+            items={[
+              {
+                label: "Website",
+                href: websiteHref,
+                display: "wellnessthroughclay.com",
+              },
+              {
+                label: "Rutgers CAS",
+                href: rutgersCasHref,
+                display: "Read article",
+                group: "Articles",
+              },
+              {
+                label: "Daily Targum",
+                href: dailyTargumHref,
+                display: "Read article",
+                group: "Articles",
+              },
+              {
+                label: "Instagram",
+                href: instagramHref,
+                display: "@ru_wellness_clay",
+              },
+            ]}
+          />
         </div>
       </section>
     </ProjectModalShell>
   );
 }
 
-function WebsitePreview({ href }: { href: string | null }) {
-  const card = (
-    <div
-      className="group relative flex aspect-[4/3] flex-col justify-between overflow-hidden border border-line p-6 transition-colors sm:p-8"
-      style={{
-        background:
-          "linear-gradient(135deg, var(--sage-soft) 0%, var(--background) 70%)",
-      }}
-    >
-      <div className="flex items-start justify-between gap-4">
-        <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.22em] text-quiet">
-          Wellness Through Clay
-        </p>
-        <span
-          aria-hidden="true"
-          className="text-base leading-none text-quiet transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-        >
-          ↗
-        </span>
-      </div>
-      <div>
-        <p className="font-display text-3xl font-medium leading-tight text-foreground sm:text-4xl">
-          Ceramics workshops at&nbsp;Rutgers
-        </p>
-        <p className="mt-3 text-sm leading-6 text-muted">
-          Mindfulness, accessibility, and community engagement — three cycles
-          and counting.
-        </p>
-      </div>
-      <p className="text-xs font-medium uppercase leading-5 tracking-[0.18em] text-foreground">
-        {href ? "Visit the site" : "Site coming soon"}
-      </p>
+function KpiStripTight({
+  items,
+}: {
+  items: Array<{ label: string; value: string; highlight?: boolean }>;
+}) {
+  return (
+    <div className="grid gap-x-6 gap-y-4 border-y border-line py-5 sm:grid-cols-2 lg:grid-cols-4">
+      {items.map((item) => (
+        <div key={item.label}>
+          <p
+            className="font-display text-[2rem] font-medium leading-none text-foreground lg:text-[2.25rem]"
+            style={
+              item.highlight
+                ? {
+                    background: "var(--sage-soft)",
+                    boxShadow: "inset 0 -0.35em 0 var(--sage-soft)",
+                    display: "inline-block",
+                    padding: "0 0.2em",
+                  }
+                : undefined
+            }
+          >
+            {item.value}
+          </p>
+          <p className="mt-1.5 text-[0.65rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+            {item.label}
+          </p>
+        </div>
+      ))}
     </div>
   );
+}
 
-  if (!href) return card;
+function SessionAveragesViz({
+  items,
+}: {
+  items: Array<{ label: string; value: number; display: string }>;
+}) {
+  const max = Math.max(...items.map((i) => i.value));
+  return (
+    <div className="space-y-3">
+      {items.map((item) => (
+        <div
+          key={item.label}
+          className="grid grid-cols-[minmax(7rem,9rem)_1fr_5.5rem] items-center gap-4"
+        >
+          <p className="text-xs leading-5 text-foreground">{item.label}</p>
+          <div className="h-px bg-foreground/[0.07]">
+            <div
+              className="h-full"
+              style={{
+                width: `${(item.value / max) * 100}%`,
+                background: "rgba(72,38,29,0.45)",
+              }}
+              aria-hidden="true"
+            />
+          </div>
+          <p className="text-right text-xs leading-5 text-muted">
+            {item.display}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+type ExternalLinkItem = {
+  label: string;
+  href: string | null;
+  display: string;
+  group?: string;
+};
+
+function ExternalLinksList({ items }: { items: ExternalLinkItem[] }) {
+  const groups: Array<{ key: string; items: ExternalLinkItem[] }> = [];
+  for (const item of items) {
+    const key = item.group ?? item.label;
+    let bucket = groups.find((g) => g.key === key);
+    if (!bucket) {
+      bucket = { key, items: [] };
+      groups.push(bucket);
+    }
+    bucket.items.push(item);
+  }
 
   return (
+    <ul className="divide-y divide-[color:var(--line)] border-y border-line">
+      {groups.map((group) => (
+        <li key={group.key} className="py-3">
+          {group.items.length === 1 ? (
+            <ExternalRow item={group.items[0]} />
+          ) : (
+            <div>
+              <p className="text-xs font-medium leading-5 text-foreground">
+                {group.key}
+              </p>
+              <ul className="mt-1.5 space-y-1.5">
+                {group.items.map((item) => (
+                  <li key={item.label}>
+                    <ExternalSubRow item={item} />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function ExternalRow({ item }: { item: ExternalLinkItem }) {
+  return (
+    <div className="flex items-baseline justify-between gap-4">
+      <span className="text-xs font-medium leading-5 text-foreground">
+        {item.label}
+      </span>
+      {item.href ? (
+        <a
+          href={item.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="focus-ring inline-flex items-baseline gap-1 text-xs leading-5 text-muted transition hover:text-foreground"
+        >
+          <span>{item.display}</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      ) : (
+        <span className="text-xs leading-5 text-quiet">{item.display}</span>
+      )}
+    </div>
+  );
+}
+
+function ExternalSubRow({ item }: { item: ExternalLinkItem }) {
+  if (!item.href) {
+    return (
+      <span className="text-xs leading-5 text-quiet">{item.label}</span>
+    );
+  }
+  return (
     <a
-      href={href}
+      href={item.href}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Open the Wellness Through Clay website in a new tab"
-      className="focus-ring block"
+      className="focus-ring inline-flex items-baseline gap-1 text-xs leading-5 text-muted transition hover:text-foreground"
     >
-      {card}
+      <span>{item.label}</span>
+      <span aria-hidden="true">↗</span>
     </a>
+  );
+}
+
+function WebsiteEmbed({ href }: { href: string }) {
+  return (
+    <div className="group relative overflow-hidden border border-line">
+      <div
+        className="flex items-center gap-2 border-b border-line px-3 py-2"
+        style={{ background: "var(--sage-soft)" }}
+      >
+        <div
+          aria-hidden="true"
+          className="flex items-center gap-1.5"
+        >
+          <span
+            className="block h-2 w-2 rounded-full"
+            style={{ background: "rgba(72,38,29,0.18)" }}
+          />
+          <span
+            className="block h-2 w-2 rounded-full"
+            style={{ background: "rgba(72,38,29,0.18)" }}
+          />
+          <span
+            className="block h-2 w-2 rounded-full"
+            style={{ background: "rgba(72,38,29,0.18)" }}
+          />
+        </div>
+        <div className="flex-1 truncate text-center text-[0.65rem] leading-5 tracking-[0.04em] text-muted">
+          wellnessthroughclay.com
+        </div>
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open Wellness Through Clay in a new tab"
+          className="focus-ring text-[0.65rem] leading-5 text-muted transition hover:text-foreground"
+        >
+          Open ↗
+        </a>
+      </div>
+      <div className="relative h-[26rem] overflow-hidden sm:h-[30rem]">
+        <iframe
+          src={href}
+          title="Wellness Through Clay live homepage preview"
+          loading="lazy"
+          className="absolute inset-0 h-full w-full transition-transform duration-500 ease-out group-hover:scale-[1.01]"
+          style={{ border: 0 }}
+          sandbox="allow-same-origin allow-scripts allow-popups"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      </div>
+    </div>
   );
 }

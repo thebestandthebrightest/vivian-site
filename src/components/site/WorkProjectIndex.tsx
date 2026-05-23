@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { ifnhPreviewData } from "@/lib/ifnh-preview-data";
-import { pressPreviewData } from "@/lib/press-preview-data";
 import { pslPreviewData } from "@/lib/psl-preview-data";
 import { scarletWellBriefData } from "@/lib/scarletwell-preview-data";
 import { sjmsPreviewData } from "@/lib/sjms-preview-data";
@@ -12,7 +11,7 @@ import { MotionReveal } from "./MotionReveal";
 import type { Project } from "./ProjectFeature";
 import { PslProjectModal } from "./PslProjectModal";
 import { ScarletWellProjectModal } from "./ScarletWellProjectModal";
-import { SimpleProjectModal } from "./SimpleProjectModal";
+import { SjmsProjectModal } from "./SjmsProjectModal";
 import { WellnessThroughClayProjectModal } from "./WellnessThroughClayProjectModal";
 
 type WorkProjectIndexProps = {
@@ -69,7 +68,6 @@ type ModalKey =
   | "ifnh"
   | "wtc"
   | "sjms"
-  | "press"
   | null;
 
 const titleToModalKey: Record<string, Exclude<ModalKey, null>> = {
@@ -77,8 +75,7 @@ const titleToModalKey: Record<string, Exclude<ModalKey, null>> = {
   "PSL Dashboard": "psl",
   "IFNH InsightOS": "ifnh",
   "Wellness Through Clay": "wtc",
-  "South Jersey Medical Society": "sjms",
-  Press: "press",
+  "SJMS Scholarship Dashboard": "sjms",
 };
 
 export function WorkProjectIndex({ projects }: WorkProjectIndexProps) {
@@ -120,17 +117,10 @@ export function WorkProjectIndex({ projects }: WorkProjectIndexProps) {
         isOpen={openModal === "wtc"}
         onClose={closeModal}
       />
-      <SimpleProjectModal
+      <SjmsProjectModal
         data={sjmsPreviewData}
         isOpen={openModal === "sjms"}
         onClose={closeModal}
-        labelledById="sjms-modal-title"
-      />
-      <SimpleProjectModal
-        data={pressPreviewData}
-        isOpen={openModal === "press"}
-        onClose={closeModal}
-        labelledById="press-modal-title"
       />
     </>
   );

@@ -102,8 +102,8 @@ export const projects: Project[] = [
   },
   {
     number: "05",
-    title: "South Jersey Medical Society",
-    descriptor: "Scholarship review system",
+    title: "SJMS Scholarship Dashboard",
+    descriptor: "South Jersey Medical Society — scholarship review system",
     category: "Operations · Review systems",
     outcome:
       "Centralized scholarship review and award decisions into a single workflow.",
@@ -114,35 +114,13 @@ export const projects: Project[] = [
     ],
     visual: "delta",
     summary:
-      "Scholarship review system for scoring applications and organizing award decisions.",
+      "Built a JavaScript-enabled review dashboard to centralize evaluator scoring, validate submissions, and support $3,000 in scholarship award decisions.",
     impact:
       "Built a JavaScript-enabled review dashboard to centralize reviewer evaluations, automate scoring, and organize award decisions.",
     details: [
       "Supported $3,000 in scholarship awards",
       "Centralized reviewer scoring",
       "Improved review workflow clarity",
-    ],
-  },
-  {
-    number: "06",
-    title: "Press",
-    descriptor: "Selected articles and external features",
-    category: "External features",
-    outcome:
-      "External features and mentions documenting program reach and recognition.",
-    metrics: [
-      { value: "—", label: "—" },
-      { value: "—", label: "—" },
-      { value: "—", label: "—" },
-    ],
-    visual: "growth",
-    summary: "Selected articles and external features.",
-    impact:
-      "External features and mentions documenting program reach, recognition, and public-facing impact.",
-    details: [
-      "Program features",
-      "External recognition",
-      "Public-facing impact",
     ],
   },
 ];

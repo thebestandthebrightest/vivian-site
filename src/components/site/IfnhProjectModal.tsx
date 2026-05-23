@@ -1,12 +1,8 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import type { IfnhPreviewData } from "@/lib/ifnh-preview-data";
-import {
-  KpiStrip,
-  ModalSectionLabel,
-  ProjectModalShell,
-} from "./ProjectModalShell";
+import { ModalSectionLabel, ProjectModalShell } from "./ProjectModalShell";
 
 type IfnhProjectModalProps = {
   data: IfnhPreviewData;
@@ -14,40 +10,14 @@ type IfnhProjectModalProps = {
   onClose: () => void;
 };
 
-const skills = [
-  { label: "Survey analysis", Icon: BarChartIcon },
-  { label: "Capacity modeling", Icon: SquareStackIcon },
-  { label: "Recommendation design", Icon: ListChecksIcon },
-];
+type TabId = "overview" | "scenario" | "insights" | "recommendation";
+type Level = "Low" | "Medium" | "High";
 
-const impacts = [
-  { label: "Identified the 30-point connection gap", Icon: UsersIcon },
-  { label: "Modeled peak seating shortfall", Icon: LayoutGridIcon },
-  { label: "Prioritized space and programming changes", Icon: TargetIcon },
-];
-
-const scenarios = [
-  {
-    name: "Current layout",
-    seatingFit: { label: "150 / 180", level: 2 },
-    interaction: "Low",
-    effort: "—",
-    recommended: false,
-  },
-  {
-    name: "Flexible seating adjustment",
-    seatingFit: { label: "~175 / 180", level: 4 },
-    interaction: "Medium",
-    effort: "Medium",
-    recommended: false,
-  },
-  {
-    name: "Seating + programming test",
-    seatingFit: { label: "~180 / 180", level: 5 },
-    interaction: "High",
-    effort: "Medium",
-    recommended: true,
-  },
+const TABS: Array<{ id: TabId; label: string }> = [
+  { id: "overview", label: "Overview" },
+  { id: "scenario", label: "Scenario Lab" },
+  { id: "insights", label: "Student Insights" },
+  { id: "recommendation", label: "Recommendation" },
 ];
 
 export function IfnhProjectModal({
@@ -55,6 +25,8 @@ export function IfnhProjectModal({
   isOpen,
   onClose,
 }: IfnhProjectModalProps) {
+  const [tab, setTab] = useState<TabId>("overview");
+
   const kpis = [
     { label: "Survey responses", value: "105" },
     { label: "Regular visitors", value: "78%" },
@@ -62,38 +34,102 @@ export function IfnhProjectModal({
     { label: "Met someone new", value: "37%" },
   ];
 
-  const funnelSteps = data.funnel.steps;
-  const maxValue = 100;
-  const usablePct = (data.capacity.usable / data.capacity.demand) * 100;
-
   return (
     <ProjectModalShell
       isOpen={isOpen}
       onClose={onClose}
       labelledById="ifnh-modal-title"
       title="IFNH InsightOS"
-      summary="A campus engagement dashboard using real student participation and survey data to identify patterns, forecast needs, and guide program decisions."
+      summary="A campus engagement dashboard using student participation and survey data to identify patterns, forecast needs, and guide program decisions."
     >
       <section>
-        <ModalSectionLabel>Survey snapshot</ModalSectionLabel>
-        <div className="mt-4">
-          <KpiStrip items={kpis} />
+        <div className="border-y border-line py-7">
+          <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+            {kpis.map((item) => (
+              <div key={item.label}>
+                <p className="font-display text-4xl font-medium leading-none text-foreground lg:text-[2.75rem]">
+                  {item.value}
+                </p>
+                <p className="mt-2 text-[0.7rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+                  {item.label}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
+      <Tabs current={tab} onChange={setTab} />
+
+      {tab === "overview" ? <OverviewTab data={data} /> : null}
+      {tab === "scenario" ? <ScenarioLabTab data={data} /> : null}
+      {tab === "insights" ? <StudentInsightsTab /> : null}
+      {tab === "recommendation" ? <RecommendationTab /> : null}
+
+      <SkillsImpactSection />
+    </ProjectModalShell>
+  );
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+
+function Tabs({
+  current,
+  onChange,
+}: {
+  current: TabId;
+  onChange: (id: TabId) => void;
+}) {
+  return (
+    <div
+      role="tablist"
+      aria-label="IFNH InsightOS sections"
+      className="-mx-6 overflow-x-auto border-b border-line px-6 sm:-mx-10 sm:px-10 lg:-mx-12 lg:px-12"
+    >
+      <div className="flex min-w-max items-end gap-7">
+        {TABS.map((t) => {
+          const active = t.id === current;
+          return (
+            <button
+              key={t.id}
+              role="tab"
+              type="button"
+              aria-selected={active}
+              onClick={() => onChange(t.id)}
+              className="focus-ring relative -mb-px py-3 text-xs font-medium uppercase leading-5 tracking-[0.18em] transition motion-reduce:transition-none"
+              style={{
+                color: active ? "var(--foreground)" : "var(--quiet)",
+                borderBottom: active
+                  ? "1.5px solid var(--foreground)"
+                  : "1.5px solid transparent",
+              }}
+            >
+              {t.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── Overview ──────────────────────────────────────────────────────────────────
+
+function OverviewTab({ data }: { data: IfnhPreviewData }) {
+  return (
+    <>
       <section>
-        <ModalSectionLabel>Presence vs. interaction</ModalSectionLabel>
+        <ModalSectionLabel>Engagement conversion gap</ModalSectionLabel>
         <div className="mt-5 space-y-2">
-          {funnelSteps.map((step, idx) => {
-            const width = (step.value / maxValue) * 100;
-            const isLast = idx === funnelSteps.length - 1;
+          {data.funnel.steps.map((step, idx) => {
+            const isLast = idx === data.funnel.steps.length - 1;
+            const width = Math.max(step.value, 25);
             return (
               <div key={step.label}>
                 <div
                   className="flex items-center justify-between px-4 py-3 sm:px-5 sm:py-4"
                   style={{
-                    width: `${Math.max(width, 25)}%`,
-                    marginLeft: `${(100 - Math.max(width, 25)) / 2}%`,
+                    width: `${width}%`,
                     background: isLast
                       ? "var(--accent-soft)"
                       : "rgba(72,38,29,0.06)",
@@ -113,18 +149,28 @@ export function IfnhProjectModal({
             );
           })}
         </div>
-        <p className="mt-5 max-w-2xl text-sm leading-6 text-muted">
-          {data.funnel.insight}
+        <div className="mt-5 flex flex-wrap items-baseline gap-3">
+          <p
+            className="font-display text-3xl font-medium leading-none text-foreground"
+            style={{ background: "var(--accent-soft)", padding: "0 0.25em" }}
+          >
+            30-point
+          </p>
+          <p className="text-sm leading-5 text-muted">connection gap</p>
+        </div>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
+          Interest was present, but the environment did not consistently
+          convert openness into interaction.
         </p>
       </section>
 
       <section>
-        <ModalSectionLabel>Demand exceeds usable seating</ModalSectionLabel>
+        <ModalSectionLabel>Capacity pressure</ModalSectionLabel>
         <div className="mt-5 space-y-3">
           <CapacityRow
             label="Usable seating"
             value={`${data.capacity.usable}`}
-            widthPct={usablePct}
+            widthPct={(data.capacity.usable / data.capacity.demand) * 100}
             color="rgba(72,38,29,0.3)"
           />
           <CapacityRow
@@ -137,10 +183,7 @@ export function IfnhProjectModal({
         <div className="mt-4 flex items-baseline gap-3">
           <p
             className="font-display text-3xl font-medium leading-none text-foreground"
-            style={{
-              background: "var(--accent-soft)",
-              padding: "0 0.25em",
-            }}
+            style={{ background: "var(--accent-soft)", padding: "0 0.25em" }}
           >
             +{data.capacity.overage}
           </p>
@@ -149,127 +192,7 @@ export function IfnhProjectModal({
           </p>
         </div>
       </section>
-
-      <section>
-        <ModalSectionLabel>Space scenario model</ModalSectionLabel>
-        <div className="mt-5 overflow-x-auto">
-          <table className="w-full min-w-[36rem] border-collapse text-left">
-            <thead>
-              <tr className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-                <th className="border-b border-line pb-3 pr-4 font-medium">
-                  Scenario
-                </th>
-                <th className="border-b border-line pb-3 pr-4 font-medium">
-                  Seating fit
-                </th>
-                <th className="border-b border-line pb-3 pr-4 font-medium">
-                  Interaction
-                </th>
-                <th className="border-b border-line pb-3 font-medium">
-                  Effort
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {scenarios.map((s) => (
-                <tr
-                  key={s.name}
-                  className="text-sm leading-5 text-foreground"
-                  style={
-                    s.recommended
-                      ? { background: "var(--sage-soft)" }
-                      : undefined
-                  }
-                >
-                  <td className="border-b border-line py-3 pr-4 align-middle">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{s.name}</span>
-                      {s.recommended ? (
-                        <span
-                          className="text-[0.6rem] font-medium uppercase leading-4 tracking-[0.16em]"
-                          style={{ color: "rgba(72,38,29,0.7)" }}
-                        >
-                          Recommended
-                        </span>
-                      ) : null}
-                    </div>
-                  </td>
-                  <td className="border-b border-line py-3 pr-4 align-middle">
-                    <div className="flex items-center gap-3">
-                      <SeatingDots level={s.seatingFit.level} />
-                      <span className="text-xs text-muted">
-                        {s.seatingFit.label}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="border-b border-line py-3 pr-4 align-middle">
-                    <Tag>{s.interaction}</Tag>
-                  </td>
-                  <td className="border-b border-line py-3 align-middle">
-                    <Tag>{s.effort}</Tag>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <ModalSectionLabel>Skills used → Impact created</ModalSectionLabel>
-        <div className="mt-5 flex flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-6">
-          <div className="lg:flex-1">
-            <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-              Skills used
-            </p>
-            <ul className="mt-3 space-y-3">
-              {skills.map(({ label, Icon }) => (
-                <li
-                  key={label}
-                  className="flex items-center gap-3 border-t border-line pt-3 text-sm leading-5 text-foreground"
-                >
-                  <Icon />
-                  <span className="font-medium">{label}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div
-            aria-hidden="true"
-            className="flex items-center justify-center text-quiet lg:px-2"
-          >
-            <span className="lg:hidden">↓</span>
-            <span
-              className="hidden lg:inline"
-              style={{ color: "var(--accent)" }}
-            >
-              →
-            </span>
-          </div>
-          <div className="lg:flex-1">
-            <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-              Impact created
-            </p>
-            <ul className="mt-3 space-y-3">
-              {impacts.map(({ label, Icon }) => (
-                <li
-                  key={label}
-                  className="flex items-center gap-3 border-t pt-3 text-sm leading-5 text-foreground"
-                  style={{ borderColor: "var(--accent)" }}
-                >
-                  <Icon color="var(--accent)" />
-                  <span className="font-medium">{label}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        <p className="mt-6 max-w-2xl text-sm leading-6 text-muted">
-          Prioritize flexible seating and low-pressure interaction programming
-          during high-traffic periods.
-        </p>
-      </section>
-    </ProjectModalShell>
+    </>
   );
 }
 
@@ -301,19 +224,290 @@ function CapacityRow({
   );
 }
 
-function SeatingDots({ level }: { level: number }) {
+// ── Scenario Lab ──────────────────────────────────────────────────────────────
+
+type ScenarioStrategy =
+  | "Current layout"
+  | "Flexible seating adjustment"
+  | "Seating + programming test";
+
+function ScenarioLabTab({ data }: { data: IfnhPreviewData }) {
+  const [usableSeats, setUsableSeats] = useState<number>(data.capacity.usable);
+  const [expected, setExpected] = useState<number>(data.capacity.demand);
+  const [interactionGoal, setInteractionGoal] = useState<Level>("Medium");
+  const [effort, setEffort] = useState<Level>("Medium");
+
+  const { gap, seatingFit, recommendation, rationale } = useMemo(() => {
+    const gap = expected - usableSeats;
+    let seatingFit: "Low" | "Moderate" | "Strong";
+    if (gap >= 20) seatingFit = "Low";
+    else if (gap > 0) seatingFit = "Moderate";
+    else seatingFit = "Strong";
+
+    let recommendation: ScenarioStrategy;
+    if (gap >= 20 || interactionGoal === "High") {
+      recommendation = "Seating + programming test";
+    } else if (gap > 0 || interactionGoal === "Medium") {
+      recommendation = "Flexible seating adjustment";
+    } else {
+      recommendation = "Current layout";
+    }
+
+    let rationale: string;
+    if (recommendation === "Seating + programming test") {
+      rationale =
+        "Peak demand exceeds usable seating, so the strongest option pairs flexible layout changes with low-pressure interaction programming.";
+    } else if (recommendation === "Flexible seating adjustment") {
+      rationale =
+        "Capacity is close to demand. Reconfigurable seating absorbs peak pressure without committing to new programming.";
+    } else {
+      rationale =
+        "Current layout meets modeled demand with room to spare. Hold steady and monitor before investing further.";
+    }
+
+    return { gap, seatingFit, recommendation, rationale };
+  }, [usableSeats, expected, interactionGoal]);
+
+  const gapLabel =
+    gap > 0
+      ? `${gap} seat shortfall`
+      : gap < 0
+        ? `${Math.abs(gap)} seat surplus`
+        : "At capacity";
+
   return (
-    <div className="flex items-center gap-1" aria-hidden="true">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <span
-          key={i}
-          className="block h-2 w-2 rounded-full"
-          style={{
-            background:
-              i <= level ? "var(--accent)" : "rgba(72,38,29,0.12)",
-          }}
-        />
-      ))}
+    <section>
+      <ModalSectionLabel>Scenario lab</ModalSectionLabel>
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
+        Adjust seating, expected demand, and goals to see how the recommended
+        strategy shifts.
+      </p>
+
+      <div className="mt-6 grid gap-8 lg:grid-cols-[1.05fr_1fr] lg:gap-10">
+        <div className="space-y-6">
+          <SliderControl
+            label="Usable seats"
+            min={100}
+            max={220}
+            value={usableSeats}
+            onChange={setUsableSeats}
+          />
+          <SliderControl
+            label="Expected students at peak"
+            min={100}
+            max={240}
+            value={expected}
+            onChange={setExpected}
+          />
+          <SegmentedControl
+            label="Interaction goal"
+            value={interactionGoal}
+            onChange={setInteractionGoal}
+          />
+          <SegmentedControl
+            label="Programming effort"
+            value={effort}
+            onChange={setEffort}
+          />
+        </div>
+
+        <div
+          className="flex flex-col gap-5 border border-line p-5 sm:p-6"
+          style={{ background: "var(--sage-soft)" }}
+        >
+          <div>
+            <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+              Recommended strategy
+            </p>
+            <p className="mt-2 font-display text-2xl font-medium leading-tight text-foreground sm:text-[1.65rem]">
+              {recommendation}
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-4 border-t border-line pt-4">
+            <ScenarioStat label="Seat gap" value={gapLabel} />
+            <ScenarioStat label="Seating fit" value={seatingFit} />
+            <ScenarioStat label="Effort" value={effort} />
+          </div>
+          <p className="text-sm leading-6 text-muted">{rationale}</p>
+        </div>
+      </div>
+
+      <div className="mt-10 overflow-x-auto">
+        <table className="w-full min-w-[36rem] border-collapse text-left">
+          <thead>
+            <tr className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+              <th className="border-b border-line pb-3 pr-4 font-medium">
+                Scenario
+              </th>
+              <th className="border-b border-line pb-3 pr-4 font-medium">
+                Seating fit
+              </th>
+              <th className="border-b border-line pb-3 pr-4 font-medium">
+                Interaction
+              </th>
+              <th className="border-b border-line pb-3 font-medium">Effort</th>
+            </tr>
+          </thead>
+          <tbody>
+            {([
+              {
+                name: "Current layout",
+                fit: "Low",
+                interaction: "Low",
+                effortLabel: "—",
+              },
+              {
+                name: "Flexible seating adjustment",
+                fit: "Moderate",
+                interaction: "Medium",
+                effortLabel: "Medium",
+              },
+              {
+                name: "Seating + programming test",
+                fit: "Strong",
+                interaction: "High",
+                effortLabel: "Medium",
+              },
+            ] as const).map((s) => {
+              const isRecommended = s.name === recommendation;
+              return (
+                <tr
+                  key={s.name}
+                  className="text-sm leading-5 text-foreground"
+                  style={
+                    isRecommended
+                      ? { background: "var(--sage-soft)" }
+                      : undefined
+                  }
+                >
+                  <td className="border-b border-line py-3 pr-4 align-middle">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{s.name}</span>
+                      {isRecommended ? (
+                        <span
+                          className="text-[0.6rem] font-medium uppercase leading-4 tracking-[0.16em]"
+                          style={{ color: "rgba(72,38,29,0.7)" }}
+                        >
+                          Recommended
+                        </span>
+                      ) : null}
+                    </div>
+                  </td>
+                  <td className="border-b border-line py-3 pr-4 align-middle">
+                    <Tag>{s.fit}</Tag>
+                  </td>
+                  <td className="border-b border-line py-3 pr-4 align-middle">
+                    <Tag>{s.interaction}</Tag>
+                  </td>
+                  <td className="border-b border-line py-3 align-middle">
+                    <Tag>{s.effortLabel}</Tag>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function SliderControl({
+  label,
+  min,
+  max,
+  value,
+  onChange,
+}: {
+  label: string;
+  min: number;
+  max: number;
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <div>
+      <div className="flex items-baseline justify-between">
+        <label className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+          {label}
+        </label>
+        <span className="font-display text-2xl font-medium leading-none text-foreground">
+          {value}
+        </span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="ifnh-slider mt-3 w-full"
+        style={{ accentColor: "var(--accent)" }}
+        aria-label={label}
+      />
+      <div className="mt-1 flex justify-between text-[0.65rem] uppercase leading-5 tracking-[0.16em] text-quiet">
+        <span>{min}</span>
+        <span>{max}</span>
+      </div>
+    </div>
+  );
+}
+
+function SegmentedControl({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: Level;
+  onChange: (v: Level) => void;
+}) {
+  const options: Level[] = ["Low", "Medium", "High"];
+  return (
+    <div>
+      <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+        {label}
+      </p>
+      <div
+        role="radiogroup"
+        aria-label={label}
+        className="mt-2 inline-flex border border-line"
+      >
+        {options.map((opt) => {
+          const active = opt === value;
+          return (
+            <button
+              key={opt}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => onChange(opt)}
+              className="focus-ring px-3 py-1.5 text-xs font-medium leading-5 transition motion-reduce:transition-none sm:px-4"
+              style={{
+                background: active ? "var(--foreground)" : "transparent",
+                color: active ? "var(--background)" : "var(--foreground)",
+                borderRight:
+                  opt !== "High" ? "1px solid var(--line)" : undefined,
+              }}
+            >
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ScenarioStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-[0.6rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+        {label}
+      </p>
+      <p className="mt-1 text-sm font-medium leading-5 text-foreground">
+        {value}
+      </p>
     </div>
   );
 }
@@ -326,9 +520,237 @@ function Tag({ children }: { children: ReactNode }) {
   );
 }
 
+// ── Student Insights ──────────────────────────────────────────────────────────
+
+const THEMES: Array<{
+  title: string;
+  body: string;
+  signal: "High signal" | "Medium signal";
+  Icon: (props: IconProps) => ReactNode;
+}> = [
+  {
+    title: "Low-pressure connection",
+    body: "Students were open to meeting others, but needed easier social entry points.",
+    signal: "High signal",
+    Icon: MessageSquareIcon,
+  },
+  {
+    title: "Intent vs. action gap",
+    body: "Many students were open to interaction, but fewer actually met someone new.",
+    signal: "High signal",
+    Icon: UsersIcon,
+  },
+  {
+    title: "Space as a constraint",
+    body: "Peak demand exceeded usable seating, making layout and flow part of the engagement problem.",
+    signal: "Medium signal",
+    Icon: LayoutIcon,
+  },
+  {
+    title: "Programming opportunity",
+    body: "Small structured prompts or events could turn passive presence into connection.",
+    signal: "Medium signal",
+    Icon: LightbulbIcon,
+  },
+];
+
+function StudentInsightsTab() {
+  return (
+    <section>
+      <ModalSectionLabel>Student insights</ModalSectionLabel>
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
+        Qualitative themes synthesized from open-text responses and behavior
+        patterns in the survey.
+      </p>
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        {THEMES.map((theme) => (
+          <article
+            key={theme.title}
+            className="flex flex-col gap-3 border-t border-line pt-5"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 text-foreground">
+                <theme.Icon />
+                <h3 className="font-display text-lg font-medium leading-tight">
+                  {theme.title}
+                </h3>
+              </div>
+              <SignalMeter level={theme.signal} />
+            </div>
+            <p className="text-sm leading-6 text-muted">{theme.body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function SignalMeter({ level }: { level: "High signal" | "Medium signal" }) {
+  const filled = level === "High signal" ? 3 : 2;
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-[0.6rem] font-medium uppercase leading-4 tracking-[0.16em] text-quiet">
+        {level}
+      </span>
+      <div className="flex items-center gap-1" aria-hidden="true">
+        {[1, 2, 3].map((i) => (
+          <span
+            key={i}
+            className="block h-2 w-2 rounded-full"
+            style={{
+              background:
+                i <= filled ? "var(--accent)" : "rgba(72,38,29,0.12)",
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Recommendation ────────────────────────────────────────────────────────────
+
+const ROADMAP: Array<{ title: string; body: string }> = [
+  {
+    title: "Adjust the space",
+    body: "Use flexible seating during high-traffic periods to reduce peak capacity pressure.",
+  },
+  {
+    title: "Add low-pressure interaction prompts",
+    body: "Use simple programming moments to help students move from openness to actual connection.",
+  },
+  {
+    title: "Monitor conversion",
+    body: "Track whether meeting-someone-new rates improve after layout and programming changes.",
+  },
+];
+
+function RecommendationTab() {
+  return (
+    <section>
+      <ModalSectionLabel>From insight to action</ModalSectionLabel>
+      <ol className="mt-6 space-y-5">
+        {ROADMAP.map((step, idx) => (
+          <li
+            key={step.title}
+            className="grid grid-cols-[2.25rem_1fr] items-start gap-4 border-t border-line pt-5"
+          >
+            <span
+              className="font-display text-2xl font-medium leading-none text-quiet"
+              aria-hidden="true"
+            >
+              {String(idx + 1).padStart(2, "0")}
+            </span>
+            <div>
+              <h3 className="font-display text-xl font-medium leading-tight text-foreground">
+                {step.title}
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-muted">{step.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <div
+        className="mt-10 border border-line p-5 sm:p-6"
+        style={{ background: "var(--sage-soft)" }}
+      >
+        <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+          Recommended scenario
+        </p>
+        <p className="mt-2 font-display text-2xl font-medium leading-tight text-foreground sm:text-[1.65rem]">
+          Seating + programming test
+        </p>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
+          This option addresses both the +30 seat shortfall and the 30-point
+          connection gap.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+// ── Skills + Impact (single header) ──────────────────────────────────────────
+
+const SKILLS: Array<{ title: string; body: string }> = [
+  {
+    title: "Survey analysis",
+    body: "Interpreted student behavior patterns from 105 responses.",
+  },
+  {
+    title: "Capacity modeling",
+    body: "Compared usable seating against modeled peak demand.",
+  },
+  {
+    title: "Recommendation design",
+    body: "Turned survey and space constraints into program decisions.",
+  },
+];
+
+const IMPACTS: Array<{ title: string; body: string }> = [
+  {
+    title: "Identified the 30-point connection gap",
+    body: "Showed where student interest was not converting into actual interaction.",
+  },
+  {
+    title: "Modeled peak seating shortfall",
+    body: "Clarified when current space capacity may limit engagement.",
+  },
+  {
+    title: "Prioritized space and programming changes",
+    body: "Recommended flexible seating and low-pressure interaction prompts.",
+  },
+];
+
+function SkillsImpactSection() {
+  return (
+    <section>
+      <ModalSectionLabel>Analysis to action</ModalSectionLabel>
+      <div className="mt-6 grid gap-10 border-t border-line pt-6 lg:grid-cols-2 lg:gap-12">
+        <div>
+          <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+            Skills used
+          </p>
+          <ul className="mt-4 space-y-4">
+            {SKILLS.map((s) => (
+              <li key={s.title} className="border-t border-line pt-3">
+                <p className="text-sm font-medium leading-5 text-foreground">
+                  {s.title}
+                </p>
+                <p className="mt-1 text-sm leading-6 text-muted">{s.body}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p className="text-[0.65rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+            Impact created
+          </p>
+          <ul className="mt-4 space-y-4">
+            {IMPACTS.map((s) => (
+              <li
+                key={s.title}
+                className="border-t pt-3"
+                style={{ borderColor: "var(--accent)" }}
+              >
+                <p className="text-sm font-medium leading-5 text-foreground">
+                  {s.title}
+                </p>
+                <p className="mt-1 text-sm leading-6 text-muted">{s.body}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Icons ─────────────────────────────────────────────────────────────────────
+
 type IconProps = { color?: string };
 
-function BarChartIcon({ color = "currentColor" }: IconProps) {
+function MessageSquareIcon({ color = "currentColor" }: IconProps) {
   return (
     <svg
       width="16"
@@ -341,51 +763,7 @@ function BarChartIcon({ color = "currentColor" }: IconProps) {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <path d="M3 3v18h18" />
-      <path d="M7 16V9" />
-      <path d="M12 16V5" />
-      <path d="M17 16v-5" />
-    </svg>
-  );
-}
-
-function SquareStackIcon({ color = "currentColor" }: IconProps) {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke={color}
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect x="3" y="9" width="12" height="12" rx="1" />
-      <path d="M7 9V7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-2" />
-    </svg>
-  );
-}
-
-function ListChecksIcon({ color = "currentColor" }: IconProps) {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke={color}
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="m3 17 2 2 4-4" />
-      <path d="m3 7 2 2 4-4" />
-      <path d="M13 6h8" />
-      <path d="M13 12h8" />
-      <path d="M13 18h8" />
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
     </svg>
   );
 }
@@ -411,7 +789,7 @@ function UsersIcon({ color = "currentColor" }: IconProps) {
   );
 }
 
-function LayoutGridIcon({ color = "currentColor" }: IconProps) {
+function LayoutIcon({ color = "currentColor" }: IconProps) {
   return (
     <svg
       width="16"
@@ -424,15 +802,14 @@ function LayoutGridIcon({ color = "currentColor" }: IconProps) {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <rect x="3" y="3" width="7" height="7" rx="1" />
-      <rect x="14" y="3" width="7" height="7" rx="1" />
-      <rect x="3" y="14" width="7" height="7" rx="1" />
-      <rect x="14" y="14" width="7" height="7" rx="1" />
+      <rect x="3" y="3" width="18" height="18" rx="1" />
+      <path d="M3 9h18" />
+      <path d="M9 21V9" />
     </svg>
   );
 }
 
-function TargetIcon({ color = "currentColor" }: IconProps) {
+function LightbulbIcon({ color = "currentColor" }: IconProps) {
   return (
     <svg
       width="16"
@@ -445,9 +822,9 @@ function TargetIcon({ color = "currentColor" }: IconProps) {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <circle cx="12" cy="12" r="10" />
-      <circle cx="12" cy="12" r="6" />
-      <circle cx="12" cy="12" r="2" />
+      <path d="M9 18h6" />
+      <path d="M10 22h4" />
+      <path d="M12 2a7 7 0 0 0-4 12.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26A7 7 0 0 0 12 2z" />
     </svg>
   );
 }

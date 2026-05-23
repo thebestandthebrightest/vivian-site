@@ -13,6 +13,7 @@ type ProjectModalShellProps = {
   labelledById: string;
   title: string;
   summary: string;
+  eyebrow?: string;
   children?: ReactNode;
 };
 
@@ -22,6 +23,7 @@ export function ProjectModalShell({
   labelledById,
   title,
   summary,
+  eyebrow,
   children,
 }: ProjectModalShellProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -99,12 +101,19 @@ export function ProjectModalShell({
           </div>
 
           <header className="grid gap-6 pb-10 pt-6 lg:grid-cols-[1fr_0.9fr] lg:items-end lg:gap-10">
-            <h2
-              id={labelledById}
-              className="font-display text-[clamp(2.6rem,6vw,4.25rem)] font-medium leading-[0.95] text-foreground"
-            >
-              {title}
-            </h2>
+            <div>
+              {eyebrow ? (
+                <p className="mb-3 text-[0.65rem] font-medium uppercase leading-5 tracking-[0.22em] text-quiet">
+                  {eyebrow}
+                </p>
+              ) : null}
+              <h2
+                id={labelledById}
+                className="font-display text-[clamp(2.6rem,6vw,4.25rem)] font-medium leading-[0.95] text-foreground"
+              >
+                {title}
+              </h2>
+            </div>
             <p className="max-w-xl text-base leading-7 text-muted sm:text-[1.05rem]">
               {summary}
             </p>

@@ -32,10 +32,22 @@ export const wellnessThroughClayPreviewData = {
     ],
   },
   projectLinks: [
-    { label: "Instagram", href: null },
-    { label: "Website", href: null },
-    { label: "Daily Targum", href: null },
-    { label: "Rutgers feature", href: null },
+    {
+      label: "Website",
+      href: "https://wellnessthroughclay.com",
+    },
+    {
+      label: "Instagram",
+      href: "https://www.instagram.com/ru_wellness_clay/",
+    },
+    {
+      label: "Rutgers CAS",
+      href: "https://alcoholstudies.rutgers.edu/wellness-through-clay-promotes-relaxation-in-biweekly-pottery-workshops/",
+    },
+    {
+      label: "Daily Targum",
+      href: "https://www.dailytargum.com/article/targum-spotlight-wellness-through-clay-to-host-biweekly-pottery-workshops-at-the-yard-20250206",
+    },
   ] as ProjectLink[],
   supports: [
     "Founder-led program design",

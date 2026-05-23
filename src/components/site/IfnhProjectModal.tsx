@@ -1,10 +1,9 @@
 "use client";
 
-import { useMemo, useState, type ReactNode, type SVGProps } from "react";
+import { useMemo, useState } from "react";
 import type { IfnhPreviewData } from "@/lib/ifnh-preview-data";
 import {
   ModalArrow,
-  ModalIcon,
   ModalSectionLabel,
   ModalTabs,
   ProjectModalShell,
@@ -24,16 +23,6 @@ type ScenarioStrategy =
   | "Current layout"
   | "Flexible seating adjustment"
   | "Seating + programming test";
-type InsightIconName =
-  | "clipboard"
-  | "repeat"
-  | "user-plus"
-  | "handshake"
-  | "split"
-  | "layout"
-  | "lightbulb"
-  | "spark"
-  | "message-users";
 
 const TABS: Array<{ id: TabId; label: string }> = [
   { id: "overview", label: "Overview" },
@@ -42,22 +31,18 @@ const TABS: Array<{ id: TabId; label: string }> = [
   { id: "recommendation", label: "Recommendation" },
 ];
 
-const FLOW: Array<{ icon: InsightIconName; label: string }> = [
-  { icon: "clipboard", label: "Survey responses" },
-  { icon: "split", label: "Conversion gap" },
-  { icon: "layout", label: "Capacity scenario" },
-  { icon: "spark", label: "Recommended path" },
+const FLOW: string[] = [
+  "Survey responses",
+  "Conversion gap",
+  "Capacity scenario",
+  "Recommended path",
 ];
 
-const KPI_ITEMS: Array<{
-  label: string;
-  value: string;
-  icon: InsightIconName;
-}> = [
-  { label: "Survey responses", value: "105", icon: "clipboard" },
-  { label: "Regular visitors", value: "78%", icon: "repeat" },
-  { label: "Open to meeting", value: "67%", icon: "user-plus" },
-  { label: "Met someone new", value: "37%", icon: "handshake" },
+const KPI_ITEMS: Array<{ label: string; value: string }> = [
+  { label: "Survey responses", value: "105" },
+  { label: "Regular visitors", value: "78%" },
+  { label: "Open to meeting", value: "67%" },
+  { label: "Met someone new", value: "37%" },
 ];
 
 const STRATEGY_OPTIONS: Array<{
@@ -90,31 +75,26 @@ const THEMES: Array<{
   title: string;
   body: string;
   signal: SignalLevel;
-  icon: InsightIconName;
 }> = [
   {
     title: "Low-pressure connection",
     body: "Students were open to meeting others, but needed easier social entry points.",
     signal: "High signal",
-    icon: "message-users",
   },
   {
     title: "Intent vs. action gap",
     body: "Many students were open to interaction, but fewer actually met someone new.",
     signal: "High signal",
-    icon: "split",
   },
   {
     title: "Space as a constraint",
     body: "Peak demand exceeded usable seating, making layout and flow part of the engagement problem.",
     signal: "Medium signal",
-    icon: "layout",
   },
   {
     title: "Programming opportunity",
     body: "Small structured prompts or events could turn passive presence into connection.",
     signal: "Medium signal",
-    icon: "lightbulb",
   },
 ];
 
@@ -173,73 +153,6 @@ const ACCENT = "var(--accent)";
 const ACCENT_SOFT = "var(--accent-soft)";
 const ACCENT_LINE = "var(--sage-line)";
 
-const INSIGHT_ICON_PATHS: Record<InsightIconName, ReactNode> = {
-  clipboard: (
-    <>
-      <rect x="6" y="4.5" width="12" height="16" rx="1.5" />
-      <path d="M9 4.5V3.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" />
-      <path d="M9 11h6M9 14.5h6M9 18h4" />
-    </>
-  ),
-  repeat: (
-    <>
-      <path d="M17 7h3V4" />
-      <path d="M20 7a7 7 0 0 0-12-3" />
-      <path d="M7 17H4v3" />
-      <path d="M4 17a7 7 0 0 0 12 3" />
-    </>
-  ),
-  "user-plus": (
-    <>
-      <circle cx="10" cy="8" r="3" />
-      <path d="M4.5 19a5.5 5.5 0 0 1 11 0" />
-      <path d="M18 8v6M15 11h6" />
-    </>
-  ),
-  handshake: (
-    <>
-      <path d="M8 12.5 5.5 15a2 2 0 1 1-2.8-2.8l4.1-4.1a3 3 0 0 1 2.1-.9H12" />
-      <path d="m10.5 13.5 2 2a2 2 0 0 0 2.8 0l5-5a2 2 0 0 0-2.8-2.8L15.8 9.4a3 3 0 0 1-2.1.9H12" />
-      <path d="m9 10 2 2a2 2 0 0 0 2.8 0l1.2-1.2" />
-    </>
-  ),
-  split: (
-    <>
-      <path d="M12 4v16" />
-      <path d="m8 8 4-4 4 4" />
-      <path d="m16 16-4 4-4-4" />
-    </>
-  ),
-  layout: (
-    <>
-      <rect x="3" y="4" width="18" height="16" rx="1.5" />
-      <path d="M3 10h18" />
-      <path d="M9 20V10" />
-      <path d="M14 14h4" />
-    </>
-  ),
-  lightbulb: (
-    <>
-      <path d="M9 18h6" />
-      <path d="M10 21h4" />
-      <path d="M12 3a6.5 6.5 0 0 0-4 11.63V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.37A6.5 6.5 0 0 0 12 3Z" />
-    </>
-  ),
-  spark: (
-    <>
-      <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2 2M16.4 16.4l2 2M5.6 18.4l2-2M16.4 7.6l2-2" />
-    </>
-  ),
-  "message-users": (
-    <>
-      <path d="M4.5 6.5H18v8H9.5L6 18v-3.5H4.5z" />
-      <circle cx="10" cy="9.5" r="1.5" />
-      <path d="M7.5 13a2.5 2.5 0 0 1 5 0" />
-      <circle cx="15.5" cy="10.5" r="1.25" />
-    </>
-  ),
-};
-
 export function IfnhProjectModal({
   data,
   isOpen,
@@ -296,32 +209,10 @@ export function IfnhProjectModal({
   );
 }
 
-function ThinIcon({
-  name,
-  className = "h-4 w-4",
-  ...rest
-}: { name: InsightIconName } & SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.4}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className={className}
-      {...rest}
-    >
-      {INSIGHT_ICON_PATHS[name]}
-    </svg>
-  );
-}
-
 function IfnhKpiStrip({
   items,
 }: {
-  items: Array<{ label: string; value: string; icon: InsightIconName }>;
+  items: Array<{ label: string; value: string }>;
 }) {
   return (
     <div className="grid gap-x-8 gap-y-6 border-y border-line py-7 sm:grid-cols-2 lg:grid-cols-4">
@@ -330,10 +221,9 @@ function IfnhKpiStrip({
           <p className="font-display text-4xl font-medium leading-none text-foreground lg:text-[2.75rem]">
             {item.value}
           </p>
-          <div className="mt-2 flex items-center gap-1.5 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
-            <ThinIcon name={item.icon} className="h-4 w-4" />
-            <span>{item.label}</span>
-          </div>
+          <p className="mt-2 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+            {item.label}
+          </p>
         </div>
       ))}
     </div>
@@ -342,37 +232,21 @@ function IfnhKpiStrip({
 
 function InsightFlow() {
   return (
-    <div className="flex flex-col gap-3 lg:flex-row lg:items-stretch">
-      {FLOW.map((step, index) => (
-        <div key={step.label} className="flex flex-1 items-stretch gap-3">
-          <div
-            className="flex flex-1 items-center gap-3 border px-4 py-4"
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-foreground">
+      {FLOW.map((label, index) => (
+        <span key={label} className="inline-flex items-center gap-4">
+          <span
+            className="text-[0.95rem] font-medium leading-6"
             style={
               index === FLOW.length - 1
-                ? {
-                    borderColor: "var(--sage-line)",
-                    background: "var(--sage-soft)",
-                  }
-                : {
-                    borderColor: "var(--line)",
-                    background: "var(--background)",
-                  }
+                ? { color: "var(--sage-deep)" }
+                : undefined
             }
           >
-            <ThinIcon
-              name={step.icon}
-              className="h-4 w-4 shrink-0 text-quiet"
-            />
-            <p className="text-[0.95rem] font-medium leading-6 text-foreground">
-              {step.label}
-            </p>
-          </div>
-          {index < FLOW.length - 1 ? (
-            <div aria-hidden="true" className="hidden items-center text-quiet lg:flex">
-              <ModalArrow />
-            </div>
-          ) : null}
-        </div>
+            {label}
+          </span>
+          {index < FLOW.length - 1 ? <ModalArrow /> : null}
+        </span>
       ))}
     </div>
   );
@@ -401,14 +275,8 @@ function OverviewTab({ data }: { data: IfnhPreviewData }) {
         </div>
 
         <aside className="border border-line bg-background p-5 sm:p-6">
-          <p className="text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-            30-point connection gap
-          </p>
-          <p className="mt-3 font-display text-[2.4rem] font-medium leading-[0.95] text-foreground sm:text-[2.9rem]">
-            {connectionGap}-point
-          </p>
-          <p className="mt-1 text-sm font-medium uppercase leading-5 tracking-[0.14em] text-quiet">
-            connection gap
+          <p className="font-display text-[2.4rem] font-medium leading-[0.95] text-foreground sm:text-[2.9rem]">
+            {connectionGap}-point gap
           </p>
           <p className="mt-5 text-[0.95rem] leading-7 text-muted">
             Interest was present, but the environment did not consistently
@@ -437,18 +305,15 @@ function OverviewTab({ data }: { data: IfnhPreviewData }) {
         </div>
 
         <aside className="border border-line bg-background p-5 sm:p-6">
-          <div className="flex flex-wrap items-center gap-3">
-            <span
-              className="inline-flex items-center border px-3 py-1 text-[0.72rem] font-medium uppercase leading-4 tracking-[0.14em]"
-              style={{
-                borderColor: ACCENT_LINE,
-                background: ACCENT_SOFT,
-                color: "var(--sage-deep)",
-              }}
-            >
-              +{data.capacity.overage} seat shortfall
-            </span>
-          </div>
+          <p
+            className="font-display text-[2.4rem] font-medium leading-[0.95] sm:text-[2.9rem]"
+            style={{ color: "var(--sage-deep)" }}
+          >
+            +{data.capacity.overage} seats
+          </p>
+          <p className="mt-2 text-sm font-medium uppercase leading-5 tracking-[0.14em] text-quiet">
+            Peak shortfall
+          </p>
           <p className="mt-5 text-[0.95rem] leading-7 text-muted">
             Peak demand exceeded usable seating, making space layout part of the
             engagement problem.
@@ -610,8 +475,7 @@ function ScenarioLabTab({ data }: { data: IfnhPreviewData }) {
 
   return (
     <section>
-      <ModalSectionLabel>Scenario lab</ModalSectionLabel>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
+      <p className="max-w-2xl text-sm leading-6 text-muted">
         Adjust seating, expected demand, and goals to test how the recommended
         strategy changes.
       </p>
@@ -644,50 +508,23 @@ function ScenarioLabTab({ data }: { data: IfnhPreviewData }) {
           />
         </div>
 
-        <div className="space-y-5 border border-line bg-background p-5 sm:p-6">
-          <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center border border-line text-foreground">
-              <ThinIcon name="spark" className="h-4 w-4" />
-            </span>
-            <div>
-              <p className="text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-                Scenario result
-              </p>
-              <p className="mt-2 font-display text-2xl font-medium leading-tight text-foreground sm:text-[1.7rem]">
-                {gapLabel}
-              </p>
-            </div>
+        <div className="space-y-6 border border-line bg-background p-5 sm:p-6">
+          <div>
+            <p className="font-display text-[2rem] font-medium leading-tight text-foreground sm:text-[2.4rem]">
+              {gapLabel}
+            </p>
+            <p className="mt-3 text-[0.95rem] leading-7 text-muted">
+              {rationale}
+            </p>
           </div>
 
           <dl className="divide-y divide-line border-y border-line">
-            <ScenarioStatusRow label="Seat gap / surplus" value={gapLabel} />
             <ScenarioStatusRow label="Seating fit" value={seatingFit} />
             <ScenarioStatusRow
               label="Recommended strategy"
               value={recommendation}
             />
           </dl>
-
-          <div
-            className="border px-4 py-4 sm:px-5"
-            style={{
-              borderColor: "var(--sage-line)",
-              background: "var(--sage-soft)",
-            }}
-          >
-            <div className="flex items-center gap-2 text-foreground">
-              <ThinIcon name="spark" className="h-4 w-4" />
-              <p className="text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em]">
-                Recommended strategy
-              </p>
-            </div>
-            <p className="mt-2 font-display text-2xl font-medium leading-tight text-foreground">
-              {recommendation}
-            </p>
-            <p className="mt-3 text-[0.95rem] leading-7 text-muted">
-              {rationale}
-            </p>
-          </div>
         </div>
       </div>
 
@@ -755,9 +592,8 @@ function SliderControl({
   return (
     <div>
       <div className="flex items-baseline justify-between gap-4">
-        <label className="inline-flex items-center gap-1.5 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
-          <ModalIcon name="sliders" className="h-4 w-4" />
-          <span>{label}</span>
+        <label className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+          {label}
         </label>
         <span className="font-display text-2xl font-medium leading-none text-foreground">
           {value}
@@ -794,14 +630,13 @@ function SegmentedControl({
 
   return (
     <div>
-      <p className="inline-flex items-center gap-1.5 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
-        <ModalIcon name="target" className="h-4 w-4" />
-        <span>{label}</span>
+      <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+        {label}
       </p>
       <div
         role="radiogroup"
         aria-label={label}
-        className="mt-2 inline-flex border border-line"
+        className="mt-2 inline-flex gap-1"
       >
         {options.map((option) => {
           const active = option === value;
@@ -816,8 +651,6 @@ function SegmentedControl({
               style={{
                 background: active ? "var(--foreground)" : "transparent",
                 color: active ? "var(--background)" : "var(--foreground)",
-                borderRight:
-                  option !== "High" ? "1px solid var(--line)" : undefined,
               }}
             >
               {option}
@@ -858,8 +691,7 @@ function ScenarioCardRow({ label, value }: { label: string; value: string }) {
 function StudentInsightsTab() {
   return (
     <section>
-      <ModalSectionLabel>Student insights</ModalSectionLabel>
-      <p className="mt-3 max-w-2xl text-[0.95rem] leading-7 text-muted">
+      <p className="max-w-2xl text-[0.95rem] leading-7 text-muted">
         Themes from the survey point to where space and programming can better
         convert openness into actual interaction.
       </p>
@@ -870,12 +702,9 @@ function StudentInsightsTab() {
             className="border border-line bg-background p-5"
           >
             <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-2.5 text-foreground">
-                <ThinIcon name={theme.icon} className="h-4 w-4 text-quiet" />
-                <h3 className="font-display text-lg font-medium leading-tight">
-                  {theme.title}
-                </h3>
-              </div>
+              <h3 className="font-display text-lg font-medium leading-tight text-foreground">
+                {theme.title}
+              </h3>
               <span className="text-[0.65rem] font-medium uppercase leading-4 tracking-[0.14em] text-quiet">
                 {theme.signal}
               </span>
@@ -915,56 +744,47 @@ function RecommendationTab() {
   return (
     <section>
       <div className="grid gap-8 xl:grid-cols-[1.12fr_0.88fr]">
-        <div>
-          <ModalSectionLabel>Recommended path</ModalSectionLabel>
-          <ol className="mt-6 space-y-5">
-            {ROADMAP.map((step, index) => (
-              <li
-                key={step.title}
-                className="grid grid-cols-[2.25rem_1fr] items-start gap-4 border-t border-line pt-5"
+        <ol className="space-y-5">
+          {ROADMAP.map((step, index) => (
+            <li
+              key={step.title}
+              className="grid grid-cols-[2.25rem_1fr] items-start gap-4 border-t border-line pt-5"
+            >
+              <span
+                className="font-display text-2xl font-medium leading-none text-quiet"
+                aria-hidden="true"
               >
-                <span
-                  className="font-display text-2xl font-medium leading-none text-quiet"
-                  aria-hidden="true"
-                >
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <div>
-                  <h3 className="font-display text-xl font-medium leading-tight text-foreground">
-                    {step.title}
-                  </h3>
-                  <p className="mt-2 text-[0.95rem] leading-7 text-muted">
-                    {step.body}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <div>
+                <h3 className="font-display text-xl font-medium leading-tight text-foreground">
+                  {step.title}
+                </h3>
+                <p className="mt-2 text-[0.95rem] leading-7 text-muted">
+                  {step.body}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
 
-        <aside className="border border-line bg-background p-5 sm:p-6">
-          <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center border border-line text-foreground">
-              <ThinIcon name="spark" className="h-4 w-4" />
-            </span>
-            <div>
-              <p className="text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-                Recommended scenario
-              </p>
-              <p className="mt-2 font-display text-2xl font-medium leading-tight text-foreground sm:text-[1.7rem]">
-                Seating + programming test
-              </p>
-            </div>
-          </div>
-          <div className="mt-5 border-t border-line pt-5">
-            <p className="text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-              Why
-            </p>
-            <p className="mt-2 text-[0.95rem] leading-7 text-muted">
-              This option addresses both the +30 seat shortfall and the 30-point
-              connection gap.
-            </p>
-          </div>
+        <aside
+          className="border p-5 sm:p-6"
+          style={{
+            borderColor: ACCENT_LINE,
+            background: ACCENT_SOFT,
+          }}
+        >
+          <p
+            className="font-display text-[1.8rem] font-medium leading-tight sm:text-[2rem]"
+            style={{ color: "var(--sage-deep)" }}
+          >
+            Seating + programming test
+          </p>
+          <p className="mt-4 text-[0.95rem] leading-7 text-muted">
+            Addresses both the +30 seat shortfall and the 30-point connection
+            gap in one paired intervention.
+          </p>
         </aside>
       </div>
     </section>

@@ -1,16 +1,14 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
+import { type ReactNode, type SVGProps, useState } from "react";
 import type { ScarletWellBriefData } from "@/lib/scarletwell-preview-data";
 import { wellnessThroughClayPreviewData } from "@/lib/wellness-through-clay-preview-data";
 import {
-  DeltaCards,
   KpiStrip,
   ModalIcon,
-  ModalTabs,
+  type ModalIconName,
   ModalSectionLabel,
   ProjectModalShell,
-  SkillsImpactColumns,
 } from "./ProjectModalShell";
 
 type ScarletWellProjectModalProps = {
@@ -29,26 +27,23 @@ const tabs: Array<{ id: TabKey; label: string }> = [
 ];
 
 const studioFlow = [
-  { icon: "clipboard" as const, label: "Final reports" },
-  { icon: "layers" as const, label: "Portfolio model" },
-  { icon: "bar-chart" as const, label: "Cycle pulse" },
-  { icon: "target" as const, label: "Planning decisions" },
+  { icon: "bar-chart" as const, label: "Program metrics" },
+  { icon: "clipboard" as const, label: "Reporting status" },
+  { icon: "layers" as const, label: "Portfolio review" },
+  { icon: "target" as const, label: "Planning actions" },
 ];
 
 const skills = [
   {
     title: "Program evaluation",
-    detail: "Compared reach, activities, budget, and reporting status across wellness grants.",
     icon: "layers" as const,
   },
   {
     title: "Data modeling",
-    detail: "Structured cycle-level metrics so efficiency and participation trends could be read together.",
     icon: "bar-chart" as const,
   },
   {
     title: "Strategic planning",
-    detail: "Translated portfolio signals into follow-up actions for active and completed programs.",
     icon: "target" as const,
   },
 ];
@@ -56,20 +51,58 @@ const skills = [
 const impacts = [
   {
     title: "Compared 41 wellness programs in one system",
-    detail: "Gave program leaders a shared view of grant activity instead of isolated reports.",
     icon: "monitor" as const,
   },
   {
-    title: "Surfaced year-over-year efficiency",
-    detail: "Made lower documented spend and higher participation visible at the portfolio level.",
+    title: "Made funding and participation patterns easier to evaluate",
     icon: "wallet" as const,
   },
   {
-    title: "Clarified follow-up priorities",
-    detail: "Separated ready reports, active programs, and items needing coordinator attention.",
-    icon: "check-circle" as const,
+    title: "Helped identify efficiency gains across grant cycles",
+    icon: "target" as const,
   },
 ];
+
+type ScarletWellIconName =
+  | ModalIconName
+  | "activity"
+  | "alert-circle"
+  | "calculator"
+  | "file-check";
+
+const EXTRA_ICON_PATHS: Record<
+  Exclude<ScarletWellIconName, ModalIconName>,
+  ReactNode
+> = {
+  activity: (
+    <>
+      <path d="M3 12h4l2.5-5 5 10 2.5-5H21" />
+      <path d="M4.5 18.5h15" />
+    </>
+  ),
+  "alert-circle": (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 8v4.5" />
+      <circle cx="12" cy="16.75" r="0.75" fill="currentColor" stroke="none" />
+    </>
+  ),
+  calculator: (
+    <>
+      <rect x="5" y="3.5" width="14" height="17" rx="1.5" />
+      <path d="M8 7.5h8" />
+      <path d="M8 11.5h2M12 11.5h2M16 11.5h0.01" />
+      <path d="M8 15.5h2M12 15.5h2M16 15.5h0.01" />
+    </>
+  ),
+  "file-check": (
+    <>
+      <path d="M7 3.5h7l4 4v13H7z" />
+      <path d="M14 3.5v4h4" />
+      <path d="m9 14 2 2 4-4" />
+    </>
+  ),
+};
 
 export function ScarletWellProjectModal({
   data,
@@ -91,7 +124,7 @@ export function ScarletWellProjectModal({
       onClose={onClose}
       labelledById="scarletwell-modal-title"
       title="ScarletWell Studio"
-      summary="Built an analytics and planning system to help Rutgers mental health and wellness programs track reach, funding, and program performance."
+      summary="Built an analytics and planning system to help Rutgers mental health and wellness programs track reach, funding, reporting status, and program performance."
     >
       <section>
         <ModalSectionLabel>Impact snapshot</ModalSectionLabel>
@@ -101,20 +134,14 @@ export function ScarletWellProjectModal({
       </section>
 
       <section>
-        <ModalSectionLabel>Dashboard workflow</ModalSectionLabel>
+        <ModalSectionLabel>Data to action</ModalSectionLabel>
         <div className="mt-5">
           <StudioFlow />
         </div>
       </section>
 
       <section>
-        <ModalTabs
-          items={tabs}
-          active={active}
-          onChange={setActive}
-          ariaLabel="ScarletWell Studio views"
-          idPrefix="sw"
-        />
+        <ScarletWellTabs active={active} onChange={setActive} />
 
         <div className="mt-6">
           {active === "insights" ? (
@@ -129,7 +156,7 @@ export function ScarletWellProjectModal({
         </div>
       </section>
 
-      <SkillsImpactColumns skills={skills} impact={impacts} />
+      <SkillsImpactSection />
     </ProjectModalShell>
   );
 }
@@ -147,7 +174,10 @@ function StudioFlow() {
                 : { background: "var(--background)" }
             }
           >
-            <ModalIcon name={step.icon} className="h-4 w-4 shrink-0 text-quiet" />
+            <ScarletWellIcon
+              name={step.icon}
+              className="h-4 w-4 shrink-0 text-quiet"
+            />
             <p className="text-[0.95rem] font-medium leading-6 text-foreground">
               {step.label}
             </p>
@@ -160,6 +190,44 @@ function StudioFlow() {
           ) : null}
         </div>
       ))}
+    </div>
+  );
+}
+
+function ScarletWellTabs({
+  active,
+  onChange,
+}: {
+  active: TabKey;
+  onChange: (id: TabKey) => void;
+}) {
+  return (
+    <div role="tablist" aria-label="ScarletWell Studio views" className="overflow-x-auto border-b border-line md:overflow-visible">
+      <div className="flex min-w-max gap-6 md:grid md:min-w-0 md:grid-cols-4 md:gap-4">
+        {tabs.map((tab) => {
+          const isActive = tab.id === active;
+          return (
+            <button
+              key={tab.id}
+              id={`sw-tab-${tab.id}`}
+              role="tab"
+              type="button"
+              aria-selected={isActive}
+              aria-controls={`sw-panel-${tab.id}`}
+              onClick={() => onChange(tab.id)}
+              className="focus-ring relative -mb-px py-3 text-left text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] transition hover:opacity-100 motion-reduce:transition-none md:text-center"
+              style={{
+                color: isActive ? "var(--foreground)" : "var(--quiet)",
+                borderBottom: isActive
+                  ? "1.5px solid var(--foreground)"
+                  : "1.5px solid transparent",
+              }}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -185,28 +253,27 @@ function TabPanel({
 
 function InsightsPanel({ data }: { data: ScarletWellBriefData }) {
   const [previous, current] = data.cycles;
-
-  const deltas = [
+  const cardMetrics = [
     {
       label: "Participants",
       value: "+14%",
-      direction: "up" as const,
       detail: "1,400 → 1,603",
-      highlight: true,
+      icon: "users" as const,
+      direction: "up" as const,
     },
     {
       label: "Documented budget",
-      value: "−44%",
-      direction: "down" as const,
+      value: "-44%",
       detail: "$26.4K → $14.8K",
-      highlight: true,
+      icon: "wallet" as const,
+      direction: "down" as const,
     },
     {
       label: "Cost / participant",
-      value: "−51%",
-      direction: "down" as const,
+      value: "-51%",
       detail: "$18.82 → $9.22",
-      highlight: true,
+      icon: "calculator" as const,
+      direction: "down" as const,
     },
   ];
 
@@ -215,51 +282,70 @@ function InsightsPanel({ data }: { data: ScarletWellBriefData }) {
       <div>
         <div className="flex items-baseline justify-between gap-4">
           <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-            Year-over-year change
+            Year-over-year efficiency
           </p>
-          <p className="text-sm leading-5 text-quiet">2024-25 → 2025-26</p>
+          <p className="text-sm leading-5 text-quiet">2024-2025 → 2025-2026</p>
         </div>
-        <div className="mt-5">
-          <DeltaCards items={deltas} />
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
+          {cardMetrics.map((metric) => (
+            <article key={metric.label} className="border border-line bg-background px-4 py-4">
+              <div className="flex items-center gap-2">
+                <ScarletWellIcon
+                  name={metric.icon}
+                  className="h-4 w-4 shrink-0 text-quiet"
+                />
+                <p className="text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+                  {metric.label}
+                </p>
+              </div>
+              <p className="mt-3 font-display text-[2.1rem] font-medium leading-none text-foreground">
+                {metric.value}
+                <span aria-hidden="true" className="ml-1 text-sm text-quiet">
+                  {metric.direction === "up" ? "↑" : "↓"}
+                </span>
+              </p>
+              <p className="mt-2 text-sm leading-6 text-muted">{metric.detail}</p>
+            </article>
+          ))}
         </div>
       </div>
 
       <div className="space-y-5">
         <MiniCompare
           title="Participants"
-          previousLabel={`${previous.label}`}
-          currentLabel={`${current.label}`}
+          icon="users"
+          previousLabel="2024-2025"
+          currentLabel="2025-2026"
           previousValue={previous.participants}
           currentValue={current.participants}
           previousDisplay={previous.participants.toLocaleString()}
           currentDisplay={current.participants.toLocaleString()}
-          direction="up"
         />
         <MiniCompare
           title="Documented budget"
-          previousLabel={`${previous.label}`}
-          currentLabel={`${current.label}`}
+          icon="wallet"
+          previousLabel="2024-2025"
+          currentLabel="2025-2026"
           previousValue={previous.budget}
           currentValue={current.budget}
           previousDisplay={`$${(previous.budget / 1000).toFixed(1)}K`}
           currentDisplay={`$${(current.budget / 1000).toFixed(1)}K`}
-          direction="down"
         />
         <MiniCompare
           title="Cost / participant"
-          previousLabel={`${previous.label}`}
-          currentLabel={`${current.label}`}
+          icon="calculator"
+          previousLabel="2024-2025"
+          currentLabel="2025-2026"
           previousValue={previous.costPerParticipant}
           currentValue={current.costPerParticipant}
           previousDisplay={`$${previous.costPerParticipant.toFixed(2)}`}
           currentDisplay={`$${current.costPerParticipant.toFixed(2)}`}
-          direction="down"
         />
       </div>
 
       <p className="max-w-2xl text-[0.95rem] leading-7 text-muted">
-        Year-over-year efficiency improved: documented cost per participant
-        dropped roughly 51% while participant reach increased.
+        Reach increased while documented spend decreased, lowering cost per
+        participant by roughly 51%.
       </p>
     </TabPanel>
   );
@@ -267,29 +353,31 @@ function InsightsPanel({ data }: { data: ScarletWellBriefData }) {
 
 function MiniCompare({
   title,
+  icon,
   previousLabel,
   currentLabel,
   previousValue,
   currentValue,
   previousDisplay,
   currentDisplay,
-  direction,
 }: {
   title: string;
+  icon: ScarletWellIconName;
   previousLabel: string;
   currentLabel: string;
   previousValue: number;
   currentValue: number;
   previousDisplay: string;
   currentDisplay: string;
-  direction: "up" | "down";
 }) {
   const max = Math.max(previousValue, currentValue);
-  const isWin = direction === "up" ? currentValue > previousValue : currentValue < previousValue;
 
   return (
     <div>
-      <p className="text-sm font-medium leading-6 text-foreground">{title}</p>
+      <div className="flex items-center gap-2">
+        <ScarletWellIcon name={icon} className="h-4 w-4 shrink-0 text-quiet" />
+        <p className="text-sm font-medium leading-6 text-foreground">{title}</p>
+      </div>
       <div className="mt-2 space-y-2">
         <Bar
           label={previousLabel}
@@ -301,7 +389,7 @@ function MiniCompare({
           label={currentLabel}
           widthPct={(currentValue / max) * 100}
           display={currentDisplay}
-          color={isWin ? "var(--sage)" : "rgba(72,38,29,0.28)"}
+          color="var(--accent)"
         />
       </div>
     </div>
@@ -338,10 +426,30 @@ function Bar({
 
 function PulsePanel() {
   const stats = [
-    { label: "Active programs", value: "12" },
-    { label: "Completed", value: "29" },
-    { label: "Reports ready", value: "8" },
-    { label: "Follow-up needed", value: "4", attention: true },
+    {
+      label: "Active programs",
+      value: "12",
+      icon: "activity" as const,
+      description: "Live portfolio tracking",
+    },
+    {
+      label: "Completed",
+      value: "29",
+      icon: "check-circle" as const,
+      description: "Closed cycle reviews",
+    },
+    {
+      label: "Reports ready",
+      value: "8",
+      icon: "file-check" as const,
+      description: "Prepared for funders",
+    },
+    {
+      label: "Follow-up needed",
+      value: "4",
+      icon: "alert-circle" as const,
+      description: "Coordinator action needed",
+    },
   ];
 
   const nextItems = [
@@ -356,32 +464,23 @@ function PulsePanel() {
         <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
           Current cycle monitoring
         </p>
-        <div className="mt-4 grid gap-x-8 gap-y-6 border-y border-line py-7 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {stats.map((s) => (
-            <div key={s.label}>
-              <p
-                className="font-display text-4xl font-medium leading-none text-foreground lg:text-[2.5rem]"
-                style={
-                  s.attention
-                    ? {
-                        background: "var(--sage-soft)",
-                        boxShadow: "inset 0 -0.35em 0 var(--sage-soft)",
-                        display: "inline-block",
-                        padding: "0 0.2em",
-                      }
-                    : undefined
-                }
-              >
+            <article key={s.label} className="border border-line bg-background px-4 py-4">
+              <div className="flex items-center gap-2">
+                <ScarletWellIcon
+                  name={s.icon}
+                  className="h-4 w-4 shrink-0 text-quiet"
+                />
+                <p className="text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+                  {s.label}
+                </p>
+              </div>
+              <p className="mt-3 font-display text-[2.2rem] font-medium leading-none text-foreground">
                 {s.value}
               </p>
-              <div className="mt-2 flex items-center gap-1.5 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
-                <ModalIcon
-                  name={s.attention ? "target" : "check-circle"}
-                  className="h-4 w-4"
-                />
-                <span>{s.label}</span>
-              </div>
-            </div>
+              <p className="mt-2 text-sm leading-6 text-muted">{s.description}</p>
+            </article>
           ))}
         </div>
       </div>
@@ -390,16 +489,20 @@ function PulsePanel() {
         <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
           What to do next
         </p>
-        <ol className="mt-4 divide-y divide-[color:var(--line)] border-y border-line">
+        <ol className="mt-4 divide-y divide-[color:var(--line)] border border-line">
           {nextItems.map((item, idx) => (
             <li
               key={item}
-              className="flex items-start gap-3 py-3 text-[0.95rem] leading-6 text-foreground"
+              className="grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 px-4 py-4 text-[0.95rem] leading-6 text-foreground"
             >
-              <span className="pt-0.5 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+              <span className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
                 {String(idx + 1).padStart(2, "0")}
               </span>
               <span>{item}</span>
+              <ScarletWellIcon
+                name="arrow-right"
+                className="h-4 w-4 shrink-0 text-quiet"
+              />
             </li>
           ))}
         </ol>
@@ -412,20 +515,24 @@ function PortfolioPanel() {
   const quadrants = [
     {
       title: "High reach · Low cost",
+      badge: "Priority",
       detail: "Repeat-cycle workshops and recurring outreach.",
-      recommended: true,
+      icon: "target" as const,
     },
     {
       title: "High reach · Higher cost",
       detail: "Large one-time events with strong turnout.",
+      icon: "wallet" as const,
     },
     {
       title: "Lower reach · Low cost",
       detail: "Niche pilots with efficient delivery.",
+      icon: "layers" as const,
     },
     {
       title: "Lower reach · Higher cost",
       detail: "Programs to re-scope or sunset.",
+      icon: "alert-circle" as const,
     },
   ];
 
@@ -435,7 +542,12 @@ function PortfolioPanel() {
         <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
           Portfolio comparison · 41 programs
         </p>
-        <div className="mt-4 grid grid-cols-2 border border-line">
+        <div className="mt-4">
+          <div className="mb-3 flex items-center justify-between gap-4 text-[0.72rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+            <span>Y-axis: Cost →</span>
+            <span>X-axis: Reach →</span>
+          </div>
+          <div className="grid border border-line md:grid-cols-2">
           {quadrants.map((q, idx) => (
             <div
               key={q.title}
@@ -443,45 +555,52 @@ function PortfolioPanel() {
               style={{
                 borderRight: idx % 2 === 0 ? "1px solid var(--line)" : undefined,
                 borderBottom: idx < 2 ? "1px solid var(--line)" : undefined,
-                background: q.recommended ? "var(--sage-soft)" : undefined,
               }}
             >
               <div className="flex items-center gap-2">
+                <ScarletWellIcon
+                  name={q.icon}
+                  className="h-4 w-4 shrink-0 text-quiet"
+                />
                 <p className="text-sm font-medium leading-6 text-foreground">
                   {q.title}
                 </p>
-                {q.recommended ? (
+                {q.badge ? (
                   <span
                     className="text-[0.72rem] font-medium uppercase leading-4 tracking-[0.14em]"
                     style={{ color: "rgba(72,38,29,0.7)" }}
                   >
-                    Priority
+                    {q.badge}
                   </span>
                 ) : null}
               </div>
               <p className="mt-2 text-sm leading-6 text-muted">{q.detail}</p>
             </div>
           ))}
+          </div>
         </div>
-        <p className="mt-1 text-[0.75rem] uppercase leading-5 tracking-[0.14em] text-quiet">
-          Reach →
-        </p>
       </div>
 
       <div>
         <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-          Funding signal
+          Funding signals
         </p>
-        <ul className="mt-4 divide-y divide-[color:var(--line)] border-y border-line">
-          <li className="flex items-baseline justify-between gap-4 py-3 text-sm leading-6 text-foreground">
+        <ul className="mt-4 divide-y divide-[color:var(--line)] border border-line">
+          <li className="grid grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-4 text-sm leading-6 text-foreground">
+            <ScarletWellIcon name="target" className="h-4 w-4 shrink-0 text-quiet" />
             <span>Repeat recipients across cycles</span>
             <span className="text-sm text-muted">Multi-cycle visibility</span>
           </li>
-          <li className="flex items-baseline justify-between gap-4 py-3 text-sm leading-6 text-foreground">
+          <li className="grid grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-4 text-sm leading-6 text-foreground">
+            <ScarletWellIcon name="wallet" className="h-4 w-4 shrink-0 text-quiet" />
             <span>Cost efficiency leaders</span>
             <span className="text-sm text-muted">Lower $ / participant</span>
           </li>
-          <li className="flex items-baseline justify-between gap-4 py-3 text-sm leading-6 text-foreground">
+          <li className="grid grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-4 text-sm leading-6 text-foreground">
+            <ScarletWellIcon
+              name="alert-circle"
+              className="h-4 w-4 shrink-0 text-quiet"
+            />
             <span>Programs to re-scope</span>
             <span className="text-sm text-muted">Low reach / high cost</span>
           </li>
@@ -499,11 +618,19 @@ function SampleProgramPanel() {
     { label: "Cycles", value: "3" },
     { label: "Avg / session", value: "14–16" },
   ];
-
-  const outcomes = [
-    "Mindfulness",
-    "Accessibility",
-    "Attendance-informed planning",
+  const surfacedInsights = [
+    {
+      label: "Repeat demand",
+      detail: "Attendance remained stable across cycles.",
+    },
+    {
+      label: "Expansion signal",
+      detail: "Program reached student and faculty/staff audiences.",
+    },
+    {
+      label: "Planning value",
+      detail: "Attendance data helped guide future session design.",
+    },
   ];
 
   return (
@@ -527,7 +654,7 @@ function SampleProgramPanel() {
                 {s.value}
               </p>
               <div className="mt-2 flex items-center gap-1.5 text-[0.75rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
-                <ModalIcon name="calendar-check" className="h-4 w-4" />
+                <ScarletWellIcon name="calendar-check" className="h-4 w-4" />
                 <span>{s.label}</span>
               </div>
             </div>
@@ -537,7 +664,7 @@ function SampleProgramPanel() {
 
       <div>
         <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-          Cumulative attendees by cycle
+          Cumulative attendance by cycle
         </p>
         <div className="mt-4 space-y-2">
           {wtc.cumulativeGrowth.points.map((p, idx, arr) => {
@@ -575,20 +702,104 @@ function SampleProgramPanel() {
         <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
           What the dashboard surfaced
         </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          {outcomes.map((o) => (
+        <div className="mt-4 divide-y divide-[color:var(--line)] border border-line">
+          {surfacedInsights.map((item) => (
             <div
-              key={o}
-              className="border border-line bg-background px-4 py-4 text-sm font-medium leading-5 text-foreground"
+              key={item.label}
+              className="grid gap-2 px-4 py-4 md:grid-cols-[12rem_1fr] md:items-center md:gap-4"
             >
-              {o}
+              <p className="text-sm font-medium leading-6 text-foreground">
+                {item.label}
+              </p>
+              <p className="text-sm leading-6 text-muted">{item.detail}</p>
             </div>
           ))}
         </div>
         <p className="mt-4 max-w-2xl text-sm leading-6 text-muted">
-          {wtc.stability.insight}
+          Participation remained stable across repeat programming cycles while
+          the model expanded beyond its original student audience.
         </p>
       </div>
     </TabPanel>
   );
+}
+
+function SkillsImpactSection() {
+  return (
+    <section className="border-t border-line pt-10">
+      <div className="grid gap-10 lg:grid-cols-2 lg:gap-12">
+        <div>
+          <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+            Skills used
+          </p>
+          <ol className="mt-4 divide-y divide-[color:var(--line)] border-y border-line">
+            {skills.map((skill, index) => (
+              <li
+                key={skill.title}
+                className="grid grid-cols-[2.5rem_auto_1fr] items-center gap-3 py-3 text-[0.95rem] leading-6 text-foreground"
+              >
+                <span className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+                  {index + 1}
+                </span>
+                <ScarletWellIcon
+                  name={skill.icon}
+                  className="h-4 w-4 shrink-0 text-quiet"
+                />
+                <span>{skill.title}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div>
+          <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+            Impact created
+          </p>
+          <ol className="mt-4 divide-y divide-[color:var(--line)] border-y border-line">
+            {impacts.map((impact, index) => (
+              <li
+                key={impact.title}
+                className="grid grid-cols-[2.5rem_auto_1fr] items-center gap-3 py-3 text-[0.95rem] leading-6 text-foreground"
+              >
+                <span className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+                  {index + 1}
+                </span>
+                <ScarletWellIcon
+                  name={impact.icon}
+                  className="h-4 w-4 shrink-0 text-quiet"
+                />
+                <span>{impact.title}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ScarletWellIcon({
+  name,
+  className = "h-4 w-4",
+  ...rest
+}: { name: ScarletWellIconName } & SVGProps<SVGSVGElement>) {
+  if (name in EXTRA_ICON_PATHS) {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.45}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        className={className}
+        {...rest}
+      >
+        {EXTRA_ICON_PATHS[name as keyof typeof EXTRA_ICON_PATHS]}
+      </svg>
+    );
+  }
+
+  return <ModalIcon name={name as ModalIconName} className={className} {...rest} />;
 }

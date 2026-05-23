@@ -21,7 +21,7 @@ export const wellnessThroughClayPreviewData = {
     points: [
       { cycle: "Spring 2025", value: 128, displayValue: "128" },
       { cycle: "Summer 2025", value: 150, displayValue: "150" },
-      { cycle: "2025-2026", value: 264, displayValue: "250+" },
+      { cycle: "2025-2026", value: 250, displayValue: "250+" },
     ],
   },
   stability: {

@@ -16,6 +16,10 @@ type ProjectModalShellProps = {
   summary: string;
   eyebrow?: string;
   children?: ReactNode;
+  closeLabel?: string;
+  showCloseIcon?: boolean;
+  panelClassName?: string;
+  contentClassName?: string;
 };
 
 export function ProjectModalShell({
@@ -26,6 +30,9 @@ export function ProjectModalShell({
   summary,
   eyebrow,
   children,
+  closeLabel = "Close modal",
+  panelClassName = "sm:max-w-[78rem]",
+  contentClassName = "max-w-6xl",
 }: ProjectModalShellProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -84,20 +91,18 @@ export function ProjectModalShell({
         aria-modal="true"
         aria-labelledby={labelledById}
         onKeyDown={handleKeyDown}
-        className="modal-panel-in mx-auto h-screen w-full overflow-y-auto bg-background sm:h-[calc(100vh-2.5rem)] sm:max-w-[78rem] sm:border sm:border-line"
+        className={`modal-panel-in mx-auto h-screen w-full overflow-y-auto bg-background sm:h-[calc(100vh-2.5rem)] sm:border sm:border-line ${panelClassName}`}
       >
-        <div className="mx-auto w-full max-w-6xl px-6 pb-16 pt-3 sm:px-10 lg:px-12">
+        <div className={`mx-auto w-full px-6 pb-16 pt-3 sm:px-10 lg:px-12 ${contentClassName}`}>
           <div className="sticky top-0 z-10 -mx-6 flex justify-end bg-background/95 px-6 py-3 sm:-mx-10 sm:px-10 lg:-mx-12 lg:px-12">
             <button
               ref={closeButtonRef}
               type="button"
               onClick={onClose}
-              className="focus-ring inline-flex items-center gap-2 text-xs font-medium uppercase leading-5 tracking-[0.18em] text-foreground transition hover:opacity-70 motion-reduce:transition-none"
+              aria-label={closeLabel}
+              className="focus-ring inline-flex h-10 w-10 items-center justify-center text-2xl font-light leading-none text-foreground transition hover:opacity-70 motion-reduce:transition-none"
             >
-              <span>Close</span>
-              <span aria-hidden="true" className="text-base leading-none">
-                ×
-              </span>
+              <span aria-hidden="true">×</span>
             </button>
           </div>
 

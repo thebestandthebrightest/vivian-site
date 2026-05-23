@@ -2,7 +2,6 @@ export type SjmsKpi = {
   label: string;
   value: string;
   numeric: boolean;
-  highlight?: boolean;
 };
 
 export type SjmsFlowStep = {
@@ -21,7 +20,7 @@ export type SjmsScoringRow = {
 
 export type SjmsListItem = {
   title: string;
-  detail: string;
+  detail?: string;
 };
 
 export type SjmsPreviewData = {
@@ -30,9 +29,12 @@ export type SjmsPreviewData = {
   summary: string;
   kpis: SjmsKpi[];
   flow: SjmsFlowStep[];
+  overviewInsight: string;
   scoring: {
+    title: string;
     columns: string[];
     rows: SjmsScoringRow[];
+    insight: string;
   };
   before: string[];
   after: string[];
@@ -43,12 +45,12 @@ export type SjmsPreviewData = {
 };
 
 export const sjmsPreviewData: SjmsPreviewData = {
-  eyebrow: "South Jersey Medical Society",
+  eyebrow: "South Jersey Medical Society · scholarship review system",
   title: "SJMS Scholarship Dashboard",
   summary:
     "Built a JavaScript-enabled review dashboard to centralize evaluator scoring, validate submissions, and support $3,000 in scholarship award decisions.",
   kpis: [
-    { label: "Awards supported", value: "$3,000", numeric: true, highlight: true },
+    { label: "Awards supported", value: "$3,000", numeric: true },
     { label: "Review stages", value: "4", numeric: true },
     { label: "Scoring logic", value: "Automated", numeric: false },
     { label: "Reviewer workflow", value: "Unified", numeric: false },
@@ -63,7 +65,10 @@ export const sjmsPreviewData: SjmsPreviewData = {
     },
     { label: "Award decisions", sublabel: "Final allocation support" },
   ],
+  overviewInsight:
+    "The dashboard replaced scattered review materials with a single workflow for scoring, validation, and award preparation.",
   scoring: {
+    title: "Scoring view",
     columns: ["Applicant", "Eligibility", "Reviewer avg.", "Validation", "Decision"],
     rows: [
       {
@@ -88,6 +93,8 @@ export const sjmsPreviewData: SjmsPreviewData = {
         decision: "Hold",
       },
     ],
+    insight:
+      "Automated rubric totals made reviewer inputs easier to compare and trace back to award decisions.",
   },
   before: [
     "Reviewer notes lived across scattered spreadsheets",
@@ -108,37 +115,13 @@ export const sjmsPreviewData: SjmsPreviewData = {
   usageNote:
     "The dashboard gave reviewers and organizers a single workflow for evaluating applications and preparing final award decisions.",
   skills: [
-    {
-      title: "JavaScript workflow design",
-      detail:
-        "Built scoring and validation logic into a shared review interface.",
-    },
-    {
-      title: "Rubric-based data modeling",
-      detail:
-        "Structured reviewer inputs into consistent, comparable scores.",
-    },
-    {
-      title: "Operations automation",
-      detail:
-        "Reduced manual coordination across the scholarship review cycle.",
-    },
+    { title: "JavaScript workflow design" },
+    { title: "Rubric-based data modeling" },
+    { title: "Operations automation" },
   ],
   impact: [
-    {
-      title: "Centralized reviewer evaluation",
-      detail:
-        "Replaced scattered review materials with one shared scoring view.",
-    },
-    {
-      title: "Improved decision traceability",
-      detail:
-        "Made award decisions easier to connect back to rubric inputs.",
-    },
-    {
-      title: "Supported $3,000 in awards",
-      detail:
-        "Helped organize the review process for scholarship allocation.",
-    },
+    { title: "Centralized reviewer evaluation" },
+    { title: "Improved decision traceability" },
+    { title: "Supported $3,000 in awards" },
   ],
 };

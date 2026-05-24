@@ -161,7 +161,7 @@ export function PslProjectModal({
         />
 
         <div
-          className="mt-7"
+          className="mt-6"
           role="tabpanel"
           id={`psl-panel-${activeTab}`}
           aria-labelledby={`psl-tab-${activeTab}`}

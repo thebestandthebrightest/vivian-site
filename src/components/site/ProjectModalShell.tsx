@@ -279,8 +279,12 @@ export function ModalTabs<T extends string>({
   idPrefix,
 }: ModalTabsProps<T>) {
   return (
-    <div role="tablist" aria-label={ariaLabel} className="overflow-x-auto border-b border-line">
-      <div className="flex min-w-max gap-6 lg:min-w-0 lg:flex-wrap">
+    <div className="border-b border-line">
+      <div
+        role="tablist"
+        aria-label={ariaLabel}
+        className="flex min-w-max gap-2 overflow-x-auto pb-4 lg:min-w-0 lg:flex-wrap"
+      >
         {items.map((item) => {
           const isActive = item.id === active;
           return (
@@ -292,12 +296,13 @@ export function ModalTabs<T extends string>({
               aria-selected={isActive}
               aria-controls={`${idPrefix}-panel-${item.id}`}
               onClick={() => onChange(item.id)}
-              className="focus-ring relative -mb-px py-3 text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] transition hover:opacity-100 motion-reduce:transition-none"
+              className="focus-ring inline-flex items-center border px-3 py-2 text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] transition-colors motion-reduce:transition-none"
               style={{
+                borderColor: isActive ? "var(--sage-line)" : "transparent",
+                background: isActive
+                  ? "linear-gradient(180deg, rgba(219, 229, 201, 0.2) 0%, rgba(219, 229, 201, 0.34) 100%)"
+                  : "transparent",
                 color: isActive ? "var(--foreground)" : "var(--quiet)",
-                borderBottom: isActive
-                  ? "1px solid var(--accent)"
-                  : "1px solid transparent",
               }}
             >
               {item.label}
@@ -318,20 +323,28 @@ export type ModalListItem = {
 export function SkillsImpactColumns({
   skills,
   impact,
+  showConnector = false,
 }: {
   skills: ModalListItem[];
   impact: ModalListItem[];
+  showConnector?: boolean;
 }) {
   return (
-    <section className="border-t border-line pt-10">
-      <div className="grid gap-10 lg:grid-cols-[1fr_auto_1fr] lg:items-start lg:gap-12">
+    <section className="border-t border-line pt-8">
+      <div
+        className={`grid gap-8 lg:items-start lg:gap-10 ${
+          showConnector ? "lg:grid-cols-[1fr_auto_1fr]" : "lg:grid-cols-2"
+        }`}
+      >
         <ModalListColumn heading="SKILLS USED" items={skills} />
-        <div
-          aria-hidden="true"
-          className="hidden self-stretch justify-center lg:flex lg:items-center"
-        >
-          <ModalArrow />
-        </div>
+        {showConnector ? (
+          <div
+            aria-hidden="true"
+            className="hidden self-stretch justify-center lg:flex lg:items-center"
+          >
+            <ModalArrow />
+          </div>
+        ) : null}
         <ModalListColumn
           heading="IMPACT"
           items={impact}

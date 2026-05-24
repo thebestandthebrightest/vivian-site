@@ -517,73 +517,95 @@ function PortfolioPanel() {
 
   return (
     <TabPanel id="portfolio">
-      <div>
-        <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-          Portfolio comparison · 41 programs
-        </p>
-        <div className="mt-4">
-          <div className="mb-3 flex items-center justify-between gap-4 text-[0.72rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
-            <span>Y-axis: Cost →</span>
-            <span>X-axis: Reach →</span>
-          </div>
-          <div className="grid border border-line md:grid-cols-2">
-          {quadrants.map((q, idx) => (
-            <div
-              key={q.title}
-              className="border-line p-4 sm:p-5"
-              style={{
-                borderRight: idx % 2 === 0 ? "1px solid var(--line)" : undefined,
-                borderBottom: idx < 2 ? "1px solid var(--line)" : undefined,
-              }}
-            >
-              <div className="flex items-center gap-2">
-                <ScarletWellIcon
-                  name={q.icon}
-                  className="h-4 w-4 shrink-0 text-quiet"
-                />
-                <p className="text-sm font-medium leading-6 text-foreground">
-                  {q.title}
-                </p>
-                {q.badge ? (
-                  <span
-                    className="text-[0.72rem] font-medium uppercase leading-4 tracking-[0.14em]"
-                    style={{ color: "rgba(72,38,29,0.7)" }}
-                  >
-                    {q.badge}
-                  </span>
-                ) : null}
-              </div>
-              <p className="mt-2 text-sm leading-6 text-muted">{q.detail}</p>
+      <div className="grid gap-8 xl:grid-cols-[1.12fr_0.88fr] xl:items-start">
+        <section>
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-4">
+            <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+              Portfolio comparison · 41 programs
+            </p>
+            <div className="flex items-center gap-5 text-[0.68rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+              <span>Cost</span>
+              <span>Reach</span>
             </div>
-          ))}
           </div>
-        </div>
-      </div>
 
-      <div>
-        <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
-          Funding signals
-        </p>
-        <ul className="mt-4 divide-y divide-[color:var(--line)] border border-line">
-          <li className="grid grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-4 text-sm leading-6 text-foreground">
-            <ScarletWellIcon name="target" className="h-4 w-4 shrink-0 text-quiet" />
-            <span>Repeat recipients across cycles</span>
-            <span className="text-sm text-muted">Multi-cycle visibility</span>
-          </li>
-          <li className="grid grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-4 text-sm leading-6 text-foreground">
-            <ScarletWellIcon name="wallet" className="h-4 w-4 shrink-0 text-quiet" />
-            <span>Cost efficiency leaders</span>
-            <span className="text-sm text-muted">Lower $ / participant</span>
-          </li>
-          <li className="grid grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-4 text-sm leading-6 text-foreground">
-            <ScarletWellIcon
-              name="alert-circle"
-              className="h-4 w-4 shrink-0 text-quiet"
-            />
-            <span>Programs to re-scope</span>
-            <span className="text-sm text-muted">Low reach / high cost</span>
-          </li>
-        </ul>
+          <div className="relative mt-5 border border-line bg-background">
+            <div className="pointer-events-none absolute inset-x-4 top-1/2 h-px bg-line" />
+            <div className="pointer-events-none absolute inset-y-4 left-1/2 w-px bg-line" />
+            <div className="pointer-events-none absolute left-4 top-3 text-[0.65rem] font-medium uppercase leading-4 tracking-[0.14em] text-quiet">
+              Higher cost
+            </div>
+            <div className="pointer-events-none absolute bottom-3 left-4 text-[0.65rem] font-medium uppercase leading-4 tracking-[0.14em] text-quiet">
+              Lower cost
+            </div>
+            <div className="pointer-events-none absolute bottom-3 right-4 text-[0.65rem] font-medium uppercase leading-4 tracking-[0.14em] text-quiet">
+              Higher reach
+            </div>
+
+            <div className="grid md:grid-cols-2">
+              {quadrants.map((q, idx) => (
+                <article
+                  key={q.title}
+                  className="min-h-[12rem] px-5 py-6 sm:px-6"
+                  style={
+                    idx === 0
+                      ? {
+                          background:
+                            "linear-gradient(180deg, rgba(219, 229, 201, 0.14) 0%, rgba(251, 250, 247, 0) 100%)",
+                        }
+                      : undefined
+                  }
+                >
+                  <div className="flex items-center gap-2">
+                    <ScarletWellIcon
+                      name={q.icon}
+                      className="h-4 w-4 shrink-0 text-quiet"
+                    />
+                    <p className="text-[0.72rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+                      {q.title}
+                    </p>
+                  </div>
+                  <p className="mt-4 max-w-[18rem] text-[0.95rem] leading-7 text-foreground">
+                    {q.detail}
+                  </p>
+                  {q.badge ? (
+                    <div className="mt-5 border-t border-[color:var(--sage-line)] pt-3">
+                      <span className="text-[0.68rem] font-medium uppercase leading-4 tracking-[0.16em] text-quiet">
+                        {q.badge}
+                      </span>
+                    </div>
+                  ) : null}
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-line pt-4 xl:border-t-0 xl:border-l xl:pl-6">
+          <p className="text-[0.75rem] font-medium uppercase leading-5 tracking-[0.18em] text-quiet">
+            Funding signals
+          </p>
+          <ul className="mt-4 border-y border-line">
+            <li className="grid grid-cols-[auto_1fr_auto] items-center gap-3 py-4 text-sm leading-6 text-foreground">
+              <ScarletWellIcon name="target" className="h-4 w-4 shrink-0 text-quiet" />
+              <span>Repeat recipients across cycles</span>
+              <span className="text-sm text-muted">Multi-cycle visibility</span>
+            </li>
+            <li className="grid grid-cols-[auto_1fr_auto] items-center gap-3 border-t border-line py-4 text-sm leading-6 text-foreground">
+              <ScarletWellIcon name="wallet" className="h-4 w-4 shrink-0 text-quiet" />
+              <span>Cost efficiency leaders</span>
+              <span className="text-sm text-muted">Lower $ / participant</span>
+            </li>
+            <li className="grid grid-cols-[auto_1fr_auto] items-center gap-3 border-t border-line py-4 text-sm leading-6 text-foreground">
+              <ScarletWellIcon
+                name="alert-circle"
+                className="h-4 w-4 shrink-0 text-quiet"
+              />
+              <span>Programs to re-scope</span>
+              <span className="text-sm text-muted">Low reach / high cost</span>
+            </li>
+          </ul>
+        </section>
       </div>
     </TabPanel>
   );

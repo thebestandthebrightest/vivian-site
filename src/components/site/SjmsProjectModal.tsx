@@ -14,6 +14,7 @@ import type {
 import {
   ModalArrow,
   ModalSectionLabel,
+  ModalTabs,
   ProjectModalShell,
   SkillsImpactColumns,
 } from "./ProjectModalShell";
@@ -61,7 +62,7 @@ const SELECTED_SURFACE_STYLE = {
   background:
     "linear-gradient(180deg, rgba(219, 229, 201, 0.2) 0%, rgba(219, 229, 201, 0.34) 100%)",
   color: "var(--foreground)",
-};
+} as const;
 
 const ICON_PATHS: Record<SjmsIconName, ReactNode> = {
   "arrow-right": (
@@ -160,7 +161,7 @@ export function SjmsProjectModal({
       </section>
 
       <section>
-        <SjmsTabs
+        <ModalTabs
           items={TAB_ITEMS}
           active={activeTab}
           onChange={setActiveTab}
@@ -168,7 +169,7 @@ export function SjmsProjectModal({
           idPrefix="sjms"
         />
 
-        <div className="mt-7">
+        <div className="mt-6">
           {activeTab === "overview" ? (
             <TabPanel id="overview">
               <OverviewTab steps={data.flow} insight={data.overviewInsight} />
@@ -193,56 +194,6 @@ export function SjmsProjectModal({
 
       <SkillsImpactColumns skills={data.skills} impact={data.impact} />
     </ProjectModalShell>
-  );
-}
-
-function SjmsTabs<T extends string>({
-  items,
-  active,
-  onChange,
-  ariaLabel,
-  idPrefix,
-}: {
-  items: Array<{ id: T; label: string }>;
-  active: T;
-  onChange: (id: T) => void;
-  ariaLabel: string;
-  idPrefix: string;
-}) {
-  return (
-    <div className="border-b border-line">
-      <div
-        role="tablist"
-        aria-label={ariaLabel}
-        className="flex min-w-max gap-2 overflow-x-auto pb-4 lg:min-w-0 lg:flex-wrap"
-      >
-        {items.map((item) => {
-          const isActive = item.id === active;
-          return (
-            <button
-              key={item.id}
-              id={`${idPrefix}-tab-${item.id}`}
-              role="tab"
-              type="button"
-              aria-selected={isActive}
-              aria-controls={`${idPrefix}-panel-${item.id}`}
-              onClick={() => onChange(item.id)}
-              className="focus-ring inline-flex items-center border px-3 py-2 text-[0.72rem] font-medium uppercase leading-5 tracking-[0.18em] transition-colors motion-reduce:transition-none"
-              style={
-                isActive
-                  ? SELECTED_SURFACE_STYLE
-                  : {
-                      borderColor: "transparent",
-                      color: "var(--quiet)",
-                    }
-              }
-            >
-              {item.label}
-            </button>
-          );
-        })}
-      </div>
-    </div>
   );
 }
 

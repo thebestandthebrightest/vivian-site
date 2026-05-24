@@ -192,7 +192,7 @@ export function IfnhProjectModal({
         />
 
         <div
-          className="mt-7"
+          className="mt-6"
           role="tabpanel"
           id={`ifnh-panel-${tab}`}
           aria-labelledby={`ifnh-tab-${tab}`}
@@ -257,7 +257,7 @@ function OverviewTab({ data }: { data: IfnhPreviewData }) {
   const seatingWidth = (data.capacity.usable / data.capacity.demand) * 100;
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <section className="grid gap-6 xl:grid-cols-[1.3fr_0.88fr]">
         <div>
           <ModalSectionLabel>Engagement conversion gap</ModalSectionLabel>
@@ -474,13 +474,13 @@ function ScenarioLabTab({ data }: { data: IfnhPreviewData }) {
         : "At capacity";
 
   return (
-    <section>
+    <section className="space-y-6">
       <p className="max-w-2xl text-sm leading-6 text-muted">
         Adjust seating, expected demand, and goals to test how the recommended
         strategy changes.
       </p>
 
-      <div className="mt-6 grid gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:gap-10">
+      <div className="grid gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:gap-10">
         <div className="space-y-6 border border-line bg-background p-5 sm:p-6">
           <SliderControl
             label="Usable seats"
@@ -528,7 +528,7 @@ function ScenarioLabTab({ data }: { data: IfnhPreviewData }) {
         </div>
       </div>
 
-      <div className="mt-8 grid gap-3 md:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-3">
         {STRATEGY_OPTIONS.map((option) => {
           const isRecommended = option.name === recommendation;
           return (
@@ -695,7 +695,7 @@ function StudentInsightsTab() {
         Themes from the survey point to where space and programming can better
         convert openness into actual interaction.
       </p>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
         {THEMES.map((theme) => (
           <article
             key={theme.title}
@@ -742,51 +742,54 @@ function SignalBar({ level }: { level: SignalLevel }) {
 
 function RecommendationTab() {
   return (
-    <section>
-      <div className="grid gap-8 xl:grid-cols-[1.12fr_0.88fr]">
-        <ol className="space-y-5">
-          {ROADMAP.map((step, index) => (
-            <li
-              key={step.title}
-              className="grid grid-cols-[2.25rem_1fr] items-start gap-4 border-t border-line pt-5"
-            >
-              <span
-                className="font-display text-2xl font-medium leading-none text-quiet"
-                aria-hidden="true"
-              >
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <div>
-                <h3 className="font-display text-xl font-medium leading-tight text-foreground">
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-[0.95rem] leading-7 text-muted">
-                  {step.body}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
-
-        <aside
-          className="border p-5 sm:p-6"
-          style={{
-            borderColor: ACCENT_LINE,
-            background: ACCENT_SOFT,
-          }}
-        >
-          <p
-            className="font-display text-[1.8rem] font-medium leading-tight sm:text-[2rem]"
-            style={{ color: "var(--sage-deep)" }}
+    <section className="grid items-start gap-6 xl:grid-cols-[1.08fr_0.92fr] xl:gap-8">
+      <ol className="border-y border-line">
+        {ROADMAP.map((step, index) => (
+          <li
+            key={step.title}
+            className={`grid grid-cols-[2.25rem_1fr] items-start gap-4 py-5 ${
+              index === 0 ? "" : "border-t border-line"
+            }`}
           >
-            Seating + programming test
-          </p>
-          <p className="mt-4 text-[0.95rem] leading-7 text-muted">
-            Addresses both the +30 seat shortfall and the 30-point connection
-            gap in one paired intervention.
-          </p>
-        </aside>
-      </div>
+            <span
+              className="font-display text-2xl font-medium leading-none text-quiet"
+              aria-hidden="true"
+            >
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <div>
+              <h3 className="font-display text-xl font-medium leading-tight text-foreground">
+                {step.title}
+              </h3>
+              <p className="mt-2 text-[0.95rem] leading-7 text-muted">
+                {step.body}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <aside
+        className="self-start border px-5 py-5 sm:px-6 sm:py-6"
+        style={{
+          borderColor: ACCENT_LINE,
+          background: ACCENT_SOFT,
+        }}
+      >
+        <p className="text-[0.72rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet">
+          Recommended path
+        </p>
+        <p
+          className="mt-4 font-display text-[1.8rem] font-medium leading-tight sm:text-[2rem]"
+          style={{ color: "var(--sage-deep)" }}
+        >
+          Seating + programming test
+        </p>
+        <p className="mt-4 text-[0.95rem] leading-7 text-muted">
+          Addresses both the +30 seat shortfall and the 30-point connection
+          gap in one paired intervention.
+        </p>
+      </aside>
     </section>
   );
 }

@@ -104,7 +104,7 @@ export function ProfileModalContent({
             id={titleId}
             className="font-display text-[clamp(2.6rem,6vw,4.25rem)] font-medium leading-[0.95] text-foreground"
           >
-            Profile
+            VIVIAN GLENN
           </h2>
           <div className="space-y-4">
             {intro.map((paragraph) => (

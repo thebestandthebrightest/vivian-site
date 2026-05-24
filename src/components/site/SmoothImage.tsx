@@ -17,7 +17,7 @@ const placeholderBase =
   "pointer-events-none absolute inset-0 bg-foreground/[0.035] transition-opacity duration-700 ease-out motion-reduce:transition-none";
 
 const mediaTransition =
-  "transition-[opacity,filter,transform] duration-700 ease-out motion-reduce:transition-opacity motion-reduce:blur-0 motion-reduce:scale-100";
+  "transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-opacity motion-reduce:scale-100";
 
 function placeholderClass(loaded: boolean, className = "") {
   return [
@@ -31,7 +31,7 @@ function mediaClass(loaded: boolean, className = "") {
   return [
     className,
     mediaTransition,
-    loaded ? "opacity-100 blur-0 scale-100" : "opacity-0 blur-sm scale-[1.01]",
+    loaded ? "opacity-100" : "opacity-0",
   ].join(" ");
 }
 

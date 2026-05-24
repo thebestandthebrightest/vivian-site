@@ -50,8 +50,17 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
   const [pinnedPopover, setPinnedPopover] = useState<PopoverKey | null>(null);
   const workPopoverRef = useRef<HTMLDivElement>(null);
   const contactPopoverRef = useRef<HTMLDivElement>(null);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelPendingClose = () => {
+    if (closeTimeoutRef.current !== null) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  };
 
   const closePopovers = () => {
+    cancelPendingClose();
     setActivePopover(null);
     setPinnedPopover(null);
   };
@@ -66,6 +75,7 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
     event: ReactPointerEvent<HTMLDivElement>,
   ) => {
     if (event.pointerType === "mouse") {
+      cancelPendingClose();
       setActivePopover(popover);
       setPinnedPopover((current) => (current === popover ? current : null));
     }
@@ -75,12 +85,19 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
     popover: PopoverKey,
     event: ReactPointerEvent<HTMLDivElement>,
   ) => {
-    if (event.pointerType === "mouse" && pinnedPopover !== popover) {
-      setActivePopover((current) => (current === popover ? null : current));
+    if (event.pointerType !== "mouse" || pinnedPopover === popover) {
+      return;
     }
+
+    cancelPendingClose();
+    closeTimeoutRef.current = setTimeout(() => {
+      closeTimeoutRef.current = null;
+      setActivePopover((current) => (current === popover ? null : current));
+    }, 160);
   };
 
   const handlePopoverClick = (popover: PopoverKey) => {
+    cancelPendingClose();
     setActiveModal(null);
 
     if (activePopover === popover && pinnedPopover === popover) {
@@ -91,6 +108,12 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
     setActivePopover(popover);
     setPinnedPopover(popover);
   };
+
+  useEffect(() => {
+    return () => {
+      cancelPendingClose();
+    };
+  }, []);
 
   useEffect(() => {
     const handlePointerDown = (event: PointerEvent) => {
@@ -165,7 +188,13 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
               </button>
 
               {activePopover === "work" ? (
-                <HomePopover
+                <>
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-1/2 top-full z-10 -translate-x-1/2"
+                    style={{ height: "2rem", width: "min(31rem, calc(100vw - 32px))" }}
+                  />
+                  <HomePopover
                   id="home-work-popover"
                   ariaLabel="Work projects"
                   className="max-w-[31rem]"
@@ -184,6 +213,7 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
                     ))}
                   </ul>
                 </HomePopover>
+                </>
               ) : null}
             </div>
 
@@ -208,13 +238,20 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
                 <span className="absolute -bottom-2 left-0 h-px w-0 bg-foreground transition-[width] duration-300 ease-out group-hover:w-full" />
               </button>
               {activePopover === "contact" ? (
-                <HomePopover
-                  id="home-contact-card"
-                  ariaLabel="Contact"
-                  className="max-w-[31rem]"
-                >
-                  <ContactCard />
-                </HomePopover>
+                <>
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-1/2 top-full z-10 -translate-x-1/2"
+                    style={{ height: "2rem", width: "min(31rem, calc(100vw - 32px))" }}
+                  />
+                  <HomePopover
+                    id="home-contact-card"
+                    ariaLabel="Contact"
+                    className="max-w-[31rem]"
+                  >
+                    <ContactCard />
+                  </HomePopover>
+                </>
               ) : null}
             </div>
           </nav>

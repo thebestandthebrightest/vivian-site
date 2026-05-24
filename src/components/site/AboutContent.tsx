@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { MotionReveal } from "@/components/site/MotionReveal";
 import { Section } from "@/components/site/Section";
 import { SmoothImage } from "@/components/site/SmoothImage";
@@ -23,8 +24,16 @@ const education = {
     "ScarletWell Grant Recipient ($3,600+)",
     "LSAMP Research Stipend ($3,000)",
   ],
-  coursework:
-    "Statistics / Calculus I / Microeconomics / Biochemistry / Organic Chemistry / Physics / Health Disparities / Public Health Literature",
+  coursework: [
+    "Statistics",
+    "Calculus I",
+    "Microeconomics",
+    "Biochemistry",
+    "Organic Chemistry",
+    "Physics",
+    "Health Disparities",
+    "Public Health Literature",
+  ],
 };
 
 const researchRows = [
@@ -82,44 +91,75 @@ const capabilities = [
 ];
 
 const sectionGridClass =
-  "grid gap-x-16 gap-y-8 md:grid-cols-[14rem_minmax(0,1fr)] lg:grid-cols-[16rem_minmax(0,1fr)]";
+  "grid items-start gap-y-6 md:grid-cols-[13rem_minmax(0,1fr)] md:gap-x-12 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-x-16";
 
 const sectionHeadingClass =
-  "font-display text-3xl font-medium leading-[1.05] text-foreground sm:text-[2.5rem]";
+  "text-[0.82rem] font-semibold uppercase tracking-[0.16em] text-foreground";
 
 const subsectionLabelClass =
-  "text-[0.7rem] font-medium uppercase tracking-[0.18em] text-foreground";
+  "text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-foreground";
+
+const bodyTextClass = "text-[0.95rem] leading-7 text-muted";
+const rowTitleClass = "text-[0.95rem] font-semibold leading-7 text-foreground";
+const rowSupportClass = "text-[0.95rem] leading-7 text-quiet";
+
+type ProfileSectionProps = {
+  title: string;
+  children: ReactNode;
+  className?: string;
+  contentClassName?: string;
+};
+
+function ProfileSection({
+  title,
+  children,
+  className = "",
+  contentClassName = "",
+}: ProfileSectionProps) {
+  return (
+    <Section className={`modal-rule py-12 sm:py-14 lg:py-16 ${className}`}>
+      <MotionReveal>
+        <div className={sectionGridClass}>
+          <div>
+            <h2 className={sectionHeadingClass}>{title}</h2>
+          </div>
+          <div className={contentClassName}>{children}</div>
+        </div>
+      </MotionReveal>
+    </Section>
+  );
+}
 
 export function AboutContent({ travelItems, titleId }: AboutContentProps) {
   return (
     <>
-      <Section className="pb-20 pt-16 sm:pb-24 sm:pt-20 lg:pb-28 lg:pt-24">
+      <Section className="pb-12 pt-12 sm:pb-14 sm:pt-16 lg:pb-16 lg:pt-20">
         <MotionReveal>
-          <div className="grid gap-12 md:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)] md:items-center md:gap-16 lg:gap-20">
+          <div className="grid items-start gap-8 md:grid-cols-[13rem_minmax(0,1fr)] md:gap-x-12 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-x-16">
             <SmoothImage
               src="/vivian-headshot.png"
               alt="Vivian Glenn"
               width={420}
               height={420}
               priority
-              sizes="(min-width: 1024px) 384px, (min-width: 768px) 36vw, 100vw"
-              wrapperClassName="w-full max-w-[24rem] md:order-2 md:ml-auto"
+              sizes="(min-width: 1024px) 224px, (min-width: 768px) 208px, 220px"
+              wrapperClassName="w-full max-w-[12rem] sm:max-w-[13rem]"
               className="h-auto w-full object-contain"
             />
-            <div className="max-w-3xl md:order-1">
+            <div className="max-w-3xl pt-1">
               <h1
                 id={titleId}
-                className="font-display text-6xl font-medium leading-[0.92] text-foreground sm:text-7xl lg:text-8xl"
+                className="text-5xl font-semibold tracking-[-0.04em] text-foreground sm:text-6xl lg:text-[4.5rem]"
               >
                 About
               </h1>
-              <div className="mt-10 space-y-5">
-                <p className="max-w-2xl text-base leading-8 text-muted sm:text-lg">
+              <div className="mt-6 space-y-4">
+                <p className="max-w-2xl text-base leading-7 text-muted sm:text-[1.02rem]">
                   I&apos;m a Public Health student at Rutgers interested in strategy,
                   analytics, operations, and systems that help organizations make
                   clearer decisions.
                 </p>
-                <p className="max-w-2xl text-base leading-8 text-muted sm:text-lg">
+                <p className="max-w-2xl text-base leading-7 text-muted sm:text-[1.02rem]">
                   My work centers on translating messy information into clear tools,
                   decisions, and operating rhythms.
                 </p>
@@ -129,109 +169,70 @@ export function AboutContent({ travelItems, titleId }: AboutContentProps) {
         </MotionReveal>
       </Section>
 
-      <Section className="modal-rule pb-20 pt-12 lg:pb-24 lg:pt-14">
-        <MotionReveal>
-          <div className={sectionGridClass}>
+      <ProfileSection title="Education" contentClassName="space-y-8">
+        <div className="space-y-1.5">
+          <p className={rowTitleClass}>{education.school.name}</p>
+          <p className={bodyTextClass}>{education.school.degree}</p>
+          <p className={rowSupportClass}>{education.school.detail}</p>
+        </div>
+
+        <div>
+          <p className={subsectionLabelClass}>Honors &amp; Awards</p>
+          <ul className={`mt-3 space-y-1 ${bodyTextClass}`}>
+            {education.honors.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <p className={subsectionLabelClass}>Relevant coursework</p>
+          <ul className={`mt-3 grid gap-x-8 gap-y-1 ${bodyTextClass} sm:grid-cols-2`}>
+            {education.coursework.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      </ProfileSection>
+
+      <ProfileSection title="Research & Writing" contentClassName="space-y-6">
+        {researchRows.map((row) => (
+          <article
+            key={row.organization}
+            className="grid gap-2 border-b border-line/70 pb-6 last:border-b-0 last:pb-0 md:grid-cols-[minmax(0,17rem)_minmax(0,1fr)] md:gap-x-8"
+          >
             <div>
-              <h2 className={sectionHeadingClass}>Education</h2>
+              <h3 className={rowTitleClass}>{row.organization}</h3>
+              <p className={rowSupportClass}>{row.role}</p>
             </div>
-            <div className="space-y-10">
-              <div className="space-y-1">
-                <p className="text-sm font-medium leading-7 text-foreground">
-                  {education.school.name}
-                </p>
-                <p className="text-sm leading-7 text-muted">
-                  {education.school.degree}
-                </p>
-                <p className="text-sm leading-7 text-quiet">
-                  {education.school.detail}
-                </p>
-              </div>
+            <p className={`max-w-2xl ${bodyTextClass}`}>{row.description}</p>
+          </article>
+        ))}
+      </ProfileSection>
 
-              <div>
-                <p className={subsectionLabelClass}>Honors &amp; Awards</p>
-                <ul className="mt-3 space-y-1 text-sm leading-7 text-muted">
-                  {education.honors.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <p className={subsectionLabelClass}>Relevant coursework</p>
-                <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">
-                  {education.coursework}
-                </p>
-              </div>
-            </div>
-          </div>
-        </MotionReveal>
-      </Section>
-
-      <Section className="modal-rule pb-20 pt-12 lg:pb-24 lg:pt-14">
-        <MotionReveal>
-          <div className={sectionGridClass}>
-            <div>
-              <h2 className={sectionHeadingClass}>Research &amp; Writing</h2>
-            </div>
-            <div className="space-y-9">
-              {researchRows.map((row) => (
-                <article
-                  key={row.organization}
-                  className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] sm:gap-10"
-                >
-                  <div>
-                    <h3 className="text-sm font-medium leading-7 text-foreground">
-                      {row.organization}
-                    </h3>
-                    <p className="text-sm leading-7 text-quiet">{row.role}</p>
-                  </div>
-                  <p className="max-w-xl text-sm leading-7 text-muted">
-                    {row.description}
-                  </p>
-                </article>
+      <ProfileSection
+        title="Capabilities"
+        contentClassName="grid gap-x-10 gap-y-7 md:grid-cols-2"
+      >
+        {capabilities.map((group) => (
+          <div key={group.title} className="space-y-2">
+            <h3 className={rowTitleClass}>{group.title}</h3>
+            <ul className={`space-y-1 ${bodyTextClass}`}>
+              {group.items.map((item) => (
+                <li key={item}>{item}</li>
               ))}
-            </div>
+            </ul>
           </div>
-        </MotionReveal>
-      </Section>
+        ))}
+      </ProfileSection>
 
-      <Section className="modal-rule pb-20 pt-12 lg:pb-24 lg:pt-14">
-        <MotionReveal>
-          <div className={sectionGridClass}>
-            <div>
-              <h2 className={sectionHeadingClass}>Capabilities</h2>
-            </div>
-            <div className="grid gap-x-12 gap-y-9 sm:grid-cols-2">
-              {capabilities.map((group) => (
-                <div key={group.title}>
-                  <h3 className="text-sm font-medium leading-7 text-foreground">
-                    {group.title}
-                  </h3>
-                  <ul className="mt-2 space-y-1 text-sm leading-7 text-muted">
-                    {group.items.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        </MotionReveal>
-      </Section>
-
-      <Section className="modal-rule pb-24 pt-12 lg:pb-28 lg:pt-14">
-        <MotionReveal>
-          <div className={sectionGridClass}>
-            <div>
-              <h2 className={sectionHeadingClass}>Travel</h2>
-            </div>
-          </div>
-          <div className="mt-10 lg:mt-12">
-            <TravelScrollStrip items={travelItems} />
-          </div>
-        </MotionReveal>
-      </Section>
+      <ProfileSection
+        title="Travel"
+        className="pb-20 sm:pb-24 lg:pb-28"
+        contentClassName="space-y-6"
+      >
+        <TravelScrollStrip items={travelItems} />
+      </ProfileSection>
     </>
   );
 }

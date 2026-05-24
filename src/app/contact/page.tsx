@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { MotionReveal } from "@/components/site/MotionReveal";
+import { PageIntro } from "@/components/site/PageIntro";
 import { PageShell } from "@/components/site/PageShell";
 import { Section } from "@/components/site/Section";
 
@@ -12,21 +13,19 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <PageShell hideFooter>
-      <main className="flex flex-1">
-        <Section className="pb-16 pt-8 sm:pb-20 sm:pt-10 lg:pb-24 lg:pt-14">
-          <MotionReveal className="w-full">
-            <div className="max-w-xl sm:ml-[6vw] lg:ml-[10vw]">
-              <h1 className="font-display text-5xl font-medium leading-none text-foreground sm:text-6xl lg:text-7xl">
-                Contact
-              </h1>
-              <div className="mt-8 max-w-[32rem] space-y-4 text-base leading-8 text-muted sm:text-lg">
+      <main>
+        <PageIntro title="Contact" />
+        <Section className="pb-24 lg:pb-32">
+          <MotionReveal>
+            <div className="max-w-xl">
+              <div className="space-y-4 text-base leading-8 text-muted sm:text-lg">
                 <p>Based in New Jersey.</p>
                 <p>
                   Open to thoughtful conversations, collaborations, and coffee
                   chats.
                 </p>
               </div>
-              <div className="mt-10 max-w-[32rem] space-y-2 text-base leading-8 text-muted sm:text-lg">
+              <div className="mt-10 space-y-2 text-base leading-8 text-muted sm:text-lg">
                 <p>
                   <a
                     className="focus-ring text-foreground underline decoration-foreground/25 underline-offset-4 transition-opacity duration-300 hover:opacity-70"

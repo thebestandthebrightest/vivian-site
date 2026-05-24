@@ -117,7 +117,6 @@ export function WellnessThroughClayProjectModal({
       labelledById="wtc-modal-title"
       title="Wellness Through Clay"
       summary="Student wellness initiative built through iterative programming, attendance insights, and community feedback."
-      childrenClassName="space-y-10 lg:space-y-12"
     >
       <section>
         <ModalSectionLabel>Impact snapshot</ModalSectionLabel>
@@ -137,11 +136,13 @@ export function WellnessThroughClayProjectModal({
           items={data.cumulativeGrowth.points}
         />
       </section>
-      <section className="space-y-7">
+      <section>
         <QuoteList items={quotes} />
+      </section>
+      <section>
         <ProofPoints items={evidenceLinks} />
       </section>
-      <SkillsImpactColumns skills={skills} impact={impacts} showConnector={false} />
+      <SkillsImpactColumns skills={skills} impact={impacts} />
       <LiveSitePreview href={websiteHref} />
     </ProjectModalShell>
   );
@@ -157,7 +158,7 @@ function KpiStripTight({
   }>;
 }) {
   return (
-    <section className="grid gap-x-8 gap-y-6 py-2 sm:grid-cols-2 lg:grid-cols-4">
+    <section className="grid gap-x-8 gap-y-6 border-y border-line py-7 sm:grid-cols-2 lg:grid-cols-4">
       {items.map((item) => (
         <div key={item.label}>
           <p

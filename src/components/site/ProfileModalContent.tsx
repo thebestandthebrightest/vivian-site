@@ -90,7 +90,7 @@ const sectionGridClass =
 const sectionHeadingClass =
   "font-display text-2xl font-medium leading-[1.05] text-foreground sm:text-[1.75rem]";
 
-const subsectionLabelClass = "system-eyebrow";
+const subsectionLabelClass = "system-eyebrow text-foreground";
 
 export function ProfileModalContent({
   travelItems,

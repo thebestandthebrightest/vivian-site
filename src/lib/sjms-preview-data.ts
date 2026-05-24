@@ -45,12 +45,12 @@ export type SjmsPreviewData = {
 };
 
 export const sjmsPreviewData: SjmsPreviewData = {
-  eyebrow: "South Jersey Medical Society · scholarship review system",
-  title: "SJMS Scholarship Dashboard",
+  eyebrow: "",
+  title: "SJMS Scholarship Review System",
   summary:
-    "Built a JavaScript-enabled review dashboard to centralize evaluator scoring, validate submissions, and support $3,000 in scholarship award decisions.",
+    "Built a JavaScript-enabled review system to centralize evaluator scoring, validate submissions, and support $3,500 in scholarship award decisions.",
   kpis: [
-    { label: "Awards supported", value: "$3,000", numeric: true },
+    { label: "Awards supported", value: "$3,500", numeric: true },
     { label: "Review stages", value: "4", numeric: true },
     { label: "Scoring logic", value: "Automated", numeric: false },
     { label: "Reviewer workflow", value: "Unified", numeric: false },
@@ -66,7 +66,7 @@ export const sjmsPreviewData: SjmsPreviewData = {
     { label: "Award decisions", sublabel: "Final allocation support" },
   ],
   overviewInsight:
-    "The dashboard replaced scattered review materials with a single workflow for scoring, validation, and award preparation.",
+    "The system replaced scattered review materials with one workflow for scoring, validation, and award preparation.",
   scoring: {
     title: "Scoring view",
     columns: ["Applicant", "Eligibility", "Reviewer avg.", "Validation", "Decision"],
@@ -94,7 +94,7 @@ export const sjmsPreviewData: SjmsPreviewData = {
       },
     ],
     insight:
-      "Automated rubric totals made reviewer inputs easier to compare and trace back to award decisions.",
+      "Automated rubric totals made reviewer inputs easier to compare and trace to award decisions.",
   },
   before: [
     "Reviewer notes lived across scattered spreadsheets",
@@ -143,7 +143,7 @@ export const sjmsPreviewData: SjmsPreviewData = {
         "Made it easier to connect eligibility, reviewer averages, and final scholarship decisions.",
     },
     {
-      title: "Supported $3,000 in awards",
+      title: "Supported $3,500 in awards",
       detail:
         "Helped organizers manage final award decisions with a cleaner operational process.",
     },

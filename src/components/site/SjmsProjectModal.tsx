@@ -178,7 +178,6 @@ export function SjmsProjectModal({
           {activeTab === "scoring" ? (
             <TabPanel id="scoring">
               <ScoringTab
-                title={data.scoring.title}
                 columns={data.scoring.columns}
                 rows={data.scoring.rows}
                 insight={data.scoring.insight}
@@ -257,23 +256,6 @@ function OverviewTab({
 }) {
   return (
     <div className="space-y-6">
-      <div className="hidden flex-wrap items-center gap-3 border-b border-line pb-4 text-[0.72rem] font-medium uppercase leading-5 tracking-[0.16em] text-quiet sm:flex">
-        {steps.map((step, index) => (
-            <div key={step.label} className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <SjmsIcon
-                name={FLOW_ICONS[index] ?? "list-check"}
-                className="h-3.5 w-3.5"
-              />
-              <span>{step.label}</span>
-            </div>
-            {index < steps.length - 1 ? (
-              <ModalArrow className="text-[0.95rem]" />
-            ) : null}
-          </div>
-        ))}
-      </div>
-
       <div className="grid gap-3 lg:grid-cols-4">
         {steps.map((step, index) => {
           const emphasized = Boolean(step.emphasized);
@@ -318,21 +300,16 @@ function OverviewTab({
 }
 
 function ScoringTab({
-  title,
   columns,
   rows,
   insight,
 }: {
-  title: string;
   columns: string[];
   rows: SjmsScoringRow[];
   insight: string;
 }) {
   return (
     <div className="space-y-5">
-      <div>
-        <ModalSectionLabel>{title}</ModalSectionLabel>
-      </div>
       <ScoringTable columns={columns} rows={rows} />
       <p className="max-w-3xl text-sm leading-6 text-muted">{insight}</p>
     </div>
@@ -364,8 +341,7 @@ function DecisionTrailTab({
       </div>
 
       <div>
-        <ModalSectionLabel>How it was used</ModalSectionLabel>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {usage.map((item, index) => (
             <div
               key={item}

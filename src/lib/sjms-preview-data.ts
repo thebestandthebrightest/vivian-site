@@ -38,8 +38,6 @@ export type SjmsPreviewData = {
   };
   before: string[];
   after: string[];
-  usage: string[];
-  usageNote: string;
   skills: SjmsListItem[];
   impact: SjmsListItem[];
 };
@@ -106,14 +104,6 @@ export const sjmsPreviewData: SjmsPreviewData = {
     "Automated rubric totals",
     "Clear validation and decision trail",
   ],
-  usage: [
-    "Application review",
-    "Reviewer scoring",
-    "Award decisions",
-    "Cycle reporting",
-  ],
-  usageNote:
-    "The dashboard gave reviewers and organizers a single workflow for evaluating applications and preparing final award decisions.",
   skills: [
     {
       title: "JavaScript workflow design",

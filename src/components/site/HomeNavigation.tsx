@@ -116,6 +116,19 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
   }, []);
 
   useEffect(() => {
+    const clearPendingClose = () => {
+      if (closeTimeoutRef.current !== null) {
+        clearTimeout(closeTimeoutRef.current);
+        closeTimeoutRef.current = null;
+      }
+    };
+
+    const resetPopovers = () => {
+      clearPendingClose();
+      setActivePopover(null);
+      setPinnedPopover(null);
+    };
+
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target as Node;
       const activeRef =
@@ -126,13 +139,13 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
         activeRef.current &&
         !activeRef.current.contains(target)
       ) {
-        closePopovers();
+        resetPopovers();
       }
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        closePopovers();
+        resetPopovers();
         setActiveModal(null);
       }
     };

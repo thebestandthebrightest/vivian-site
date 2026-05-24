@@ -28,6 +28,12 @@ const quotes = [
   "It was nice creating something without pressure.",
 ];
 
+const cycleNotes: Record<string, string> = {
+  "Spring 2025": "Hosted at The Yard",
+  "Summer 2025": "Faculty/staff summer series",
+  "2025-2026": "Moved into IFNH collaboration space",
+};
+
 const skills = [
   {
     title: "Program operations",
@@ -111,6 +117,7 @@ export function WellnessThroughClayProjectModal({
       labelledById="wtc-modal-title"
       title="Wellness Through Clay"
       summary="Student wellness initiative built through iterative programming, attendance insights, and community feedback."
+      childrenClassName="space-y-10 lg:space-y-12"
     >
       <section>
         <ModalSectionLabel>Impact snapshot</ModalSectionLabel>
@@ -128,16 +135,13 @@ export function WellnessThroughClayProjectModal({
         <CumulativeReachLine
           label="Cumulative reach"
           items={data.cumulativeGrowth.points}
-          caption="Cumulative reach grew across three programming cycles while the model became more consistent."
         />
       </section>
-      <section>
+      <section className="space-y-7">
         <QuoteList items={quotes} />
-      </section>
-      <section>
         <ProofPoints items={evidenceLinks} />
       </section>
-      <SkillsImpactColumns skills={skills} impact={impacts} />
+      <SkillsImpactColumns skills={skills} impact={impacts} showConnector={false} />
       <LiveSitePreview href={websiteHref} />
     </ProjectModalShell>
   );
@@ -153,7 +157,7 @@ function KpiStripTight({
   }>;
 }) {
   return (
-    <section className="grid gap-x-8 gap-y-6 border-y border-line py-7 sm:grid-cols-2 lg:grid-cols-4">
+    <section className="grid gap-x-8 gap-y-6 py-2 sm:grid-cols-2 lg:grid-cols-4">
       {items.map((item) => (
         <div key={item.label}>
           <p
@@ -196,7 +200,6 @@ function ProcessRow({ steps }: { steps: string[] }) {
 function CumulativeReachLine({
   label,
   items,
-  caption,
 }: {
   label: string;
   items: Array<{
@@ -204,8 +207,8 @@ function CumulativeReachLine({
     value: number;
     displayValue?: string;
   }>;
-  caption: string;
 }) {
+  const [activeCycle, setActiveCycle] = useState<string | null>(null);
   const width = 720;
   const height = 220;
   const padX = 56;
@@ -236,11 +239,24 @@ function CumulativeReachLine({
     .join(" ");
 
   const baselineY = padTop + innerH;
+  const activePoint = points.find((point) => point.cycle === activeCycle) ?? null;
+  const activeNote = activePoint ? cycleNotes[activePoint.cycle] : null;
 
   return (
     <section>
       <ModalSectionLabel>{label}</ModalSectionLabel>
-      <div className="mt-5 w-full">
+      <div className="relative mt-4 w-full">
+        {activePoint && activeNote ? (
+          <div
+            className="pointer-events-none absolute z-10 -translate-x-1/2 rounded-full border border-line bg-background/95 px-3 py-1.5 text-[0.7rem] font-medium uppercase tracking-[0.14em] text-quiet shadow-[0_8px_24px_rgba(32,27,24,0.08)]"
+            style={{
+              left: `${(activePoint.x / width) * 100}%`,
+              top: `calc(${(activePoint.y / height) * 100}% - 2.5rem)`,
+            }}
+          >
+            {activeNote}
+          </div>
+        ) : null}
         <svg
           viewBox={`0 0 ${width} ${height}`}
           role="img"
@@ -268,6 +284,19 @@ function CumulativeReachLine({
           />
           {points.map((p) => (
             <g key={p.cycle}>
+              <circle
+                cx={p.x}
+                cy={p.y}
+                r={14}
+                fill="transparent"
+                className="cursor-default"
+                onMouseEnter={() => setActiveCycle(p.cycle)}
+                onMouseLeave={() => setActiveCycle((current) => (current === p.cycle ? null : current))}
+                onFocus={() => setActiveCycle(p.cycle)}
+                onBlur={() => setActiveCycle((current) => (current === p.cycle ? null : current))}
+                tabIndex={0}
+                aria-label={`${p.cycle.replace("-", "–")}: ${cycleNotes[p.cycle] ?? p.displayValue ?? p.value}`}
+              />
               <circle
                 cx={p.x}
                 cy={p.y}
@@ -300,7 +329,6 @@ function CumulativeReachLine({
           ))}
         </svg>
       </div>
-      <p className="mt-5 max-w-3xl text-[0.98rem] leading-7 text-muted">{caption}</p>
     </section>
   );
 }
@@ -308,8 +336,8 @@ function CumulativeReachLine({
 function QuoteList({ items }: { items: string[] }) {
   return (
     <section>
-      <ModalSectionLabel>Participant signal</ModalSectionLabel>
-      <div className="mt-5 grid gap-3 sm:grid-cols-3">
+      <ModalSectionLabel>Quotes</ModalSectionLabel>
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
         {items.map((quote) => (
           <figure
             key={quote}
@@ -335,7 +363,7 @@ function ProofPoints({ items }: { items: EvidenceLinkItem[] }) {
   return (
     <section>
       <ModalSectionLabel>Proof points</ModalSectionLabel>
-      <ul className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((item) => (
           <li key={item.label}>
             <ProofPointCard item={item} />
@@ -406,11 +434,11 @@ function LiveSitePreview({ href }: { href: string }) {
   }, []);
 
   return (
-    <section className="border-t border-line pt-10">
+    <section className="border-t border-line pt-8">
       <ModalSectionLabel>Live site preview</ModalSectionLabel>
       <div
         ref={containerRef}
-        className="mt-5 w-full max-w-[72rem] overflow-hidden border border-line bg-background p-3 sm:p-4"
+        className="mt-4 w-full overflow-hidden border border-line bg-background p-2.5 sm:p-3"
         style={{ height: `${Math.round(previewHeight * scale) + 24}px` }}
       >
         <div className="overflow-hidden bg-background" style={{ height: `${Math.round(previewHeight * scale)}px` }}>

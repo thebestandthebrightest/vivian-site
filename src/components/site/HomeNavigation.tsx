@@ -192,7 +192,7 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
                   <span
                     aria-hidden="true"
                     className="absolute left-1/2 top-full z-10 -translate-x-1/2"
-                    style={{ height: "2rem", width: "min(31rem, calc(100vw - 32px))" }}
+                    style={{ height: "2rem", width: "31rem" }}
                   />
                   <HomePopover
                   id="home-work-popover"
@@ -242,7 +242,7 @@ export function HomeNavigation({ aboutTravelItems }: HomeNavigationProps) {
                   <span
                     aria-hidden="true"
                     className="absolute left-1/2 top-full z-10 -translate-x-1/2"
-                    style={{ height: "2rem", width: "min(31rem, calc(100vw - 32px))" }}
+                    style={{ height: "2rem", width: "31rem" }}
                   />
                   <HomePopover
                     id="home-contact-card"

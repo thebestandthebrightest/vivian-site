@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { SmoothImage, SmoothVideo } from "./SmoothImage";
 
 export type TravelItem = {
@@ -14,13 +14,103 @@ type TravelScrollStripProps = {
   items: TravelItem[];
 };
 
+const LOOP_COPIES = 3;
+
 export function TravelScrollStrip({ items }: TravelScrollStripProps) {
   const stripRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const hoverRef = useRef(false);
   const dragRef = useRef({
     active: false,
     scrollLeft: 0,
     startX: 0,
   });
+
+  const looped =
+    items.length > 0
+      ? Array.from({ length: LOOP_COPIES }, () => items).flat()
+      : items;
+
+  const getSetWidth = () => {
+    const track = trackRef.current;
+    if (!track) return 0;
+    return track.scrollWidth / LOOP_COPIES;
+  };
+
+  // Position at the start of the middle copy so the first alphabetized
+  // image sits at the left edge but there is room to scroll either way.
+  useEffect(() => {
+    const strip = stripRef.current;
+    if (!strip || items.length === 0) return;
+
+    const align = () => {
+      const setWidth = getSetWidth();
+      if (setWidth > 0) strip.scrollLeft = setWidth;
+    };
+
+    align();
+    const id = window.requestAnimationFrame(align);
+    window.addEventListener("resize", align);
+    return () => {
+      window.cancelAnimationFrame(id);
+      window.removeEventListener("resize", align);
+    };
+  }, [items]);
+
+  // Invisible loop: when nearing either boundary, jump by one set width.
+  useEffect(() => {
+    const strip = stripRef.current;
+    if (!strip || items.length === 0) return;
+
+    const handleScroll = () => {
+      const setWidth = getSetWidth();
+      if (setWidth <= 0) return;
+      if (strip.scrollLeft <= setWidth * 0.25) {
+        strip.scrollLeft += setWidth;
+      } else if (strip.scrollLeft >= setWidth * 1.75) {
+        strip.scrollLeft -= setWidth;
+      }
+    };
+
+    strip.addEventListener("scroll", handleScroll, { passive: true });
+    return () => strip.removeEventListener("scroll", handleScroll);
+  }, [items]);
+
+  // Only hijack wheel-to-horizontal while the cursor is over the strip.
+  useEffect(() => {
+    const strip = stripRef.current;
+    if (!strip) return;
+
+    const setHover = (value: boolean) => () => {
+      hoverRef.current = value;
+    };
+    const enter = setHover(true);
+    const leave = setHover(false);
+
+    const handleWheel = (event: WheelEvent) => {
+      if (!hoverRef.current) return;
+      const horizontal =
+        Math.abs(event.deltaX) > Math.abs(event.deltaY)
+          ? event.deltaX
+          : event.deltaY;
+      if (horizontal === 0) return;
+      event.preventDefault();
+      strip.scrollLeft += horizontal;
+    };
+
+    strip.addEventListener("pointerenter", enter);
+    strip.addEventListener("pointerleave", leave);
+    strip.addEventListener("mouseenter", enter);
+    strip.addEventListener("mouseleave", leave);
+    strip.addEventListener("wheel", handleWheel, { passive: false });
+    return () => {
+      strip.removeEventListener("pointerenter", enter);
+      strip.removeEventListener("pointerleave", leave);
+      strip.removeEventListener("mouseenter", enter);
+      strip.removeEventListener("mouseleave", leave);
+      strip.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
 
   const startDrag = (clientX: number) => {
     const strip = stripRef.current;
@@ -58,7 +148,13 @@ export function TravelScrollStrip({ items }: TravelScrollStripProps) {
         ref={stripRef}
         className="relative w-full min-w-0 cursor-grab select-none overflow-x-auto active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         aria-label="Travel image strip"
-        onMouseLeave={stopDrag}
+        onMouseEnter={() => {
+          hoverRef.current = true;
+        }}
+        onMouseLeave={() => {
+          hoverRef.current = false;
+          stopDrag();
+        }}
         onMouseDown={(event) => {
           if (event.button !== 0) return;
 
@@ -79,14 +175,14 @@ export function TravelScrollStrip({ items }: TravelScrollStripProps) {
         onDragStart={(event) => event.preventDefault()}
         onMouseUp={stopDrag}
         onPointerCancel={stopDrag}
-        onPointerLeave={stopDrag}
         onPointerUp={stopDrag}
       >
-        <div className="flex w-max gap-5">
-          {items.map((item) => (
+        <div ref={trackRef} className="flex w-max gap-5">
+          {looped.map((item, index) => (
             <figure
-              key={item.filename}
+              key={`${item.filename}-${index}`}
               className="group w-[14rem] flex-none sm:w-[16rem] lg:w-[17rem]"
+              aria-hidden={index >= items.length ? true : undefined}
             >
               <div className="relative aspect-[4/5] overflow-hidden bg-background">
                 {item.kind === "image" ? (

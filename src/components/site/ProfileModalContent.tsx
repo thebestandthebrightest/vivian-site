@@ -1,14 +1,18 @@
 import { SmoothImage } from "@/components/site/SmoothImage";
-import { SmoothVideo } from "@/components/site/SmoothImage";
-import type { TravelItem } from "@/components/site/TravelScrollStrip";
+import {
+  TravelScrollStrip,
+  type TravelItem,
+} from "@/components/site/TravelScrollStrip";
 
 type ProfileModalContentProps = {
   travelItems: TravelItem[];
   titleId: string;
 };
 
-const summary =
-  "Public Health student at Rutgers working across strategy, analytics, operations, and systems that help organizations make clearer decisions.";
+const intro = [
+  "I'm a Public Health student at Rutgers interested in strategy, analytics, operations, and systems that help organizations make clearer decisions.",
+  "My work centers on translating messy information into clear tools, decisions, and operating rhythms.",
+];
 
 const education = {
   school: {
@@ -94,19 +98,26 @@ export function ProfileModalContent({
 }: ProfileModalContentProps) {
   return (
     <>
-      <header className="grid gap-8 pb-12 pt-6 lg:grid-cols-[1fr_0.9fr] lg:items-start lg:gap-10">
-        <div>
+      <header className="grid gap-8 pb-10 pt-6 lg:grid-cols-[1fr_0.9fr] lg:items-start lg:gap-10">
+        <div className="flex flex-col gap-6">
           <h2
             id={titleId}
             className="font-display text-[clamp(2.6rem,6vw,4.25rem)] font-medium leading-[0.95] text-foreground"
           >
             Profile
           </h2>
+          <div className="space-y-4">
+            {intro.map((paragraph) => (
+              <p
+                key={paragraph}
+                className="max-w-xl text-[0.98rem] leading-7 text-muted sm:text-[1.05rem]"
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-col gap-6">
-          <p className="max-w-xl text-[0.98rem] leading-7 text-muted sm:text-[1.05rem]">
-            {summary}
-          </p>
+        <div className="flex flex-col">
           <SmoothImage
             src="/vivian-headshot.png"
             alt="Vivian Glenn"
@@ -114,7 +125,7 @@ export function ProfileModalContent({
             height={420}
             priority
             sizes="(min-width: 1024px) 360px, (min-width: 768px) 36vw, 80vw"
-            wrapperClassName="w-full max-w-[22rem]"
+            wrapperClassName="w-full max-w-[22rem] lg:ml-auto"
             className="h-auto w-full object-contain"
           />
         </div>
@@ -211,36 +222,8 @@ export function ProfileModalContent({
             <h3 className={sectionHeadingClass}>Travel</h3>
           </div>
         </div>
-        <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 lg:grid-cols-4">
-          {travelItems.map((item) => (
-            <figure key={item.filename} className="flex flex-col">
-              <div className="relative aspect-[4/5] overflow-hidden bg-background">
-                {item.kind === "image" ? (
-                  <SmoothImage
-                    src={item.src}
-                    alt={item.label}
-                    fill
-                    sizes="(min-width: 1024px) 18vw, (min-width: 640px) 28vw, 45vw"
-                    wrapperClassName="h-full w-full"
-                    className="object-cover"
-                  />
-                ) : (
-                  <SmoothVideo
-                    aria-label={item.label}
-                    className="h-full w-full object-cover"
-                    wrapperClassName="h-full w-full"
-                    muted
-                    playsInline
-                    preload="metadata"
-                    src={item.src}
-                  />
-                )}
-              </div>
-              <figcaption className="mt-3 text-xs font-medium leading-6 text-quiet">
-                {item.label}
-              </figcaption>
-            </figure>
-          ))}
+        <div className="mt-8">
+          <TravelScrollStrip items={travelItems} />
         </div>
       </section>
     </>
